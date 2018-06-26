@@ -46,6 +46,7 @@ from Libs import Scheduler, Settings, Logger
 try:
     import RepoManager
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import Context
     import EventServerInterface as ESI
     # import TaskManager
@@ -62,6 +63,8 @@ except ImportError:
     # from . import TestModel
     from . import DbManager
 =======
+=======
+>>>>>>> upstream1/master
     import EventServerInterface as ESI
     import ProjectsManager
     import Common
@@ -74,7 +77,10 @@ except ImportError:
     from . import Common
     from . import DbManager
     from . import ProjectsManager
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     
 import Libs.FileModels.TestPlan as TestPlan
 import Libs.FileModels.TestUnit as TestUnit
@@ -250,6 +256,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         Returns tree
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         tests_ret = []
         nb_tests, nb_tests_f, tests, stats = self.getListingFilesV2(path="%s/%s" % (self.testsPath, str(project)), 
                                                                     project=project, supportSnapshot=True  )
@@ -259,6 +266,10 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         return self.getListingFilesV2(path="%s/%s" % (self.testsPath, str(project)), 
                                       project=project, supportSnapshot=True  )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        return self.getListingFilesV2(path="%s/%s" % (self.testsPath, str(project)), 
+                                      project=project, supportSnapshot=True  )
+>>>>>>> upstream1/master
 
     def __getBasicListing(self, testPath, initialPath):
         """
@@ -293,6 +304,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         @rtype: list
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         nb, nbf, tests, stats = self.getListingFilesV2( path=self.destBackup, 
                                                         extensionsSupported=[RepoManager.ZIP_EXT] )
         backups_ret = self.encodeData(data=tests)
@@ -302,6 +314,11 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                                         extensionsSupported=[RepoManager.ZIP_EXT] )
         return tests
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        _, _, tests, _ = self.getListingFilesV2( path=self.destBackup, 
+                                                        extensionsSupported=[RepoManager.ZIP_EXT] )
+        return tests
+>>>>>>> upstream1/master
 
     def getLastBackupIndex(self, pathBackups ):
         """
@@ -683,6 +700,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                                     'enable': "0" , 'depth': 1, 
                                                     'id': ts['id'], 'testname': filenameTs, 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                     'parent': ts['parent'], 'alias': alias_ts }] ) 
 
         return ( ret, alltests )
@@ -690,6 +708,10 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                                     'parent': ts['parent'], 'alias': alias_ts }] )
         return ret + (alltests, )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                                    'parent': ts['parent'], 'alias': alias_ts }] )
+        return ret + (alltests, )
+>>>>>>> upstream1/master
 
     def addtf2tp(self, data_, tpid=0):
         """
@@ -877,10 +899,14 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
     
     def getFile(self, pathFile, binaryMode=True, project='', addLock=True, login='', 
 <<<<<<< HEAD
+<<<<<<< HEAD
                     forceOpen=False, readOnly=False, projectsList=[]):
 =======
                     forceOpen=False, readOnly=False):
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                    forceOpen=False, readOnly=False):
+>>>>>>> upstream1/master
         """
         New in v17
         Return the file ask by the tester
@@ -889,6 +915,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         ret = RepoManager.RepoManager.getFile(self, pathFile=pathFile, binaryMode=binaryMode, project=project, 
                                                     addLock=addLock, login=login, forceOpen=forceOpen, 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                     readOnly=readOnly, 
                                                     projectsList=projectsList)
         result, path_file, name_file, ext_file, data_base64, project, locked = ret
@@ -896,6 +923,10 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                                     readOnly=readOnly)
         result, path_file, name_file, ext_file, project, data_base64, locked, locked_by = ret
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                                    readOnly=readOnly)
+        result, path_file, name_file, ext_file, project, data_base64, locked, locked_by = ret
+>>>>>>> upstream1/master
         if result != self.context.CODE_OK:
             return ret
             
@@ -980,6 +1011,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         ret = RepoManager.RepoManager.moveDir(self, mainPath=mainPath, folderName=folderName, newPath=newPath, 
                                             project=project, newProject=newProject)
 <<<<<<< HEAD
+<<<<<<< HEAD
         ( code, mainPath, folderName, newPath, project) = ret
         
         if code == self.context.CODE_OK:
@@ -1024,6 +1056,8 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         return ret
         
     def moveFile(self, mainPath, fileName, extFilename, newPath, project='', newProject='', 
@@ -1035,6 +1069,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         ret = RepoManager.RepoManager.moveFile( self, mainPath=mainPath, fileName=fileName, extFilename=extFilename, 
                                                 newPath=newPath, project=project, newProject=newProject, 
                                                 supportSnapshot=supportSnapshot)
+<<<<<<< HEAD
 <<<<<<< HEAD
         ( code, mainPath, fileName, newPath, extFilename, project) = ret
         
@@ -1064,6 +1099,9 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
 =======
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+
+>>>>>>> upstream1/master
         return ret
         
     def duplicateDir(self, mainPath, oldPath, newPath, project='', newProject='', newMainPath=''):
@@ -1096,6 +1134,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         # execute the rename function as before
         ret = RepoManager.RepoManager.renameDir(self, mainPath=mainPath, oldPath=oldPath, newPath=newPath, 
                                                      project=project)
+<<<<<<< HEAD
 <<<<<<< HEAD
         code, mainPath, oldPath, newPath, project  = ret  
         
@@ -1137,6 +1176,8 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                 # finished = self.updateAllTestsPlan(renamedBy=renamedBy)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
         return ret
         
@@ -1152,6 +1193,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                                     newFilename=newFilename,
                                                     extFilename=extFilename, project=project, 
                                                     supportSnapshot=supportSnapshot )
+<<<<<<< HEAD
 <<<<<<< HEAD
         code, mainPath, oldFilename, newFilename, extFilename, project = ret
 
@@ -1178,6 +1220,8 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                 # finished = self.updateAllTestsPlan(renamedBy=renamedBy)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
         return ret
 

@@ -1,5 +1,9 @@
 :: -------------------------------------------------------------------
+<<<<<<< HEAD:app-client/Scripts/qt5/MakeResources.bat
 :: Copyright (c) 2010-2017 Denis Machard
+=======
+:: Copyright (c) 2010-2018 Denis Machard
+>>>>>>> upstream1/master:app-client/Scripts/qt5/MakeResources.bat
 :: This file is part of the extensive testing project
 ::
 :: This library is free software; you can redistribute it and/or

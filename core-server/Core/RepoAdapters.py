@@ -30,6 +30,7 @@ import base64
 import zlib
 import parser
 <<<<<<< HEAD
+<<<<<<< HEAD
 # import compiler
 import re
 import tempfile
@@ -53,6 +54,12 @@ import re
 import tempfile
 import tarfile
 try:
+=======
+import re
+import tempfile
+import tarfile
+try:
+>>>>>>> upstream1/master
     import ConfigParser
 except ImportError: # python3 support
     import configparser as ConfigParser
@@ -61,11 +68,15 @@ import json
 try:
     import Common
     import RepoManager
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     import RepoLibraries
     import Common
     import EventServerInterface as ESI
 except ImportError: # python3 support
+<<<<<<< HEAD
 <<<<<<< HEAD
     # from . import Context
     from . import RepoManager
@@ -74,6 +85,10 @@ except ImportError: # python3 support
     from . import Common
     from . import RepoManager
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+    from . import Common
+    from . import RepoManager
+>>>>>>> upstream1/master
     from . import RepoLibraries
     from . import Common
     from . import EventServerInterface as ESI
@@ -469,6 +484,7 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
         @rtype: 
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         nb, nbf, backups, stats = self.getListingFilesV2(path=self.destBackup, 
                                                          extensionsSupported=[RepoManager.ZIP_EXT])
         backups_ret = self.encodeData(data=backups)
@@ -478,6 +494,11 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
                                                   extensionsSupported=[RepoManager.ZIP_EXT])
         return backups
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        _, _, backups, _ = self.getListingFilesV2(path=self.destBackup, 
+                                                  extensionsSupported=[RepoManager.ZIP_EXT])
+        return backups
+>>>>>>> upstream1/master
 
     def getTree(self, b64=False):
         """
@@ -608,6 +629,7 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
                     version_name = f[1:]
                 rns.append( "\n%s\n%s" % (version_name, Common.indent(rn,1) ) )
 <<<<<<< HEAD
+<<<<<<< HEAD
                 
         # zip and encode in b64
         try: 
@@ -624,6 +646,10 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
 
         return '\n'.join(rns)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+
+        return '\n'.join(rns)
+>>>>>>> upstream1/master
 
     def checkSyntax(self, content):
         """
@@ -639,9 +665,12 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
             content_decoded = base64.b64decode(content)
             parser.suite(content_decoded).compile()
 <<<<<<< HEAD
+<<<<<<< HEAD
             # compiler.parse(content_decoded)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         except SyntaxError as e:
             syntax_msg = str(e)
             return False, str(e)

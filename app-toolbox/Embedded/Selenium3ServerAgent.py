@@ -122,6 +122,7 @@ class SeleniumServer(GenericTool.Tool):
     Selenium tool class
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
     def __init__(self, controllerIp, controllerPort, toolName, toolDesc, defaultTool, supportProxy=0, 
                         proxyIp=None, proxyPort=None, sslSupport=True, seleniumIp="127.0.0.1", seleniumPort=4444):
         """
@@ -131,6 +132,8 @@ class SeleniumServer(GenericTool.Tool):
                                     supportProxy=supportProxy, proxyIp=proxyIp, proxyPort=proxyPort, 
                                     sslSupport=sslSupport)
 =======
+=======
+>>>>>>> upstream1/master
     def __init__(self, controllerIp, controllerPort, toolName, 
                        toolDesc, defaultTool, supportProxy=0, 
                        proxyIp=None, proxyPort=None, sslSupport=True, 
@@ -143,7 +146,10 @@ class SeleniumServer(GenericTool.Tool):
                                   supportProxy=supportProxy, proxyIp=proxyIp, 
                                   proxyPort=proxyPort, 
                                   sslSupport=sslSupport)
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.__type__ = __TYPE__
         self.__mutex__ = threading.RLock()
 
@@ -304,12 +310,17 @@ class SeleniumServer(GenericTool.Tool):
                                                                                             Settings.get( 'Paths', 'bin' ))
                                                                                 )
 <<<<<<< HEAD
+<<<<<<< HEAD
                 
                 __cmd__ += r' -log "%s\selenium3_%s.log" -debug true' % ( "%s\%s" % ( Settings.getDirExec(), 
 =======
                 #  -debug true
                 __cmd__ += r' -log "%s\selenium3_%s.log"  -debug' % ( "%s\%s" % ( Settings.getDirExec(), 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                #  -debug true
+                __cmd__ += r' -log "%s\selenium3_%s.log"  -debug' % ( "%s\%s" % ( Settings.getDirExec(), 
+>>>>>>> upstream1/master
                                                                                         Settings.get( 'Paths', 'logs' )), 
                                                                           self.toolName)
             else:
@@ -455,16 +466,22 @@ class SeleniumServer(GenericTool.Tool):
         # send through notify only a thumbnail
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.sendData(request=request, data={   'data': thumbnail, 'filename': '%s_%s.%s' % (commandName, commandId, extension),
                                                     'command-name': commandName, 'command-id': "%s" % commandId, 
                                                     'adapter-id': "%s" % adapterId  } )
 =======
+=======
+>>>>>>> upstream1/master
             self.sendData(request=request, data={ 'data': thumbnail, 
                                                   'filename': '%s_%s.%s' % (commandName, commandId, extension),
                                                   'command-name': commandName, 
                                                   'command-id': "%s" % commandId, 
                                                   'adapter-id': "%s" % adapterId  } )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         except Exception as e:
             self.error("unable to send notify through notify: %s" % e)
             

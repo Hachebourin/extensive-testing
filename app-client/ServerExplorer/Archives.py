@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -495,6 +495,7 @@ class PreviewReport(QWidget, Logger.ClassLogger):
             else:
                 frame = self.txtEdit.page().mainFrame()
                 txtReport = frame.toPlainText()
+<<<<<<< HEAD
 
                 try:
                     with codecs.open(_filename, "w", "utf-8") as f:
@@ -502,6 +503,15 @@ class PreviewReport(QWidget, Logger.ClassLogger):
                 except Exception as e:
                     self.error('unable to save report file as txt: %s' % str(e) )
 
+=======
+
+                try:
+                    with codecs.open(_filename, "w", "utf-8") as f:
+                        f.write( txtReport )
+                except Exception as e:
+                    self.error('unable to save report file as txt: %s' % str(e) )
+
+>>>>>>> upstream1/master
     def __toPlainText(self, text):
         """
         New in v18
@@ -899,6 +909,7 @@ class PreviewComments(QWidget):
 
         # prepare vars
         cur = self.itemCurrent
+<<<<<<< HEAD
 
         if cur.typeItem != TYPE_ITEM_TEST_RESULT:
             return
@@ -906,8 +917,17 @@ class PreviewComments(QWidget):
         logDirName = cur.parent.parent.archiveDescr['name']
         logSubDirName = cur.parent.archiveDescr['name']
         logFileName =  cur.archiveDescr['name']
+=======
+        replayId = "0"
+
+        if cur.typeItem != TYPE_ITEM_TEST_RESULT:
+            return
+
+        testId = cur.parent.testId
+        replayId = cur.runId
+>>>>>>> upstream1/master
         projectId =  cur.archiveDescr['project']
-        filePath = '%s/%s/%s/%s' % (projectId, logDirName,logSubDirName, logFileName )
+
         postComment = self.commentTextarea.toPlainText()
         if sys.version_info > (3,): # python 3 support
             postComment_encoded = base64.b64encode( bytes(postComment, 'utf8') )
@@ -916,6 +936,7 @@ class PreviewComments(QWidget):
             postComment_encoded = base64.b64encode( postComment.toUtf8() )
         
         # call web services
+<<<<<<< HEAD
         UCI.instance().addCommentArchive(   archiveFile = filePath, 
                                             archivePost = postComment_encoded, 
                                             postTimestamp=time.time() )
@@ -942,6 +963,13 @@ class PreviewComments(QWidget):
         
         # call web services
         UCI.instance().readCommentsArchive( archiveFile = filePath )
+=======
+        RCI.instance().addCommentTr( testId = testId, replayId=replayId,
+                                     comment = postComment_encoded, 
+                                     timestamp=time.time(),
+                                     projectId=projectId,
+                                     returnAll=True)
+>>>>>>> upstream1/master
 
     def delComments(self):
         """
@@ -952,6 +980,7 @@ class PreviewComments(QWidget):
         if reply == QMessageBox.Yes:
             # prepare vars
             cur = self.itemCurrent
+<<<<<<< HEAD
             
             if cur.typeItem != TYPE_ITEM_TEST_RESULT:
                 return
@@ -961,10 +990,20 @@ class PreviewComments(QWidget):
             logFileName =  cur.archiveDescr['name']
             projectId =  cur.archiveDescr['project']
             filePath = '%s/%s/%s/%s' % ( projectId, logDirName, logSubDirName, logFileName )
+=======
+            replayId = "0"
+>>>>>>> upstream1/master
             
-            # call web services
-            UCI.instance().delCommentsArchive( archiveFile = filePath )
+            if cur.typeItem != TYPE_ITEM_TEST_RESULT:
+                return
+            
+            testId = cur.parent.testId
+            replayId = cur.runId  
+            projectId =  cur.archiveDescr['project']
 
+            # call web services
+            RCI.instance().delCommentsTr( testId = testId, replayId=replayId, projectId=projectId)
+            
     def parseComments(self, comments):
         """
         Parse comments 
@@ -984,7 +1023,7 @@ class PreviewComments(QWidget):
         commentsParsed.reverse()
         self.commentsTextarea.setHtml( "<br />".join(commentsParsed)   )
 
-    def onDeleteComments(self, archivePath):
+    def onDeleteComments(self):
         """
         On comments deleted
 
@@ -995,6 +1034,7 @@ class PreviewComments(QWidget):
         @type archiveComments:
         """
         self.commentsTextarea.setHtml('')
+<<<<<<< HEAD
         archPath, righover = str(archivePath).rsplit('/', 1)
         archiveName = righover.rsplit('_',1)[0]
         newArchiveName = "%s_0.trx" % archiveName
@@ -1003,6 +1043,10 @@ class PreviewComments(QWidget):
         self.onCommentAdded(oldArchivePath=archivePath, newArchivePath=newArchivePath, 
                             archiveComments=[], displayPosts=False)
 
+=======
+        self.onCommentAdded(archiveComments=[])
+                            
+>>>>>>> upstream1/master
     def onLoadComments(self, archivePath, archiveComments):
         """
         On comments loaded
@@ -1014,8 +1058,8 @@ class PreviewComments(QWidget):
         @type archiveComments:
         """
         self.parseComments( comments=archiveComments )
-    
-    def onCommentAdded(self, oldArchivePath, newArchivePath, archiveComments, displayPosts):
+
+    def onCommentAdded(self, archiveComments):
         """
         On comment added
 
@@ -1032,7 +1076,7 @@ class PreviewComments(QWidget):
         @type displayPosts:
         """
         # display all comments
-        if displayPosts: self.parseComments( comments=archiveComments )
+        if len(archiveComments): self.parseComments( comments=archiveComments )
 
         # clean field
         self.addCommentAction.setEnabled(False)
@@ -1120,7 +1164,7 @@ class PreviewVerdict(QWidget, Logger.ClassLogger):
         if self.toXml:
             self.txtEdit = QtHelper.RawXmlEditor(parent=self)
             self.txtEdit.setText( self.__data )
-            self.txtEdit.setUtf8(True)
+            # self.txtEdit.setUtf8(True)
             self.txtEdit.setFont( QFont( "%s" % fontName, int(fontSize)) )
         else:
             self.txtEdit = QtHelper.RawEditor(parent=self) 
@@ -1722,7 +1766,7 @@ class WArchives(QWidget, Logger.ClassLogger):
         messageBox = QMessageBox(self)
         
         if cur.typeItem == 0: # date folder
-            logDirName = cur.archiveDescr['name']
+            date = cur.archiveDescr['name']
             projectId =  cur.archiveDescr['project']
        
             reply = messageBox.warning(self, self.tr("Delete Test Result"), 
@@ -1730,11 +1774,10 @@ class WArchives(QWidget, Logger.ClassLogger):
                                         QMessageBox.Yes |QMessageBox.Cancel )
             #call web service
             if reply == QMessageBox.Yes:   
-                UCI.instance().deleteTestResult(  '%s/' % (logDirName), projectId=projectId )
-            
+                RCI.instance().deleteTestResultByDate( date=date, projectId=projectId )
+                
         elif cur.typeItem == 1: # test result folder
-            logDirName = cur.parent.archiveDescr['name']
-            logSubDirName = cur.archiveDescr['name']
+            testId = cur.testId
             projectId =  cur.archiveDescr['project']
        
             
@@ -1743,8 +1786,12 @@ class WArchives(QWidget, Logger.ClassLogger):
                                        QMessageBox.Yes |QMessageBox.Cancel )
             #call web service
             if reply == QMessageBox.Yes:   
+<<<<<<< HEAD
                 UCI.instance().deleteTestResult('%s/%s' % (logDirName,logSubDirName), 
                                                 projectId=projectId )
+=======
+                RCI.instance().deleteTestResult( testId=testId, projectId=projectId )
+>>>>>>> upstream1/master
         else:
             pass
         del messageBox
@@ -1795,7 +1842,7 @@ class WArchives(QWidget, Logger.ClassLogger):
         self.refreshAction.setEnabled(True)
         self.fullRefreshAction.setEnabled(True)
 
-        if UCI.RIGHTS_ADMIN in UCI.instance().userRights :
+        if UCI.RIGHTS_ADMIN in RCI.instance().userRights :
             self.emptyAction.setEnabled(True)
 
     def deactivate (self):
@@ -1866,6 +1913,7 @@ class WArchives(QWidget, Logger.ClassLogger):
 
         # test path
         cur = self.itemCurrent
+<<<<<<< HEAD
         logDirName = cur.parent.parent.archiveDescr['name']
         logSubDirName = cur.parent.archiveDescr['name']
         
@@ -1880,6 +1928,18 @@ class WArchives(QWidget, Logger.ClassLogger):
         UCI.instance().exportTestReport( testPath= '%s/%s' % (logDirName,logSubDirName), 
                                             testFileName=logFileName, projectId=projectId )
 
+=======
+        replayId = "0"
+
+        testId = cur.parent.testId
+        replayId = cur.runId
+        projectId = cur.archiveDescr['project']
+        
+        # call web services
+        RCI.instance().getTrReviews( testId=testId, replayId=replayId, 
+                                     projectId=projectId )
+        
+>>>>>>> upstream1/master
     def exportTestDesign(self):
         """
         Export test design
@@ -1890,18 +1950,21 @@ class WArchives(QWidget, Logger.ClassLogger):
 
         # test path
         cur = self.itemCurrent
-        logDirName = cur.parent.parent.archiveDescr['name']
-        logSubDirName = cur.parent.archiveDescr['name']
-        # filename without extension, example : "Noname1_0_PASS_0.trx
-        logFileName =  cur.archiveDescr['name'].rsplit('.', 1)[0]
-        # and without nb comment and result
-        logFileName =  logFileName.rsplit('_', 2)[0]
+
+        testId = cur.parent.testId
+        replayId = cur.runId
         projectId = cur.archiveDescr['project']
 
         # call web services
+<<<<<<< HEAD
         UCI.instance().exportTestDesign( testPath= '%s/%s' % (logDirName,logSubDirName), 
                                         testFileName=logFileName, projectId=projectId )
 
+=======
+        RCI.instance().getTrDesigns( testId=testId, replayId=replayId, 
+                                     projectId=projectId )
+       
+>>>>>>> upstream1/master
     def exportTestVerdict(self):
         """
         Export test verdict
@@ -1912,6 +1975,7 @@ class WArchives(QWidget, Logger.ClassLogger):
 
         # test path
         cur = self.itemCurrent
+<<<<<<< HEAD
         logDirName = cur.parent.parent.archiveDescr['name']
         logSubDirName = cur.parent.archiveDescr['name']
         
@@ -1926,6 +1990,17 @@ class WArchives(QWidget, Logger.ClassLogger):
         UCI.instance().exportTestVerdict( testPath= '%s/%s' % (logDirName,logSubDirName), 
                                             testFileName=logFileName, projectId=projectId )
 
+=======
+
+        testId = cur.parent.testId
+        replayId = cur.runId
+        projectId = cur.archiveDescr['project']
+        
+        # call web services
+        RCI.instance().getTrVerdicts( testId=testId, replayId=replayId, 
+                                      projectId=projectId )
+       
+>>>>>>> upstream1/master
     def partialRefreshRepo(self):
         """
         Refresh statistics of the archives
@@ -1934,18 +2009,29 @@ class WArchives(QWidget, Logger.ClassLogger):
         projectId = self.getProjectId(project="%s" % projectName)
         
         # web service call
+<<<<<<< HEAD
         UCI.instance().refreshRepo(repo=UCI.REPO_ARCHIVES, partialRefresh=True, 
                                     project=projectId)
 
+=======
+        RCI.instance().refreshTr( projectId=projectId, partialRefresh=True )
+        
+>>>>>>> upstream1/master
     def fullRefreshRepo(self):
         """
         Refresh statistics of the archives
         """
         projectName = self.prjComboBox.currentText()
         projectId = self.getProjectId(project="%s" % projectName)
+<<<<<<< HEAD
         UCI.instance().refreshRepo(repo=UCI.REPO_ARCHIVES, partialRefresh=False, 
                                     project=projectId, showPopup=False)
 
+=======
+        
+        RCI.instance().refreshTr( projectId=projectId, partialRefresh=False )
+        
+>>>>>>> upstream1/master
     def createRootItem(self):
         """
         Create the root item
@@ -2044,7 +2130,7 @@ class WArchives(QWidget, Logger.ClassLogger):
                 self.deleteTrAction.setEnabled(False)
                 self.resetPreview()
                 
-        if UCI.RIGHTS_ADMIN not in UCI.instance().userRights :
+        if UCI.RIGHTS_ADMIN not in RCI.instance().userRights :
             self.deleteTrAction.setEnabled(False)
         
     def onDoubleClicked (self, wfile):
@@ -2165,15 +2251,13 @@ class WArchives(QWidget, Logger.ClassLogger):
             self.error( 'current item is none' )
             return
 
-        # {'content': [], 'type': 'folder', 'name': '16:00:03.219498.Tm9uYW1lMQ==.admin'}
         cur = self.itemCurrent
-        logDirName = cur.parent.archiveDescr['name']
-        logSubDirName = cur.archiveDescr['name']
+        testId = cur.testId
         projectId =  cur.archiveDescr['project']
         
         # call web services
-        UCI.instance().loadTestCache(  logDirName, logSubDirName, projectId )
-
+        RCI.instance().getUncompleteTr( testId, projectId )
+        
     def createPkg(self):
         """
         Create a package of the selected test result
@@ -2183,13 +2267,12 @@ class WArchives(QWidget, Logger.ClassLogger):
             return
 
         cur = self.itemCurrent
-        logDirName = cur.parent.archiveDescr['name']
-        logSubDirName = cur.archiveDescr['name']
+        testId = cur.testId
         projectId =  cur.archiveDescr['project']
 
         # call web services
-        UCI.instance().createZipArchives(  logDirName, logSubDirName, projectId=projectId )
-
+        RCI.instance().createTrZip( testId=testId, projectId=projectId )
+        
     def saveFile (self):
         """
         Save the selected file
@@ -2199,10 +2282,9 @@ class WArchives(QWidget, Logger.ClassLogger):
             return
 
         cur = self.itemCurrent
-        logDirName = cur.parent.parent.archiveDescr['name']
-        logSubDirName = cur.parent.archiveDescr['name']
         logFileName =  cur.archiveDescr['name']
         projectId =  cur.archiveDescr['project']
+        testId = cur.parent.testId
         
         if Settings.instance().readValue( key = 'TestArchives/download-directory' ) != 'Undefined':
             _destfileName = "%s/%s" % ( Settings.instance().readValue( key = 'TestArchives/download-directory' ), 
@@ -2220,8 +2302,8 @@ class WArchives(QWidget, Logger.ClassLogger):
             
         if _destfileName:
             # call web services
-            UCI.instance().downloadResultLogsV2( '%s/%s' % (logDirName,logSubDirName), logFileName, projectId, 
-                                                        andSave=True, destFile="%s" % _destfileName )
+            RCI.instance().downloadResult(  fileName=logFileName, testId=testId, projectId=projectId, 
+                                            saveAs=True, saveAsName="%s" % _destfileName )
         else:
             # display bug
             self.archives.setVisible(False)
@@ -2236,14 +2318,18 @@ class WArchives(QWidget, Logger.ClassLogger):
             return
 
         cur = self.itemCurrent
-        logDirName = cur.parent.parent.archiveDescr['name']
-        logSubDirName = cur.parent.archiveDescr['name']
         logFileName =  cur.archiveDescr['name']
+        testId = cur.parent.testId
         projectId =  cur.archiveDescr['project']
 
         # call web service
+<<<<<<< HEAD
         UCI.instance().downloadResultLogsV2(  '%s/%s' % (logDirName,logSubDirName), 
                                                 logFileName, projectId=projectId )
+=======
+        RCI.instance().downloadResult( fileName=logFileName, testId=testId, projectId=projectId, 
+                                       saveAs=False, saveAsName='')
+>>>>>>> upstream1/master
 
     def loadData( self, data, parent, fileincluded=True, subCall=False):
         """
@@ -2416,7 +2502,8 @@ class WArchives(QWidget, Logger.ClassLogger):
             # call web services
             projectName = self.prjComboBox.currentText()
             projectId = self.getProjectId(project="%s" % projectName)
-            UCI.instance().emptyRepo(repo=UCI.REPO_ARCHIVES, project=projectId)
+
+            RCI.instance().resetTr(projectId=projectId)
 
     def initializeProjects(self, projects=[], defaultProject=1):
         """
@@ -2516,7 +2603,11 @@ class WArchives(QWidget, Logger.ClassLogger):
         self.tabComments.active(item=self.itemCurrent)
 
         # call web service
+<<<<<<< HEAD
         RCI.instance().getTestReports( testId=testId, replayId=replayId, 
+=======
+        RCI.instance().getTrReports( testId=testId, replayId=replayId, 
+>>>>>>> upstream1/master
                                        projectId=projectId )
          
     def loadImagePreview(self):
@@ -2538,14 +2629,19 @@ class WArchives(QWidget, Logger.ClassLogger):
             self.previewTab.setCurrentIndex(TAB_IMAGES)   
 
             cur = self.itemCurrent
-            logDirName = cur.parent.parent.archiveDescr['name']
-            logSubDirName = cur.parent.archiveDescr['name']
-            logFileName =  cur.archiveDescr['name']
+            
+            testId = cur.parent.testId
+            imageName =  cur.archiveDescr['name']
             projectId =  cur.archiveDescr['project']
 
             # call web service
+<<<<<<< HEAD
             UCI.instance().getImagePreview( '%s/%s' % (logDirName,logSubDirName), 
                                             logFileName, projectId=projectId )
+=======
+            RCI.instance().getTrImage( testId=testId, imageName=imageName, 
+                                       projectId=projectId )
+>>>>>>> upstream1/master
         else:
             self.resetPreview()
             
@@ -2583,56 +2679,61 @@ class WArchives(QWidget, Logger.ClassLogger):
         self.previewTab.setTabEnabled(TAB_COMMENTS, True)
         
         # load reports
+<<<<<<< HEAD
         if 'html-report' in content:
             self.tabReports.loadReports( self.decodeData(content['html-report']) )
+=======
+        if 'review' in content:
+            self.tabReports.loadReports( content['review'] )
+>>>>>>> upstream1/master
         else:
             self.tabReports.loadReports( "No test report available" )
             self.previewTab.setTabEnabled(TAB_COMMENTS, False)
             
         # load comments
+<<<<<<< HEAD
         if 'comments-report' in content:
             self.tabComments.onLoadComments(archivePath="", archiveComments=content['comments-report'])
 
         if 'csv-report' in content:
             self.previewTab.setTabEnabled(TAB_VERDICTS, True)
             self.tabVerdicts.loadVerdicts( self.decodeData(content['csv-report']) )
+=======
+        if 'comments' in content:
+            self.tabComments.onLoadComments(archivePath="", archiveComments=content['comments'])
+
+        if 'verdict' in content:
+            self.previewTab.setTabEnabled(TAB_VERDICTS, True)
+            self.tabVerdicts.loadVerdicts( content['verdict'] )
+>>>>>>> upstream1/master
         else:
-            self.tabVerdicts.loadVerdicts( "No test verdict available" )
+            self.tabVerdicts.loadVerdicts( "No csv verdict available" )
             self.previewTab.setTabEnabled(TAB_VERDICTS, False)
 
+<<<<<<< HEAD
         if 'xml-report' in content:
             self.previewTab.setTabEnabled(TAB_XML_VERDICTS, True)
             self.tabXmlVerdicts.loadVerdicts( self.decodeData(content['xml-report']) )
+=======
+        if 'xml-verdict' in content:
+            self.previewTab.setTabEnabled(TAB_XML_VERDICTS, True)
+            self.tabXmlVerdicts.loadVerdicts( content['xml-verdict'] )
+>>>>>>> upstream1/master
         else:
-            self.tabXmlVerdicts.loadVerdicts( "No test verdict available" )
+            self.tabXmlVerdicts.loadVerdicts( "No xml verdict available" )
             self.previewTab.setTabEnabled(TAB_XML_VERDICTS, False)
             
+<<<<<<< HEAD
         if 'html-basic-report' in content:
             self.tabBasicReports.loadReports( self.decodeData(content['html-basic-report']) )
+=======
+        if 'basic-review' in content:
+            self.tabBasicReports.loadReports( content['basic-review'] )
+>>>>>>> upstream1/master
         else:
             self.tabBasicReports.loadReports( "No basic test report available" )
             self.previewTab.setTabEnabled(TAB_BASIC_REPORTS, False)
-        
-    def decodeData(self, b64data):
-        """
-        Decode data
-        """
-        data = ''
-        try:
-            data_decoded = base64.b64decode(b64data)
-        except Exception as e:
-            self.error( 'unable to decode from base64 structure: %s' % str(e) )
-        else:
-            try:
-                data = zlib.decompress(data_decoded)
-                try:
-                    data = data.decode('utf8')
-                except UnicodeDecodeError as e:
-                    data = data
-            except Exception as e:
-                self.error( 'unable to decompress: %s' % str(e) )
-        return data
-        
+
 AR = None # Singleton
 def instance ():
     """

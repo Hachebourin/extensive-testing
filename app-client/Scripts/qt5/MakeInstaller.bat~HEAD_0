@@ -1,5 +1,5 @@
 :: -------------------------------------------------------------------
-:: Copyright (c) 2010-2018 Denis Machard
+:: Copyright (c) 2010-2017 Denis Machard
 :: This file is part of the extensive testing project
 ::
 :: This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@ set Project=%~dp0..\..\
 
 set PythonPath=C:\Python36
 set Python=%PythonPath%\python.exe
+set Output=E:\My Lab\01 ExtensiveTesting\02 - Output\
 
 :: make resources
 %PythonPath%\python.exe -m PyQt5.pyrcc_main -o "%Project%\Resources\Resources.py" "%Project%\Resources\__resources.qrc"
@@ -31,8 +32,12 @@ set Python=%PythonPath%\python.exe
 :: build the project
 echo Build the project...
 cd "%Project%"
-%Python% "%Project%\ConfigureExe.py" portable
+%Python% "%Project%\ConfigureExe.py"
 %PythonPath%\Scripts\pyinstaller.exe --clean --noconfirm BuildWinIns.spec
-%Python% "%Project%\BuildWinIns.py"
+
+:: build the installer
+echo Build the installer...
+"%Python%" "%Project%\BuildWinInno.py" "%Output%\" "dist\ExtensiveTestingClient"
+
 
 pause

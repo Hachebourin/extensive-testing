@@ -33,6 +33,7 @@ import re
 try:
     import cStringIO
 <<<<<<< HEAD
+<<<<<<< HEAD
 except ImportError: # support python 3
     import io as cStringIO
 try:
@@ -43,11 +44,17 @@ except ImportError: # support python 3
 except ImportError: # support python 3
     import io as cStringIO
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+    import cPickle
+except ImportError: # support python 3
+    import io as cStringIO
+>>>>>>> upstream1/master
     import pickle as cPickle
 
 try:
     import RepoManager
     import EventServerInterface as ESI
+<<<<<<< HEAD
 <<<<<<< HEAD
     # import Context
     # import TaskManager
@@ -57,12 +64,17 @@ except ImportError: # python3 support
     # from . import Context
     # from . import TaskManager
 =======
+=======
+>>>>>>> upstream1/master
     import Common
 except ImportError: # python3 support
     from . import RepoManager
     from . import EventServerInterface as ESI
     from . import Common
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     
 from Libs import Scheduler, Settings, Logger
 import Libs.FileModels.TestResult as TestResult
@@ -158,10 +170,14 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
             return self.context.CODE_OK
         except OSError as e:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.trace( e )
 =======
             self.error( e )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            self.error( e )
+>>>>>>> upstream1/master
             return self.context.CODE_FORBIDDEN
         except Exception as e:
             raise Exception( e )
@@ -340,6 +356,7 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
             
             # reset the cache
 <<<<<<< HEAD
+<<<<<<< HEAD
             del self.cacheUuids
             self.cacheUuids = {}
             
@@ -353,6 +370,10 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
             if projectId in self.cacheUuids:
                 del self.cacheUuids[projectId]
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            if projectId in self.cacheUuids:
+                del self.cacheUuids[projectId]
+>>>>>>> upstream1/master
         except Exception as e:
             self.error( "Unable to reset archives %s" % str(e) )
         return ret
@@ -400,10 +421,14 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         """
         ret = self.context.CODE_ERROR
 <<<<<<< HEAD
+<<<<<<< HEAD
         pathTozip = '%s/%s' % (mainPathTozip,subPathTozip)
 =======
         mainPathTozip, subPathTozip = trPath.split("/", 1)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        mainPathTozip, subPathTozip = trPath.split("/", 1)
+>>>>>>> upstream1/master
         try:
             timeArch, milliArch, testName, testUser = subPathTozip.split(".")
             fulltestNameDecoded = base64.b64decode(testName)
@@ -512,6 +537,7 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
             return ( self.context.CODE_ERROR, archivePath, newArchivePath, comments )
         return ( self.context.CODE_OK, archivePath, newArchivePath , comments )
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     def getComments(self, archivePath):
         """
@@ -557,6 +583,8 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         return ( self.context.CODE_OK, archivePath , comments )
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
     def delComments(self, archivePath):
         """
@@ -606,6 +634,7 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
             self.error( "[delComments] %s" % str(e) )
             return ( self.context.CODE_ERROR, archivePath )
         return ( self.context.CODE_OK, archivePath  )
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     def getTestDesign(self, archivePath, archiveName, returnXml=False, projectId=1):
@@ -772,6 +801,8 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         return ( self.context.CODE_OK, verdict )
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
     def createResultLog(self, testsPath, logPath, logName, logData ):
         """
@@ -840,9 +871,13 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         test id = md5
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         self.trace("Find testresult %s in project %s" % (testId, projectId) )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        self.trace("Find testresult %s in project %s" % (testId, projectId) )
+>>>>>>> upstream1/master
         ret = self.context.CODE_NOT_FOUND
         tr = ''
         if int(projectId) in self.cacheUuids:
@@ -983,6 +1018,7 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
                 return p
         return p 
 <<<<<<< HEAD
+<<<<<<< HEAD
         
     def getTrBasicReport(self, trPath, replayId=0):
         """
@@ -1016,6 +1052,10 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
     
     def getTrReportByExtension(self, trPath, replayId=0, trExt="tbrp"):
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+    
+    def getTrReportByExtension(self, trPath, replayId=0, trExt="tbrp"):
+>>>>>>> upstream1/master
         """
         Get the report of the test result passed on argument
         
@@ -1042,18 +1082,24 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
                             break
             except Exception as e:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 self.error("unable to get html test report: %s" % e )
                 return ( self.context.CODE_ERROR, report )
         return ( self.context.CODE_OK, report )  
         
     def getTrReportCsv(self, trPath):
 =======
+=======
+>>>>>>> upstream1/master
                 self.error("unable to get the first one html test basic report: %s" % e )
                 return ( self.context.CODE_ERROR, report )
         return ( self.context.CODE_OK, report )  
 
     def getTrName(self, trPath, replayId=0, withExt=True, matchExt="trx" ):
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         """
         xxxx
         """
@@ -1064,10 +1110,14 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         res = os.path.exists( fullPath )
         if not res:
 <<<<<<< HEAD
+<<<<<<< HEAD
             return( self.context.CODE_NOT_FOUND, report )  
 =======
             return( self.context.CODE_NOT_FOUND, trName )  
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return( self.context.CODE_NOT_FOUND, trName )  
+>>>>>>> upstream1/master
         else:
             try:
                 for entry in list(scandir.scandir( fullPath )):
@@ -1079,17 +1129,23 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
                             break
             except Exception as e:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 self.error("unable to get csv test report: %s" % e )
                 return ( self.context.CODE_ERROR, report )
         return ( self.context.CODE_OK, report )  
 =======
+=======
+>>>>>>> upstream1/master
                 self.error("unable to find trx: %s" % e )
                 return ( self.context.CODE_ERROR, trName )
                 
             if trName is None:
                 return( self.context.CODE_NOT_FOUND, trName )  
         return ( self.context.CODE_OK, trName )  
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         
     def getTrLogName(self, trPath, replayId=0, withExt=True, matchExt="log" ):
         """
@@ -1102,10 +1158,14 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         res = os.path.exists( fullPath )
         if not res:
 <<<<<<< HEAD
+<<<<<<< HEAD
             return( self.context.CODE_NOT_FOUND, events )  
 =======
             return( self.context.CODE_NOT_FOUND, trName )  
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return( self.context.CODE_NOT_FOUND, trName )  
+>>>>>>> upstream1/master
         else:
             try:
                 for entry in list(scandir.scandir( fullPath )):
@@ -1117,12 +1177,15 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
                             break
             except Exception as e:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 self.error("unable to get test events: %s" % e )
                 return ( self.context.CODE_ERROR, events )
         return ( self.context.CODE_OK, events )  
         
     def getTrLogs(self, trPath):
 =======
+=======
+>>>>>>> upstream1/master
                 self.error("unable to find log file: %s" % e )
                 return ( self.context.CODE_ERROR, trName )
                 
@@ -1131,6 +1194,7 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
         return ( self.context.CODE_OK, trName )  
    
     def getBasicListing(self, projectId=1, dateFilter=None, timeFilter=None):
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         """
         """
@@ -1157,6 +1221,10 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
                 return ( self.context.CODE_ERROR, logs )
         return ( self.context.CODE_OK, logs ) 
 =======
+=======
+        """
+        """
+>>>>>>> upstream1/master
         listing = []
         initialPath = "%s/" % (self.testsPath)
         for entry in reversed(list(scandir.scandir( "%s/%s" % (self.testsPath, projectId) ) ) ) :
@@ -1167,7 +1235,10 @@ class RepoArchives(RepoManager.RepoManager, Logger.ClassLogger):
                                                         dateFilter=dateFilter, timeFilter=timeFilter) 
                                )
         return listing
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         
     def __getBasicListing(self, testPath, initialPath, projectId, dateFilter, timeFilter):
         """

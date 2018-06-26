@@ -430,16 +430,22 @@ class SeleniumServer(GenericTool.Tool):
         # send through notify only a thumbnail
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.sendData(request=request, data={ 'data': thumbnail, 'filename': '%s_%s.%s' % (commandName, commandId, extension),
                                                     'command-name': commandName, 'command-id': "%s" % commandId, 
                                                     'adapter-id': "%s" % adapterId  } )
 =======
+=======
+>>>>>>> upstream1/master
             self.sendData(request=request, data={ 'data': thumbnail, 
                                                   'filename': '%s_%s.%s' % (commandName, commandId, extension),
                                                   'command-name': commandName, 
                                                   'command-id': "%s" % commandId, 
                                                   'adapter-id': "%s" % adapterId  } )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         except Exception as e:
             self.error("unable to send notify through notify: %s" % e)
             

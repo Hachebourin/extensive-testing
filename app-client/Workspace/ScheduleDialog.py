@@ -1353,16 +1353,22 @@ class SchedDialogV1(QtHelper.EnhancedQDialog):
             self.configBox.setChecked(False)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def fillFields(self, schedType, schedArgs, taskName, taskId, schedNb, 
                         withoutProbes, enabled=True, noKeepTr=False, withoutNotifs=False, 
                         schedFrom=(0,0,0,0,0,0), schedTo=(0,0,0,0,0,0) ):
 =======
+=======
+>>>>>>> upstream1/master
     def fillFields(self, schedType, schedArgs, 
                     taskName, taskId, schedNb, 
                     withoutProbes, enabled=True, 
                     noKeepTr=False, withoutNotifs=False, 
                     schedFrom=(0,0,0,0,0,0), schedTo=(0,0,0,0,0,0) ):
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         """
         Fill fields
         """

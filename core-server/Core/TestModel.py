@@ -48,14 +48,20 @@ except ImportError: # support python 3
     from . import ProjectsManager
     from . import Common 
 <<<<<<< HEAD
+<<<<<<< HEAD
     
 =======
+=======
+>>>>>>> upstream1/master
 
 # unicode = str with python3
 if sys.version_info > (3,):
     unicode = str
         
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 TS_ENABLED				= "2"
 TS_DISABLED				= "0"
 

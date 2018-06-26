@@ -22,6 +22,7 @@
 # -------------------------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 try:
     import MySQLdb
 except ImportError: # python3 support
@@ -40,6 +41,11 @@ from binascii import hexlify
 import os
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+from binascii import hexlify
+import os
+
+>>>>>>> upstream1/master
 try:
     import MySQLdb
 except ImportError: # python3 support
@@ -48,19 +54,25 @@ import time
 import hashlib
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # import Context
 try:
     import DbManager
 except ImportError: # python3 support
     from . import DbManager
 =======
+=======
+>>>>>>> upstream1/master
 try:
     import DbManager
     import Common
 except ImportError: # python3 support
     from . import DbManager
     from . import  Common
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     
 from Libs import Settings, Logger
 
@@ -292,10 +304,14 @@ class UsersManager(Logger.ClassLogger):
         
         # disconnect user before deletion
 <<<<<<< HEAD
+<<<<<<< HEAD
         disconnected = self.context.unregisterUserFromXmlrpc(login=dbRows[0]['login'])
 =======
         # todo
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        # todo
+>>>>>>> upstream1/master
         
         # delete from db
         sql = """DELETE FROM `%s-users` WHERE  id='%s'""" % ( prefix, escape(userId) )
@@ -410,10 +426,14 @@ class UsersManager(Logger.ClassLogger):
         
         # disconnect user before 
 <<<<<<< HEAD
+<<<<<<< HEAD
         disconnected = self.context.unregisterUserFromXmlrpc(login=dbRows[0]['login'])
 =======
         # todo
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        # todo
+>>>>>>> upstream1/master
         
         # update password
         emptypwd = hashlib.sha1()
@@ -447,10 +467,14 @@ class UsersManager(Logger.ClassLogger):
 
         # disconnect user before 
 <<<<<<< HEAD
+<<<<<<< HEAD
         disconnected = self.context.unregisterUserFromXmlrpc(login=dbRows[0]['login'])
 =======
         # todo
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        # todo
+>>>>>>> upstream1/master
         
         # update password
         sha1 = hashlib.sha1()

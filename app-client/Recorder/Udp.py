@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -53,6 +53,8 @@ except ImportError:
 from Libs import QtHelper, Logger
 
 import UserClientInterface as UCI
+import RestClientInterface as RCI
+
 import Workspace as WWorkspace
 import Settings
 import DefaultTemplates
@@ -248,7 +250,7 @@ class DUdpReplay(QtHelper.EnhancedQDialog, Logger.ClassLogger):
         self.testType = None
 
         if not self.offlineMode:
-            if not UCI.instance().isAuthenticated():
+            if not RCI.instance().isAuthenticated():
                 self.addLogWarning(txt="<< Connect to the test center in first!" )
                 QMessageBox.warning(self, "Import" , "Connect to the test center in first!")
                 return
@@ -321,7 +323,7 @@ class DUdpReplay(QtHelper.EnhancedQDialog, Logger.ClassLogger):
         """
         Export to test
         """
-        if not UCI.instance().isAuthenticated():
+        if not RCI.instance().isAuthenticated():
             self.addLogWarning(txt="<< Connect to the test center in first!" )
             QMessageBox.warning(self, "Import" , "Connect to the test center in first!")
             return

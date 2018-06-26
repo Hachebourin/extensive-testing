@@ -29,6 +29,7 @@ try:
     import EventServerInterface as ESI
     import RepoArchives
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import Context
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
@@ -39,6 +40,11 @@ except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import RepoArchives
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+except ImportError: # python3 support
+    from . import EventServerInterface as ESI
+    from . import RepoArchives
+>>>>>>> upstream1/master
     
 import Libs.NetLayerLib.ServerAgent as NetLayerLib
 import Libs.NetLayerLib.Messages as Messages
@@ -294,6 +300,7 @@ class ProbeServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         self.__mutex.acquire()
         doNotify=False
 <<<<<<< HEAD
+<<<<<<< HEAD
         if len(self.probesRegistered) >= self.context.getLicence()[ 'probes' ] [ 'instance' ]:
             self.info('license probes reached')
             NetLayerLib.ServerAgent.forbidden(self, client, tid)
@@ -301,6 +308,9 @@ class ProbeServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
 =======
         if request['userid'] in  self.probesRegistered:
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        if request['userid'] in  self.probesRegistered:
+>>>>>>> upstream1/master
             self.info('duplicate probe registration: %s' % request['userid'] )
             NetLayerLib.ServerAgent.failed(self, client, tid)
         else:

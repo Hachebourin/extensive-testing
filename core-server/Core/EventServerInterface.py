@@ -26,6 +26,7 @@ from Libs import Logger, Settings
 
 try:
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import Context
     import ProjectsManager
 except ImportError: # python3 support
@@ -34,6 +35,10 @@ except ImportError: # python3 support
     import ProjectsManager
 except ImportError: # python3 support
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+    import ProjectsManager
+except ImportError: # python3 support
+>>>>>>> upstream1/master
     from . import ProjectsManager
 
 import threading
@@ -87,10 +92,14 @@ class EventServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         """
         self.trace("New connection Client=%s" % str(client.client_address) )
 <<<<<<< HEAD
+<<<<<<< HEAD
         
 =======
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+
+>>>>>>> upstream1/master
         NetLayerLib.ServerAgent.onConnection( self, client )
         if not self.wsSupport:
             self.trace('sending notify to channel id: %s' % str(client.client_address) )
@@ -169,10 +178,14 @@ class EventServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         """
         self.trace('Sending notify to all users')
 <<<<<<< HEAD
+<<<<<<< HEAD
         
 =======
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+
+>>>>>>> upstream1/master
         connected = self.context.getUsersConnectedCopy()
         for cur_user in connected:
             NetLayerLib.ServerAgent.notify( self, client = connected[cur_user]['address'], 

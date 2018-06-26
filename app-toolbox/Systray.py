@@ -81,10 +81,14 @@ __BEGIN__ = "2010"
 __END__="2018"
 # date and time of the buid
 <<<<<<< HEAD
+<<<<<<< HEAD
 __BUILDTIME__="04/11/2017 18:04:27"
 =======
 __BUILDTIME__="09/02/2018 18:13:18"
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+__BUILDTIME__="09/02/2018 18:13:18"
+>>>>>>> upstream1/master
 # Redirect stdout and stderr to log file only on production
 REDIRECT_STD=True
 
@@ -924,11 +928,16 @@ class ToolPage(QWidget):
             return
         
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.pluginProcess.sendCommand(cmd="start-probe", data='', more={'callid': tid, 'data': data, 'tid': tid})
 =======
         self.pluginProcess.sendCommand(cmd="start-probe", data='', 
                                        more={'callid': tid, 'data': data, 'tid': tid})
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        self.pluginProcess.sendCommand(cmd="start-probe", data='', 
+                                       more={'callid': tid, 'data': data, 'tid': tid})
+>>>>>>> upstream1/master
         
     def onStoppingProbe(self,  tid, data):
         """
@@ -1285,8 +1294,11 @@ class WelcomePage(QWidget):
         super(WelcomePage, self).__init__()
         
 <<<<<<< HEAD
+<<<<<<< HEAD
 class OptionPage(QWidget):
 =======
+=======
+>>>>>>> upstream1/master
         self.defaultProxyHttpAddr = Settings.get( 'Server', 'addr-proxy-http' )
         self.defaultProxyHttpPort = Settings.get( 'Server', 'port-proxy-http' )
 
@@ -1350,7 +1362,10 @@ class OptionPage(QWidget):
         self.setLayout(mainLayout)
         
 class DeployPage(QWidget):
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     """
     Option page widget
     """

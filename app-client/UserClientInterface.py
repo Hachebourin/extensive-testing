@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -30,10 +30,6 @@ import sys
 import time
 import base64
 import zlib
-try:
-    import xmlrpclib
-except ImportError: # support python3
-    import xmlrpc.client as xmlrpclib
 import hashlib
 import copy
 import os
@@ -66,12 +62,6 @@ import TestResults
 import Settings
 import ServerExplorer
 
-import Workspace.FileModels.TestData as FileModelTestData
-import Workspace.FileModels.TestSuite as FileModelTestSuite
-import Workspace.FileModels.TestUnit as FileModelTestUnit
-import Workspace.FileModels.TestAbstract as FileModelTestAbstract
-import Workspace.FileModels.TestPlan as FileModelTestPlan
-
 import Workspace as WWorkspace
 import RestClientInterface as RCI
 
@@ -81,24 +71,10 @@ EXT_TESTPLAN = "tpx"
 EXT_TESTGLOBAL = "tgx"
 EXT_TESTABSTRACT = "tax"
 
-TESTPLAN_REPO_FROM_OTHER                = 'other'
-TESTPLAN_REPO_FROM_LOCAL                = 'local'
-TESTPLAN_REPO_FROM_REMOTE               = 'remote'
-TESTPLAN_REPO_FROM_HDD                  = 'hdd'
-TESTPLAN_REPO_FROM_LOCAL_REPO_OLD       = 'local repository'
-
-############## NETWORK ERROR ##############
-# errors on channel tcp
-
-# - Connection refused: [Errno 10061] No connection could be made because the target machine actively refused it
-# - Resolved hostname failed: [Errno 11004] getaddrinfo failed
-# - Network problem server to slow to respond
-# - Connection timeout
-
-TIMEOUT_CONNECT_XMLRPC      = 10.0
 
 ############## RESPONSE CODE ##############
 
+<<<<<<< HEAD
 CODE_ERROR                  = 500
 CODE_DISABLED               = 405
 CODE_ALLREADY_EXISTS        = 420
@@ -226,36 +202,42 @@ DOWNLOAD_CLIENT             =   "downloadClient"
 # GET_TEST_PREVIEW            =   "getTestPreview"
 GET_IMAGE_PREVIEW           =   "getImagePreview"
 DELETE_TEST_RESULT          =   "deleteTestResult"
+=======
+# CODE_ERROR                  = 500
+# CODE_DISABLED               = 405
+# CODE_ALLREADY_EXISTS        = 420
+# CODE_NOT_FOUND              = 404
+# CODE_LOCKED                 = 421
+# CODE_ALLREADY_CONNECTED     = 416
+# CODE_FORBIDDEN              = 403
+# CODE_FAILED                 = 400
+# CODE_OK                     = 200
+>>>>>>> upstream1/master
 
 ############## USERS TYPE ##############
 RIGHTS_ADMIN                =   "Administrator"
-RIGHTS_USER                 =   "Tester"
-RIGHTS_DEVELOPER            =   "Developer"
-RIGHTS_MANAGER              =   "Leader"
-RIGHTS_LEADER               =   RIGHTS_MANAGER
-RIGHTS_TESTER               =   RIGHTS_USER
+RIGHTS_TESTER               =   "Tester"
+RIGHTS_MONITOR              =   "Monitor"
 
 RIGHTS_USER_LIST            =  [ 
                                     RIGHTS_ADMIN, 
-                                    RIGHTS_LEADER,
-                                    RIGHTS_TESTER,
-                                    RIGHTS_DEVELOPER
+                                    RIGHTS_MONITOR,
+                                    RIGHTS_TESTER
                                 ]
 
 ############## SCHEDULATION TYPE ##############
-SCHED_NOW                   =   -1      # one run 
-SCHED_AT                    =   0       # run postponed
-SCHED_IN                    =   1       # run postponed
-SCHED_EVERY_SEC             =   2
-SCHED_EVERY_MIN             =   3
-SCHED_HOURLY                =   4
-SCHED_DAILY                 =   5
-SCHED_EVERY_X               =   6
-SCHED_WEEKLY                =   7
-SCHED_NOW_MORE              =   8
-
-SCHED_QUEUE                 =   9      # run enqueued
-SCHED_QUEUE_AT              =   10     # run enqueued at
+SCHED_NOW                   =   0      # one run 
+SCHED_AT                    =   1       # run postponed
+SCHED_IN                    =   2       # run postponed
+SCHED_EVERY_SEC             =   3
+SCHED_EVERY_MIN             =   4
+SCHED_HOURLY                =   5
+SCHED_DAILY                 =   6
+SCHED_EVERY_X               =   7
+SCHED_WEEKLY                =   8
+SCHED_NOW_MORE              =   9
+SCHED_QUEUE                 =   10      # run enqueued
+SCHED_QUEUE_AT              =   11     # run enqueued at
 
 
 SCHED_DAYS_DICT =   {
@@ -332,45 +314,22 @@ def bytes2str(val):
         return str(val, "utf8")
     else:
         return val
-        
-def calling_xmlrpc(func):
-    """
-    Decorator for xmlrpc call
-    """
-    def wrapper(*args, **kwargs):
-        """
-        just a wrapper
-        """
-        funcname = func.__name__
-        parent = args[0]
-        try:
-            parent.trace("calling xmlrpc %s" % funcname)
-            func(*args, **kwargs)
-            parent.trace("ending xmlrpc %s, waiting response" % funcname)
-        except Exception as e:
-            parent.onError( title=funcname, err=str(e) )
-    return wrapper
 
 class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
     """
     User client interface
-    """
-    ResetStatistics = pyqtSignal()  
+    """ 
     CriticalMsg = pyqtSignal(str, str)  
     WarningMsg = pyqtSignal(str, str)  
     InformationMsg = pyqtSignal(str, str)  
-    Disconnected = pyqtSignal()  
-    Connected = pyqtSignal(dict)  
+    Disconnected = pyqtSignal()
     Notify = pyqtSignal(tuple)  
     Interact = pyqtSignal(int, str, float, int, str) 
     Pause = pyqtSignal(int, str, str, float, int) 
     BreakPoint = pyqtSignal(int, int, float) 
-    AddTestTab = pyqtSignal(TestResults.TestResult.WTestResult) 
-    TestRescheduled = pyqtSignal(int) 
-    TestKilled = pyqtSignal(int) 
-    TestsKilled = pyqtSignal(list) # new in v12.1
     ArrowCursor = pyqtSignal() 
     BusyCursor = pyqtSignal()
+<<<<<<< HEAD
     TestCancelled = pyqtSignal(int)
     RefreshRepo = pyqtSignal(int, str, bool, bool, int)
     GetFileRepo = pyqtSignal(int, str, str, str, str, int, int, int, int) 
@@ -415,6 +374,8 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
     GetImagePreview = pyqtSignal(str)
     # GetTestPreview = pyqtSignal(dict)
     WebCall = pyqtSignal(object)
+=======
+>>>>>>> upstream1/master
     def __init__(self, parent = None, clientVersion=None):
         """
         Qt Class User Client Interface
@@ -462,31 +423,15 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         self.proxyActivated = False
 
         self.portData = Settings.instance().readValue( key = 'Server/port-data' )
-        self.authenticated = False
-        self.userRights = []
-        self.userId = 0
         self.loaderDialog = QtHelper.MessageBoxDialog(dialogName = self.tr("Loading"))
 
-        self.updateClientDialog = QtHelper.MessageBoxDialog(dialogName = '')
-        self.updateClientDialog.Download.connect(self.updateClient)
-
         self.parent.DataProgress.connect(self.updateDataReadProgress)
-        
-        self.updateTimer = QTimer()
-        self.updateTimer.timeout.connect(self.getClientUpdateAuto)
-        
+
     def application(self):
         """
         return main application instance
         """
         return self.parent
-
-    def updateClient(self, pkgName):
-        """
-        Download the client to update it
-        """
-        self.updateClientDialog.done(0)
-        self.downloadClientV2(packageName="%s" % pkgName) 
 
     def getLogin(self):
         """
@@ -556,8 +501,8 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
             self.proxyActivated = False
             
         NetLayerLib.ClientAgent.unsetProxy(self)
-        ServerExplorer.instance().wWebService.unsetWsProxy()
-
+        ServerExplorer.instance().RestService.unsetWsProxy()
+        
         self.address = address
         self.addressProxyHttp = addressProxyHttp
         self.portProxyHttp = portProxyHttp
@@ -593,7 +538,8 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
 
             # resolve proxy if activated 
             if self.proxyActivated and len(addressProxyHttp) and portProxyHttp:
-                resolvedProxyHttp = NetLayerLib.ClientAgent.setProxyAddress(self, ip = addressProxyHttp, port = int(portProxyHttp) )
+                resolvedProxyHttp = NetLayerLib.ClientAgent.setProxyAddress(self, ip = addressProxyHttp, 
+                                                                            port = int(portProxyHttp) )
                 if resolvedProxyHttp is None:
                     ret = resolvedProxyHttp
                 else:
@@ -601,7 +547,8 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
                     self.addressProxyHttpResolved = dst_ip
                 
                 # set proxy on ws http
-                ServerExplorer.instance().configureProxy(ip=self.addressProxyHttpResolved, port=portProxyHttp)
+                ServerExplorer.instance().configureProxy(ip=self.addressProxyHttpResolved, 
+                                                         port=portProxyHttp)
             ret = True
         return ret
 
@@ -611,15 +558,6 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         """
         self.startConnection()
 
-    def isAuthenticated (self):
-        """
-        Is authenticated ?
-
-        @return:
-        @rtype:
-        """
-        return self.authenticated
-
     def onResolveHostnameFailed(self, err):
         """
         On resolve hostname failed
@@ -627,17 +565,18 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         if 'Errno 11004' in err:
             msgErr = 'Server address resolution failed'
         else:
             msgErr = err
+            
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
-        self.emitCriticalMsg( self.tr("Connection") , "%s:\n%s" % (self.tr("Error occured"),msgErr) )
+            
+        self.emitCriticalMsg( self.tr("Connection") , 
+                              "%s:\n%s" % (self.tr("Error occured"),msgErr) )
 
     def onResolveHostnameProxyFailed(self, err):
         """
@@ -646,17 +585,18 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         if 'Errno 11004' in str(err):
             msgErr = 'Proxy address resolution failed'
         else:
             msgErr = err
+            
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
-        self.emitCriticalMsg( self.tr("Connection Proxy") , "%s:\n%s" % (self.tr("Error occured"),msgErr) )
+            
+        self.emitCriticalMsg( self.tr("Connection Proxy") , 
+                              "%s:\n%s" % (self.tr("Error occured"),msgErr) )
     
     def onConnectionRefused(self, err):
         """
@@ -665,17 +605,18 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         if 'Errno 10061' in err:
             msgErr = 'The connection has been refused by the server'
         else:
             msgErr = err
+            
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
-        self.emitCriticalMsg( self.tr("Connection") , "%s:\n%s" % (self.tr("Error occured"),msgErr) )
+            
+        self.emitCriticalMsg( self.tr("Connection") , 
+                              "%s:\n%s" % (self.tr("Error occured"),msgErr) )
 
     def onConnectionTimeout(self, err):
         """
@@ -684,12 +625,11 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
+            
         self.emitCriticalMsg( self.tr("Connection") , "%s %s.\n%s\n\n%s" % ( self.tr('Connection'), err,  self.tr("Please retry!"),
                                                                             self.tr("If the problem persists contact your administrator.") )
                             )
@@ -698,12 +638,11 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         """
         Called on websocket error
         """
-        self.updateTimer.stop()
-        
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
+            
         self.emitCriticalMsg( self.tr("Connection") , "%s %s.\n%s\n\n%s" % ( self.tr('Connection'), err,  self.tr("Please retry!"),
                                                                             self.tr("If the problem persists contact your administrator.") )
                             )
@@ -715,16 +654,16 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         if 'Errno 10061' in err:
             msgErr = 'Proxy: the connection has been refused by the server'
         else:
             msgErr = err
+            
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
+            
         self.emitCriticalMsg( self.tr("Connection Proxy") , str(msgErr) )
 
     def onProxyConnectionError(self, err):
@@ -734,12 +673,11 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         ServerExplorer.instance().stopWorking()
         self.closeConnection()
         ServerExplorer.instance().enableConnect()
         WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
+        
         self.emitCriticalMsg( self.tr("Connection Proxy") , str(err) )
 
     def onProxyConnectionTimeout(self, err):
@@ -749,12 +687,11 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         @param err: message
         @type err: string
         """
-        self.updateTimer.stop()
-        
         if ServerExplorer.instance() is not None:
             ServerExplorer.instance().stopWorking()
             ServerExplorer.instance().enableConnect()
             WWorkspace.WDocumentViewer.instance().updateConnectLink(connected=False)
+            
         self.emitCriticalMsg( self.tr("Connection Proxy") , "%s %s.\n%s\n\n%s" % ( self.tr("Connection Proxy"), err, self.tr("Please retry!"),
                                                                 self.tr("If the problem persists contact your administrator.") )
                              )
@@ -763,8 +700,6 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         """
         On proxy connection
         """
-        self.updateTimer.stop()
-        
         self.trace('Proxy initialization...')
         try:
             self.sendProxyHttpRequest()
@@ -814,18 +749,12 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         On first notify received from server
         """
         self.trace('API Authentication...')
-        try:
-            xml_data = { 'channel-id':  self.channelId, 'login': self.login, 'password':self.password }
-            xml_data.update( self.__getCurrentVersion() )
 
-            self.trace('[XMLRPC] xmlrpc function called')
-            self.__callXmlrpc( xmlrpcFunc=AUTHENTICATE_CLIENT, xmlrpcData=xml_data )
+        # rest call
+        RCI.instance().login(  login=self.login, 
+                               password=self.password, 
+                               channelId=self.channelId  )
 
-        except Exception as e:
-            self.closeConnection()
-            ServerExplorer.instance().stopWorking()
-            self.emitCriticalMsg( self.tr("Connection") , str(e) )
-            
     def emitCriticalMsg(self, title, err):
         """
         Emit a critical message
@@ -850,9 +779,7 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         Emit "Disconnected" on disconnection
         """
         self.trace('on disconnection byserver=%s inactivitserver=%s...' %(byServer, inactivityServer) )
-        self.updateTimer.stop()
-        self.authenticated = False
-                    
+           
         if QtHelper.str2bool( Settings.instance().readValue( key = 'Server/rest-support' ) ):
             if not byServer:
                 RCI.instance().logout()
@@ -861,9 +788,7 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
             if ServerExplorer.instance() is not None: ServerExplorer.instance().stopWorking()
 
             self.channelId = None
-            self.userRights = []
-            self.userId = 0
-
+            
             self.Disconnected.emit() 
             
             if QtHelper.str2bool( Settings.instance().readValue( key = 'Common/systray-notifications' ) ):
@@ -877,18 +802,18 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         else:
             if self.isConnected():  self.trace('Disconnection...')
             self.channelId = None
-            self.userRights = []
-            self.userId = 0
+
             NetLayerLib.ClientAgent.onDisconnection(self)
             if ServerExplorer.instance() is not None: ServerExplorer.instance().stopWorking()
             
             self.Disconnected.emit() 
             
+            msg = "Disconnected by the server.\nPlease to reconnect"
             if byServer:
                 if QtHelper.str2bool( Settings.instance().readValue( key = 'Common/systray-notifications' ) ):
-                    self.application().showMessageWarningTray(msg=self.tr("Disconnected by the server.\nPlease to reconnect"))
+                    self.application().showMessageWarningTray(msg=self.tr(msg))
                 else: 
-                    self.emitWarningMsg(title=self.tr("Connection"), err=self.tr("Disconnected by the server.\nPlease to reconnect"))
+                    self.emitWarningMsg(title=self.tr("Connection"), err=self.tr(msg))
         
     def onRequest (self, client, tid, request):
         """
@@ -907,6 +832,7 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
                     self.channelId = request['body'][1]['channel-id']
             else:
                 self.Notify.emit( request['body'] )
+                
         elif request['cmd'] == Messages.RSQ_CMD:
             if 'cmd' in request['body']:
                 if request['body']['cmd'] == Messages.CMD_INTERACT:
@@ -922,16 +848,23 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
 											int(request['body']['test-id']), defaultValue )
 											
                     if 'pause' in request['body']:
-                        self.Pause.emit( tid, request['body']['step-id'], request['body']['step-summary'],
-                                           request['body']['timeout'], int(request['body']['test-id']) )
+                        self.Pause.emit( tid, request['body']['step-id'], 
+                                         request['body']['step-summary'],
+                                         request['body']['timeout'], 
+                                         int(request['body']['test-id']) )
+                                         
                     if 'breakpoint' in request['body']:
-                        self.BreakPoint.emit( tid, int(request['body']['test-id']), request['body']['timeout'] )
+                        self.BreakPoint.emit( tid, 
+                                              int(request['body']['test-id']), 
+                                              request['body']['timeout'] )
+                                              
                 else:
                     NetLayerLib.ClientAgent.forbidden(self, tid=tid, body='' )
             else:
                 NetLayerLib.ClientAgent.forbidden(self, tid=tid, body='' )
         else:
             self.trace('%s received ' % request['cmd'])
+<<<<<<< HEAD
     
     def onResponse(self, value):
         """
@@ -5062,6 +4995,8 @@ class UserClientInterface(QObject, Logger.ClassLogger, NetLayerLib.ClientAgent):
         """
         xmlrpcData = { 'projectid': projectId, 'tr-path':trPath}
         self.__callXmlrpc( xmlrpcFunc=DELETE_TEST_RESULT, xmlrpcData=xmlrpcData )
+=======
+>>>>>>> upstream1/master
 
 UCI = None # Singleton
 def instance ():

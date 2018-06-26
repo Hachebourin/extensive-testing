@@ -22,6 +22,7 @@
 # -------------------------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 try:
     import MySQLdb
 except ImportError: # python3 support
@@ -29,6 +30,8 @@ except ImportError: # python3 support
 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 import time
 import datetime
 import pickle
@@ -37,9 +40,12 @@ import threading
 import os
 import parser
 <<<<<<< HEAD
+<<<<<<< HEAD
 # import compiler
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 try:
     import ConfigParser
 except ImportError: # python3 support
@@ -73,6 +79,7 @@ try:
     import ProbesManager
 except ImportError:
 <<<<<<< HEAD
+<<<<<<< HEAD
     import json
 
 try:
@@ -98,15 +105,20 @@ try:
 except ImportError:
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     from . import Common
     from . import TestModel
     from . import SubTestModel
     from . import EventServerInterface as ESI
     from . import TestServerInterface as TSI
 <<<<<<< HEAD
+<<<<<<< HEAD
     # from . import StatsManager
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     from . import RepoManager
     from . import RepoArchives
     from . import RepoLibraries
@@ -115,9 +127,12 @@ except ImportError:
     from . import StorageDataAdapters
     from . import UsersManager
 <<<<<<< HEAD
+<<<<<<< HEAD
     # from . import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     from . import ProjectsManager
     from . import AgentsManager
     from . import ProbesManager
@@ -243,17 +258,23 @@ def getGroupId():
 
 class Task(Logger.ClassLogger):
 <<<<<<< HEAD
+<<<<<<< HEAD
     def __init__(self, testData, testName, testPath, testUser, testId, testBackground, taskEnabled=True, withoutProbes=False,
                     debugActivated=False, withoutNotif=False, noKeepTr=False, testUserId=0, testProjectId=0, stepByStep=False,
                     breakpoint=False, runSimultaneous=False, channelId=False, statsmgr=None, context=None):
 =======
+=======
+>>>>>>> upstream1/master
     def __init__(self, testData, testName, testPath, testUser, testId, 
                     testBackground, taskEnabled=True, withoutProbes=False,
                     debugActivated=False, withoutNotif=False, noKeepTr=False, 
                     testUserId=0, testProjectId=0, stepByStep=False,
                     breakpoint=False, runSimultaneous=False, channelId=False, 
                     statsmgr=None, context=None):
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         """
         Construc test class
 
@@ -468,12 +489,17 @@ class Task(Logger.ClassLogger):
         if withId:
             if withGroupId:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 return ( self.schedId, self.schedType, str(self.schedArgs), str(self.schedAt), 
                           self.getTaskName(), str(self.userName),
 =======
                 return (    self.schedId, self.schedType, str(self.schedArgs), str(self.schedAt), 
                             self.getTaskName(), str(self.userName),
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                return (    self.schedId, self.schedType, str(self.schedArgs), str(self.schedAt), 
+                            self.getTaskName(), str(self.userName),
+>>>>>>> upstream1/master
                             str(self.startTime), str(self.duration), str(self.state),  self.schedNb, 
                             self.recurId, self.enabled, self.withoutProbes,
                             self.withoutNotif, self.noKeepTr, self.userId, self.projectId,
@@ -489,6 +515,7 @@ class Task(Logger.ClassLogger):
         else:
             # Called to add in the history
 <<<<<<< HEAD
+<<<<<<< HEAD
             return ( self.schedType, str(self.schedArgs), str(self.schedAt), self.getTaskName(), 
                      str(self.userName), str(self.startTime), str(self.duration), 
                     str(self.state), self.projectId )
@@ -497,6 +524,11 @@ class Task(Logger.ClassLogger):
                         str(self.userName), str(self.startTime), str(self.duration), 
                         str(self.state), self.projectId )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return (    self.schedType, str(self.schedArgs), str(self.schedAt), self.getTaskName(), 
+                        str(self.userName), str(self.startTime), str(self.duration), 
+                        str(self.state), self.projectId )
+>>>>>>> upstream1/master
 
     def getId(self):
         """
@@ -1059,11 +1091,16 @@ class Task(Logger.ClassLogger):
         """
         try: 
 <<<<<<< HEAD
+<<<<<<< HEAD
             tmpPath = '%s%s/Parsed' % ( Settings.getDirExec(), Settings.get( 'Paths', 'tmp' )  )
 =======
             tmpPath = '%s%s/Parsed' % ( Settings.getDirExec(), 
                                         Settings.get( 'Paths', 'tmp' )  )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            tmpPath = '%s%s/Parsed' % ( Settings.getDirExec(), 
+                                        Settings.get( 'Paths', 'tmp' )  )
+>>>>>>> upstream1/master
             os.mkdir( tmpPath, 0o755 )
         except Exception as e:
             pass
@@ -1073,20 +1110,28 @@ class Task(Logger.ClassLogger):
                                                     self.testName,
                                                     self.userName, 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                     self.testId  )
 =======
                                                     self.getTestID()  )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                                    self.getTestID()  )
+>>>>>>> upstream1/master
         if subTest:
             fileName = '%s%s/Parsed/SubTE_%s_%s_%s.BAD' % ( Settings.getDirExec(), 
                                                             Settings.get( 'Paths', 'tmp' ), 
                                                             self.testName, 
                                                             self.userName, 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                             self.testId  )
 =======
                                                             self.getTestID()  )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                                            self.getTestID()  )
+>>>>>>> upstream1/master
         f = open( fileName ,  'w')
         f.write(te)
         f.close()
@@ -1136,6 +1181,7 @@ class Task(Logger.ClassLogger):
                 try:
                     te = TestModel.createTestDesign(    
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                         dataTest = self.dataTest, userName=self.userName, testName=self.testName, 
                                                         trPath=self.getTestPath(withDate=True), logFilename=self.completeId(), 
                                                         withoutProbes=self.withoutProbes,
@@ -1149,6 +1195,8 @@ class Task(Logger.ClassLogger):
                                                         parametersShared=self.ctx.instance().getTestEnvironment(user=self.userName)
                                                     )
 =======
+=======
+>>>>>>> upstream1/master
                                                 dataTest = self.dataTest, 
                                                 userName=self.userName, 
                                                 testName=self.testName, 
@@ -1166,7 +1214,10 @@ class Task(Logger.ClassLogger):
                                                 testLocation=self.getTestLocation(),
                                                 parametersShared=self.ctx.instance().getTestEnvironment(user=self.userName)
                                             )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                 except Exception as e:
                     cleanupTmp = False
                     self.error( 'Parse test design: unable to create te: %s' % str(e) )
@@ -1365,6 +1416,7 @@ class Task(Logger.ClassLogger):
             te = ''
             try:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 te = TestModel.createTestExecutable(dataTest = self.dataTest, userName=self.userName, testName=self.testName, 
                                 trPath=self.getTestPath(), logFilename=self.completeId(), withoutProbes=self.withoutProbes,
                                 defaultLibrary=RepoLibraries.instance().getDefaultV2(), defaultAdapter=RepoAdapters.instance().getDefaultV2(),
@@ -1374,6 +1426,8 @@ class Task(Logger.ClassLogger):
                                 runningAgents=AgentsManager.instance().getRunning(), runningProbes=ProbesManager.instance().getRunning()
                         )
 =======
+=======
+>>>>>>> upstream1/master
                 te = TestModel.createTestExecutable(dataTest = self.dataTest, userName=self.userName, 
                                                     testName=self.testName, trPath=self.getTestPath(), 
                                                     logFilename=self.completeId(), withoutProbes=self.withoutProbes,
@@ -1388,7 +1442,10 @@ class Task(Logger.ClassLogger):
                                                     runningProbes=ProbesManager.instance().getRunning(),
                                                     taskUuid=self.taskUuid
                                                     )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             except Exception as e:
                 self.error( "parse test - unable to prepare te: %s" % str(e) )
                 self.wrongParseToFile( te=te)
@@ -1575,17 +1632,23 @@ class Task(Logger.ClassLogger):
                             
                     if ts['enable'] == TestModel.TS_ENABLED:
 <<<<<<< HEAD
+<<<<<<< HEAD
                         subte = SubTestModel.createSubTest( dataTest = ts, descriptions=dataTest['properties']['descriptions']['description'],
                                                             trPath=self.getTestPath(),
                                                             defaultLibrary=RepoLibraries.instance().getDefaultV2(),
                                                             defaultAdapter=RepoAdapters.instance().getDefaultV2(), 
 =======
+=======
+>>>>>>> upstream1/master
                         subte = SubTestModel.createSubTest( dataTest = ts, 
                                                             descriptions=dataTest['test-properties']['descriptions']['description'],
                                                             trPath=self.getTestPath(),
                                                             defaultLibrary=RepoLibraries.instance().getDefault(),
                                                             defaultAdapter=RepoAdapters.instance().getDefault(), 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                                             isTestUnit=isSubTu, isTestAbstract=isSubTa,
                                                             isTestPlan=isTp, isTestGlobal=isTg )
                         sub_tes.append( subte )
@@ -1603,6 +1666,7 @@ class Task(Logger.ClassLogger):
                 dataTest = copy.deepcopy(self.dataTest)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             te = TestModel.createTestExecutable(    dataTest = dataTest, userName=self.userName, testName=self.testName, 
                                                     trPath=self.getTestPath(), logFilename=self.completeId(), withoutProbes=self.withoutProbes,
                                                     defaultLibrary=RepoLibraries.instance().getDefaultV2(), defaultAdapter=RepoAdapters.instance().getDefaultV2(),
@@ -1611,6 +1675,8 @@ class Task(Logger.ClassLogger):
                                                     stepByStep=self.stepByStep, breakpoint=self.breakpoint, testId=self.testId, testLocation=self.getTestLocation(),
                                                     runningAgents=AgentsManager.instance().getRunning(), runningProbes=ProbesManager.instance().getRunning()
 =======
+=======
+>>>>>>> upstream1/master
             te = TestModel.createTestExecutable(    
                                                 dataTest = dataTest, userName=self.userName, 
                                                 testName=self.testName, trPath=self.getTestPath(), 
@@ -1625,7 +1691,10 @@ class Task(Logger.ClassLogger):
                                                 runningAgents=AgentsManager.instance().getRunning(), 
                                                 runningProbes=ProbesManager.instance().getRunning(),
                                                 taskUuid=self.taskUuid
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                                 )
         except Exception as e:
             self.error( 'unable to create the main te: %s' % e )
@@ -1831,13 +1900,19 @@ class Task(Logger.ClassLogger):
             for i in xrange(len(sub_tes)):
                 try:
 <<<<<<< HEAD
+<<<<<<< HEAD
                     parser.suite(sub_tes[i]).compile()
 =======
+=======
+>>>>>>> upstream1/master
                     if sys.version_info > (3,):
                         parser.suite(sub_tes[i].decode("utf8")).compile()
                     else:
                         parser.suite(sub_tes[i]).compile()
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                 except SyntaxError as e:
                     e.lineno = None
                     self.trace( 'unable to compile sub te syntax: %s' % e )
@@ -1895,11 +1970,16 @@ class Task(Logger.ClassLogger):
                                         Settings.get( 'Paths', 'testsresults-tmp' ) )
         else:
 <<<<<<< HEAD
+<<<<<<< HEAD
             testResultPath = '%s%s' % ( Settings.getDirExec(), Settings.get( 'Paths', 'testsresults' ) )
 =======
             testResultPath = '%s%s' % ( Settings.getDirExec(), 
                                         Settings.get( 'Paths', 'testsresults' ) )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            testResultPath = '%s%s' % ( Settings.getDirExec(), 
+                                        Settings.get( 'Paths', 'testsresults' ) )
+>>>>>>> upstream1/master
         fileName = "%s/%s/%s/%s/%s_%s" % ( testResultPath,  
                                            self.projectId, 
                                            time.strftime("%Y-%m-%d", time.localtime(self.prepareTime)), 
@@ -1925,11 +2005,16 @@ class Task(Logger.ClassLogger):
         """
         reports = ''
 <<<<<<< HEAD
+<<<<<<< HEAD
         testResultPath = '%s%s' % ( Settings.getDirExec(), Settings.get( 'Paths', 'testsresults' ) )
 =======
         testResultPath = '%s%s' % ( Settings.getDirExec(), 
                                     Settings.get( 'Paths', 'testsresults' ) )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        testResultPath = '%s%s' % ( Settings.getDirExec(), 
+                                    Settings.get( 'Paths', 'testsresults' ) )
+>>>>>>> upstream1/master
         fileName = "%s/%s/%s/%s/%s_%s" % ( testResultPath,  
                                            self.projectId, 
                                            time.strftime("%Y-%m-%d", time.localtime(self.prepareTime)), 
@@ -2008,11 +2093,16 @@ class Task(Logger.ClassLogger):
         filename = testname_replayid_nbcomments_verdict.testresult
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         testResultPath = '%s%s' % ( Settings.getDirExec(), Settings.get( 'Paths', 'testsresults' ) )
 =======
         testResultPath = '%s%s' % ( Settings.getDirExec(), 
                                     Settings.get( 'Paths', 'testsresults' ) )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        testResultPath = '%s%s' % ( Settings.getDirExec(), 
+                                    Settings.get( 'Paths', 'testsresults' ) )
+>>>>>>> upstream1/master
         dirTask = "%s/%s/%s/" % ( self.projectId, 
                                   time.strftime("%Y-%m-%d", time.localtime(self.prepareTime)),
                                   self.completeId() )
@@ -2587,6 +2677,7 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
         try:
             task = self.registerTask( 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                         testData=tst['test-data'], testName=tst['test-name'], 
                                         testPath=tst['test-path'], testUserId=user_profile['id'],
                                         testUser=userName, testId=groupId, testBackground=True,
@@ -2595,6 +2686,8 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                                         testProjectId=tst['prj-id'], runFrom=(0,0,0,0,0,0), runTo=(0,0,0,0,0,0),
                                         groupId=groupId
 =======
+=======
+>>>>>>> upstream1/master
                                     testData=tst['test-data'], testName=tst['test-name'], 
                                     testPath=tst['test-path'], testUserId=user_profile['id'],
                                     testUser=userName, testId=groupId, testBackground=True,
@@ -2602,7 +2695,10 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                                     debugActivated=False, withoutNotif=False, noKeepTr=False,
                                     testProjectId=tst['prj-id'], runFrom=(0,0,0,0,0,0), runTo=(0,0,0,0,0,0),
                                     groupId=groupId
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                     )
         except Exception as e:
             self.error( "group tasks, error detected: %s" % e )
@@ -2713,18 +2809,24 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                                                                                                           schedNb, 
                                                                                                           testName) )
 <<<<<<< HEAD
+<<<<<<< HEAD
                 self.trace( "Loading backup. [UserName=%s] [Background=%s] [Enabled=%s] [WithoutProbes=%s] [WithoutNotif=%s]" % (userName, 
                                                                                                                                  background, 
                                                                                                                                  enabled, 
                                                                                                                                  withoutProbes, 
                                                                                                                                  withoutNotif) )
 =======
+=======
+>>>>>>> upstream1/master
                 self.trace( "Loading backup. [UserName=%s] [Background=%s] [Enabled=%s] [Probes=%s] [Notif=%s]" % (userName, 
                                                                                                                  background, 
                                                                                                                  enabled, 
                                                                                                                  withoutProbes, 
                                                                                                                  withoutNotif) )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                 self.trace( "Loading backup.. [NoKeepTr=%s] [UserId=%s] [ProjectId=%s] [Sched-From=%s] [Sched-To=%s]" % (noKeepTr, 
                                                                                                                          userId, 
                                                                                                                          projectId, 
@@ -2742,11 +2844,14 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                     if success:
                         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
                             task = self.reloadTask( testData=dataTest, testName=testName, testPath=testPath, testUser=userName,
                                                     testId=testId, testBackground=background, runAt=schedAt, runType=schedType,
                                                     runNb=schedNb, runEnabled=enabled, withoutProbes=withoutProbes, withoutNotif=withoutNotif,
                                                     noKeepTr=noKeepTr, testUserId=userId, testProjectId=projectId, runFrom=schedFrom, 
 =======
+=======
+>>>>>>> upstream1/master
                             task = self.reloadTask( testData=dataTest, testName=testName, 
                                                     testPath=testPath, testUser=userName,
                                                     testId=testId, testBackground=background, 
@@ -2755,7 +2860,10 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                                                     withoutProbes=withoutProbes, withoutNotif=withoutNotif,
                                                     noKeepTr=noKeepTr, testUserId=userId, 
                                                     testProjectId=projectId, runFrom=schedFrom, 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                                     runTo=schedTo )
                             if task is None:
                                 success = False
@@ -2846,10 +2954,14 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
         if user is not None:
             if isinstance(user, self.ctx.UserContext):
 <<<<<<< HEAD
+<<<<<<< HEAD
                 prjs = user.getProjects(b64=False)
 =======
                 prjs = user.getProjects()
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                prjs = user.getProjects()
+>>>>>>> upstream1/master
             else:
                 prjs = ProjectsManager.instance().getProjects(user=user)
         # end of new in v10
@@ -2892,10 +3004,14 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
         if user is not None:
             if isinstance(user, self.ctx.UserContext):
 <<<<<<< HEAD
+<<<<<<< HEAD
                 prjs = user.getProjects(b64=False)
 =======
                 prjs = user.getProjects()
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                prjs = user.getProjects()
+>>>>>>> upstream1/master
             else:
                 prjs = ProjectsManager.instance().getProjects(user=user)
             prjsDict = {}
@@ -2926,10 +3042,14 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
         if user is not None:
             if isinstance(user, self.ctx.UserContext):
 <<<<<<< HEAD
+<<<<<<< HEAD
                 prjs = user.getProjects(b64=False)
 =======
                 prjs = user.getProjects()
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                prjs = user.getProjects()
+>>>>>>> upstream1/master
             else:
                 prjs = ProjectsManager.instance().getProjects(user=user)
             prjsDict = {}
@@ -2967,10 +3087,17 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
     def getTaskBy(self, taskId, userName=None):
         """
         Returns the task corresponding to the id passed as argument, otherwise None
+<<<<<<< HEAD
 
         @param taskId:
         @type taskId:
 
+=======
+
+        @param taskId:
+        @type taskId:
+
+>>>>>>> upstream1/master
         @return:
         @rtype:
         """
@@ -3178,18 +3305,24 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                                                                                                             testName, 
                                                                                                             testUser) )
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.trace( "Registering task. [InBackground=%s] [Run-Enabled=%s] [WithoutProbes=%s] [Debug=%s] [Notif=%s]" % (testBackground, 
                                                                                                                        runEnabled, 
                                                                                                                        withoutProbes, 
                                                                                                                        debugActivated, 
                                                                                                                        withoutNotif) )
 =======
+=======
+>>>>>>> upstream1/master
         self.trace( "Registering task. [InBackground=%s] [Run-Enabled=%s] [Debug=%s] " % (testBackground, 
                                                                                            runEnabled, 
                                                                                            debugActivated) )
         self.trace( "Registering task. [Probes-Disabled=%s] [Notif-Disabled=%s]" % ( withoutProbes, 
                                                                                    withoutNotif) )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.trace( "Registering task.. [NoKeepTr=%s] [UserId=%s] [ProjectId=%s] [Run-From=%s]" % ( noKeepTr, 
                                                                                                     testUserId, 
                                                                                                     testProjectId, 
@@ -3200,11 +3333,14 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                                                                                                         channelId) )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         task = Task( testData=testData, testName=testName, testPath=testPath, testUser=testUser, testId=testId, testUserId=testUserId,
                      testBackground=testBackground, taskEnabled=runEnabled, withoutProbes=withoutProbes, debugActivated=debugActivated,
                      withoutNotif=withoutNotif, noKeepTr=noKeepTr, testProjectId=testProjectId, stepByStep=stepByStep, breakpoint=breakpoint,
                      runSimultaneous=runSimultaneous, channelId=channelId, statsmgr=self.statsmgr, context=self.ctx)
 =======
+=======
+>>>>>>> upstream1/master
         task = Task( testData=testData, testName=testName, testPath=testPath, 
                      testUser=testUser, testId=testId, testUserId=testUserId,
                      testBackground=testBackground, taskEnabled=runEnabled, 
@@ -3213,7 +3349,10 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                      stepByStep=stepByStep, breakpoint=breakpoint,
                      runSimultaneous=runSimultaneous, channelId=channelId, 
                      statsmgr=self.statsmgr, context=self.ctx)
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         task.setId( self.getEventId() )
 
         if groupId is not None:
@@ -3673,12 +3812,17 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
     
     def updateTask(self, taskId, schedType, shedAt, schedNb,  schedEnabled=True, withoutProbes=False, 
 <<<<<<< HEAD
+<<<<<<< HEAD
                             debugActivated=False, noKeepTr=False,
                                 withoutNotif=False, schedFrom=(0,0,0,0,0,0), schedTo=(0,0,0,0,0,0) ):
 =======
                     debugActivated=False, noKeepTr=False, withoutNotif=False, 
                     schedFrom=(0,0,0,0,0,0), schedTo=(0,0,0,0,0,0), userName=None ):
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                    debugActivated=False, noKeepTr=False, withoutNotif=False, 
+                    schedFrom=(0,0,0,0,0,0), schedTo=(0,0,0,0,0,0), userName=None ):
+>>>>>>> upstream1/master
         """
         Update a specific task, change the start time
 
@@ -3706,14 +3850,20 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                     
             # Initialize the task with the start time 
 <<<<<<< HEAD
+<<<<<<< HEAD
             timesec = task.initialize( runAt=shedAt, runType=schedType, runNb=schedNb, runEnabled=schedEnabled, withoutProbes=withoutProbes,
                                         debugActivated=debugActivated, noKeepTr=noKeepTr, withoutNotif=withoutNotif, 
 =======
+=======
+>>>>>>> upstream1/master
             timesec = task.initialize( runAt=shedAt, runType=schedType, runNb=schedNb, 
                                         runEnabled=schedEnabled, withoutProbes=withoutProbes,
                                         debugActivated=debugActivated, noKeepTr=noKeepTr, 
                                         withoutNotif=withoutNotif, 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                         runFrom=schedFrom, runTo=schedTo)
 
             if task.isRecursive():
@@ -3728,14 +3878,20 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
             if task.state == STATE_DISABLED:
                 task.setState( state=STATE_UPDATING )
 <<<<<<< HEAD
+<<<<<<< HEAD
                 EventReg = self.registerEvent(  id=task.getId(), author=task.userName, name=task.getTaskName(), 
                                                 weekly=None, daily=None, hourly=None, everyMin=None, everySec=None, at=None, 
 =======
+=======
+>>>>>>> upstream1/master
                 EventReg = self.registerEvent(  id=task.getId(), author=task.userName, 
                                                 name=task.getTaskName(), 
                                                 weekly=None, daily=None, hourly=None, 
                                                 everyMin=None, everySec=None, at=None, 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                                 delay=None, timesec=task.schedAt,
                                                 callback = self.executeTask, task = task )
                 task.setState( state=STATE_WAITING )
@@ -3763,11 +3919,16 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
                 else:
                     # Update event in the scheduler
 <<<<<<< HEAD
+<<<<<<< HEAD
                     taskRescheduled = TaskMngr.updateEvent( event = task.eventReg, weekly=None, daily=None, hourly=None, 
 =======
                     taskRescheduled = TaskMngr.updateEvent( event = task.eventReg, weekly=None, 
                                                             daily=None, hourly=None, 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                    taskRescheduled = TaskMngr.updateEvent( event = task.eventReg, weekly=None, 
+                                                            daily=None, hourly=None, 
+>>>>>>> upstream1/master
                                                             everyMin=None, everySec=None,
                                                             at=None, delay=None, timesec=timesec )
                     if not taskRescheduled:
@@ -3796,6 +3957,7 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
         return success
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def resetHistoryInDb(self):
         """
         """
@@ -3812,6 +3974,8 @@ class TaskManager(Scheduler.SchedulerThread, Logger.ClassLogger):
 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 def getObjectTask (testData, testName, testPath, testUser, testId, testBackground, 
                     projectId=0, statsmgr=None, context=None):
     """

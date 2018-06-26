@@ -26,6 +26,7 @@ import threading
 try:
     import EventServerInterface as ESI
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import TestServerInterface as TSI
     # import Context
 except ImportError: # python3 support
@@ -38,6 +39,11 @@ except ImportError: # python3 support
     from . import EventServerInterface as ESI
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+except ImportError: # python3 support
+    from . import EventServerInterface as ESI
+
+>>>>>>> upstream1/master
 import Libs.NetLayerLib.ServerAgent as NetLayerLib
 import Libs.NetLayerLib.Messages as Messages
 import Libs.NetLayerLib.ClientAgent as ClientAgent
@@ -219,6 +225,7 @@ class AgentServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         self.__mutex.acquire()
         doNotify=False
 <<<<<<< HEAD
+<<<<<<< HEAD
         if len(self.agentsRegistered) >= self.context.getLicence()[ 'agents' ] [ 'instance' ]:
             self.info('license agents reached')
             NetLayerLib.ServerAgent.forbidden(self, client, tid)
@@ -226,6 +233,9 @@ class AgentServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
 =======
         if request['userid'] in  self.agentsRegistered:
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        if request['userid'] in  self.agentsRegistered:
+>>>>>>> upstream1/master
             self.info('duplicate agents registration: %s' % request['userid'] )
             NetLayerLib.ServerAgent.failed(self, client, tid)
         else:

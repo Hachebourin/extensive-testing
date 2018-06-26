@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -55,6 +55,7 @@ except ImportError: # support python3
     from . import Udp
     
 import UserClientInterface as UCI
+import RestClientInterface as RCI
 
 import Workspace as WWorkspace
 import Workspace.TestUnit as TestUnit
@@ -120,7 +121,7 @@ class WRecorder(object):
         Start udp capture
         """
         if not self.offlineMode:
-            if not UCI.instance().isAuthenticated():
+            if not RCI.instance().isAuthenticated():
                 QMessageBox.warning(Gui.instance(), "Assistant Automation" , "Connect to the test center in first!")
                 return
 
@@ -139,7 +140,11 @@ class WRecorder(object):
         Start tcp capture
         """
         if not self.offlineMode:
+<<<<<<< HEAD
             if not UCI.instance().isAuthenticated():
+=======
+            if not RCI.instance().isAuthenticated():
+>>>>>>> upstream1/master
                 QMessageBox.warning(Gui.instance(), "Assistant Automation" , 
                                     "Connect to the test center in first!")
                 return
@@ -159,7 +164,11 @@ class WRecorder(object):
         Start http capture
         """
         if not self.offlineMode:
+<<<<<<< HEAD
             if not UCI.instance().isAuthenticated():
+=======
+            if not RCI.instance().isAuthenticated():
+>>>>>>> upstream1/master
                 QMessageBox.warning(Gui.instance(), "Assistant Automation" , 
                                     "Connect to the test center in first!")
                 return
@@ -205,7 +214,11 @@ class WRecorder(object):
         Restart the gui recorder from test
         """
         if not self.offlineMode:
+<<<<<<< HEAD
             if not UCI.instance().isAuthenticated():
+=======
+            if not RCI.instance().isAuthenticated():
+>>>>>>> upstream1/master
                 QMessageBox.warning(Gui.instance(), "Assistant Automation" , 
                                     "Connect to the test center in first!")
                 return
@@ -246,7 +259,11 @@ class WRecorder(object):
         Start gui recorder
         """
         if not self.offlineMode:
+<<<<<<< HEAD
             if not UCI.instance().isAuthenticated():
+=======
+            if not RCI.instance().isAuthenticated():
+>>>>>>> upstream1/master
                 QMessageBox.warning(Gui.instance(), "Assistant Automation" , 
                                     "Connect to the test center in first!")
                 return

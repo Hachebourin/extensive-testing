@@ -24,6 +24,7 @@
 import base64
 import zlib
 <<<<<<< HEAD
+<<<<<<< HEAD
 try:
     # python 2.4 support
     import simplejson as json
@@ -32,22 +33,31 @@ except ImportError:
 =======
 import json
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+import json
+>>>>>>> upstream1/master
 
 try:
     import AgentServerInterface as ASI
     import EventServerInterface as ESI
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     import Common
 except ImportError: # python3 support
     from . import AgentServerInterface as ASI
     from . import  EventServerInterface as ESI
 <<<<<<< HEAD
+<<<<<<< HEAD
     # from . import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     from . import  Common
     
 from Libs import Settings, Logger
@@ -79,6 +89,7 @@ class AgentsManager(Logger.ClassLogger):
         self.configsFile = None
         self.__pids__ = {}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     def encodeData(self, data):
         """
@@ -122,6 +133,8 @@ class AgentsManager(Logger.ClassLogger):
 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     def getDefaultAgents(self, b64=False):
         """
         Read default agents to start on boot
@@ -163,6 +176,7 @@ class AgentsManager(Logger.ClassLogger):
         try:
             if self.configsFile is not None:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 # check licence
                 if len(self.configsFile.sections()) >=  self.context.getLicence()[ 'agents' ] [ 'default' ]:
                     ret = self.context.CODE_FORBIDDEN
@@ -185,6 +199,8 @@ class AgentsManager(Logger.ClassLogger):
                     # return OK
                     ret = self.context.CODE_OK
 =======
+=======
+>>>>>>> upstream1/master
                 # add the section in the config file object
                 self.configsFile.add_section(aName)
                 self.configsFile.set( aName, 'enable', 1)
@@ -202,7 +218,10 @@ class AgentsManager(Logger.ClassLogger):
                 
                 # return OK
                 ret = self.context.CODE_OK
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         except ConfigParser.DuplicateSectionError:
             self.error( "agent already exist %s" % str(aName) ) 
             ret = self.context.CODE_ALLREADY_EXISTS

@@ -26,10 +26,13 @@ try:
     import WebServer
     import RestServerInterface
 <<<<<<< HEAD
+<<<<<<< HEAD
     import XmlrpcServerInterface
     import XmlrpcServerRights
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     import ProbeServerInterface
     import AgentServerInterface
     import EventServerInterface
@@ -55,10 +58,13 @@ except ImportError: # python3 support
     from . import WebServer
     from . import RestServerInterface
 <<<<<<< HEAD
+<<<<<<< HEAD
     from . import XmlrpcServerInterface
     from . import XmlrpcServerRights
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     from . import ProbeServerInterface
     from . import AgentServerInterface
     from . import EventServerInterface
@@ -226,6 +232,7 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
                                            context = Context.instance()
                                         )
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.info("Starting WSU on %s:%s" %  (  Settings.get('Bind','ip-wsu') , 
                                                     Settings.getInt('Bind','port-wsu') ) )
             XmlrpcServerRights.initialize()
@@ -237,6 +244,8 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
                                             )
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             self.info("Starting RSU on %s:%s" %  (  Settings.get('Bind','ip-rsi') , 
                                                     Settings.getInt('Bind','port-rsi') ) )
             RestServerInterface.initialize( listeningAddress = 
@@ -268,11 +277,14 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
 
             # Start on modules
 <<<<<<< HEAD
+<<<<<<< HEAD
             XmlrpcServerInterface.instance().start()
             self.info("WSU is listening on tcp://%s:%s" % ( Settings.get('Bind','ip-wsu'), 
                                                             Settings.get('Bind','port-wsu') ) ) 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             RestServerInterface.instance().start()
             self.info("RSI is listening on tcp://%s:%s" % ( Settings.get('Bind','ip-rsi'), 
                                                             Settings.get('Bind','port-rsi') ) )                 

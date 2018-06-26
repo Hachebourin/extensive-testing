@@ -31,6 +31,7 @@ import zlib
 import shutil
 import json
 
+<<<<<<< HEAD
 try:
     import DbManager
     import Common
@@ -48,6 +49,15 @@ except ImportError: # python3 support
 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+try:
+    import DbManager
+    import Common
+except ImportError: # python3 support
+    from . import DbManager
+    from . import Common
+
+>>>>>>> upstream1/master
 from Libs import Settings, Logger
 
 DEFAULT_PRJ_ID = "1"
@@ -371,11 +381,16 @@ class ProjectsManager(Logger.ClassLogger):
             return (self.context.CODE_ERROR, "unable to read project relations")
         if dbRows[0]["nbrelation"]:
 <<<<<<< HEAD
+<<<<<<< HEAD
             return (self.context.CODE_ERROR, "unable to remove project because this project is linked with %s users" % dbRows["nbrelation"] )
 =======
             msg = "unable to remove project because this project is linked with %s user(s)" % dbRows[0]["nbrelation"]
             return (self.context.CODE_ERROR, msg )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            msg = "unable to remove project because this project is linked with %s user(s)" % dbRows[0]["nbrelation"]
+            return (self.context.CODE_ERROR, msg )
+>>>>>>> upstream1/master
         
         # delete from db
         sql = """DELETE FROM `%s-projects` WHERE  id='%s'""" % ( prefix, escape(projectId) )
@@ -407,10 +422,14 @@ class ProjectsManager(Logger.ClassLogger):
         if not dbRet: 
             self.error( "unable to read project's table" )
 <<<<<<< HEAD
+<<<<<<< HEAD
             return (self.context.CODE_ERROR, "unable to read project's table")
 =======
             return (self.context.CODE_ERROR, [])
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return (self.context.CODE_ERROR, [])
+>>>>>>> upstream1/master
 
         return (self.context.CODE_OK, dbRows )
         

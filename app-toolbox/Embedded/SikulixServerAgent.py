@@ -530,14 +530,20 @@ class SikulixServer(GenericTool.Tool):
         # send through notify only a thumbnail
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.sendData(request=request, data={   'data': thumbnail, 'filename': '%s_%s.%s' % (action, actionId, extension),
                                                     'action': action, 'action-id': "%s" % actionId, 
 =======
+=======
+>>>>>>> upstream1/master
             self.sendData(request=request, data={   'data': thumbnail, 
                                                     'filename': '%s_%s.%s' % (action, actionId, extension),
                                                     'action': action, 
                                                     'action-id': "%s" % actionId, 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                                                     'adapter-id': "%s" % adapterId  } )
         except Exception as e:
             self.error("unable to send notify through notify: %s" % e)
@@ -550,14 +556,20 @@ class SikulixServer(GenericTool.Tool):
         """
         # globalID = <id_script>_<test_replay_id>_<id_adapter>_<id_action>
 <<<<<<< HEAD
+<<<<<<< HEAD
         globalId = "%s_%s_%s_%s" % (request['script_id'], request['test-replay-id'],
                                     request['source-adapter'], request['data']['action-id'] )
 =======
+=======
+>>>>>>> upstream1/master
         globalId = "%s_%s_%s_%s" % (request['script_id'], 
                                     request['test-replay-id'],
                                     request['source-adapter'], 
                                     request['data']['action-id'] )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.onToolLogWarningCalled( "<< Action (%s) called: %s" % (globalId, request['data']['action'])  )
         
         # dispatch action

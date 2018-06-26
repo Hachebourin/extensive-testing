@@ -37,14 +37,20 @@ if sys.version_info > (3,):
     
 from Libs import Logger
 <<<<<<< HEAD
+<<<<<<< HEAD
 # import Context
 =======
+=======
+>>>>>>> upstream1/master
 
 try:
     import Common
 except ImportError: # python3 support
     from . import Common
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
 TEST_ABSTRACT_EXT               = 'tax'
 TEST_UNIT_EXT                   = 'tux'
@@ -342,11 +348,16 @@ class RepoManager(Logger.ClassLogger):
                                 zip_file.write(filename=full_path, arcname=file)
                 elif os.path.isdir(full_path):
 <<<<<<< HEAD
+<<<<<<< HEAD
                     self.addFolderToZip(zip_file, full_path, extToInclude, fileToExclude, extToExclude, keepTree)
 =======
                     self.addFolderToZip(zip_file, full_path, extToInclude, 
                                         fileToExclude, extToExclude, keepTree)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                    self.addFolderToZip(zip_file, full_path, extToInclude, 
+                                        fileToExclude, extToExclude, keepTree)
+>>>>>>> upstream1/master
         except IOError as e:
             raise IOError(e)
         except Exception as e:
@@ -415,9 +426,13 @@ class RepoManager(Logger.ClassLogger):
                                     folderNameList[2] = base64.b64encode(newFolderName.encode("utf8"))
                                     virtualFolderName = ".".join(folderNameList)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                                     del folderNameList
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                    del folderNameList
+>>>>>>> upstream1/master
                                 del newFolderName
                                 f.close()
                             except Exception as e:
@@ -558,10 +573,14 @@ class RepoManager(Logger.ClassLogger):
             
             if is_locked and not forceOpen and addLock and not readOnly:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 return [ self.context.CODE_LOCKED, path_file, name_file, ext_file, base64.b64encode(""), project, (is_locked,locked_by) ]
 =======
                 return (self.context.CODE_OK,) +  ret +  (base64.b64encode(""), is_locked, locked_by)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                return (self.context.CODE_OK,) +  ret +  (base64.b64encode(""), is_locked, locked_by)
+>>>>>>> upstream1/master
                 
             # open the file in binary mode ? yes by default
             if binaryMode:
@@ -572,9 +591,12 @@ class RepoManager(Logger.ClassLogger):
             # read the content, encode in base64 and return it
             data_read = f.read()
 <<<<<<< HEAD
+<<<<<<< HEAD
             ret =  [ self.context.CODE_OK, path_file, name_file, ext_file, base64.b64encode(data_read), project, (is_locked,locked_by) ]
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             f.close()
             
             # create lock file only if activated
@@ -589,6 +611,7 @@ class RepoManager(Logger.ClassLogger):
         except IOError as e:
             self.error( e )
 <<<<<<< HEAD
+<<<<<<< HEAD
             ret =  [ self.context.CODE_FORBIDDEN, False, False, False, False, False, (False,'') ]
         except Exception as e:
             self.error( e )
@@ -602,6 +625,13 @@ class RepoManager(Logger.ClassLogger):
             return (self.context.CODE_NOT_FOUND,)+ ret + ( '', False,'')
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return (self.context.CODE_FORBIDDEN,) + ret + ( '', False,'')
+        except Exception as e:
+            self.error( e )
+            return (self.context.CODE_NOT_FOUND,)+ ret + ( '', False,'')
+
+>>>>>>> upstream1/master
     def getBackup(self, pathFile, binaryMode=True, project=''):
         """
         Returns the content of the backp gived in argument
@@ -635,11 +665,16 @@ class RepoManager(Logger.ClassLogger):
                 f = open( "%s/%s/%s" % (self.destBackup, project, pathFile), 'r')
             data_read = f.read()
 <<<<<<< HEAD
+<<<<<<< HEAD
             ret =  [ self.context.CODE_OK, path_file, name_file, ext_file, base64.b64encode(data_read), project ]
 =======
             ret =  [ self.context.CODE_OK, path_file, name_file, 
                      ext_file, base64.b64encode(data_read), project ]
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            ret =  [ self.context.CODE_OK, path_file, name_file, 
+                     ext_file, base64.b64encode(data_read), project ]
+>>>>>>> upstream1/master
             f.close()
         except Exception as e:
             self.error( e )
@@ -668,12 +703,15 @@ class RepoManager(Logger.ClassLogger):
             else:
                 complete_path = "%s/%s/%s.%s" % (self.testsPath, project, nameFile, extFile)
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.trace( "importing file %s" % complete_path  ) 
             res = os.path.exists( complete_path )
             if res:
                 return ( self.context.CODE_ALLREADY_EXISTS, pathFile, nameFile, extFile, project )
             
 =======
+=======
+>>>>>>> upstream1/master
                 lockPath = "%s/%s/.%s.%s.lock" % (self.testsPath, project,  nameFile, extFile)
 
             # refuse to save if a lock already exist with a diffent login name
@@ -688,7 +726,10 @@ class RepoManager(Logger.ClassLogger):
                     if base64.b64encode(login) != lockedBy:
                         return (self.context.CODE_OK,) + ret + (is_locked, lockedBy,)
                                 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             # create missing directory
             if createFolders:
                 folderPath = "%s/%s/%s/" % (self.testsPath, project, pathFile)
@@ -710,6 +751,7 @@ class RepoManager(Logger.ClassLogger):
             f.close()
             
 <<<<<<< HEAD
+<<<<<<< HEAD
             ret = (  self.context.CODE_OK, pathFile, nameFile, extFile, project )
         except Exception as e:
             self.error( e )
@@ -724,6 +766,14 @@ class RepoManager(Logger.ClassLogger):
             return (self.context.CODE_ERROR,) + ret + (is_locked, lockedBy,)
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return ( self.context.CODE_OK,) + ret + (is_locked, lockedBy,)
+                    
+        except Exception as e:
+            self.error( e )
+            return (self.context.CODE_ERROR,) + ret + (is_locked, lockedBy,)
+
+>>>>>>> upstream1/master
     def unlockFile(self, pathFile, nameFile, extFile, project='', login=''):
         """
         Save data in the file passed in argument
@@ -769,6 +819,7 @@ class RepoManager(Logger.ClassLogger):
         except Exception as e:
             self.error( "unable to unlock file: %s" % e )
             ret = self.context.CODE_ERROR
+<<<<<<< HEAD
 <<<<<<< HEAD
         return ret
 
@@ -849,6 +900,8 @@ class RepoManager(Logger.ClassLogger):
             ret = (  self.context.CODE_ERROR, False, False, False, False, project, closeAfter, lockedBy)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         return ret
 
     def addDir(self, pathFolder, folderName, project=''):
@@ -1108,11 +1161,16 @@ class RepoManager(Logger.ClassLogger):
         if not len(newFilename):
             self.error( "empty filename" )
 <<<<<<< HEAD
+<<<<<<< HEAD
             return ( self.context.CODE_ERROR, mainPath, oldFilename, newFilename, extFilename, project)
 =======
             return ( self.context.CODE_ERROR, mainPath, oldFilename, 
                      newFilename, extFilename, project)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            return ( self.context.CODE_ERROR, mainPath, oldFilename, 
+                     newFilename, extFilename, project)
+>>>>>>> upstream1/master
         try:
             oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, 
                                            unicode(oldFilename), extFilename )
@@ -1123,12 +1181,15 @@ class RepoManager(Logger.ClassLogger):
             res = os.path.exists( oldpath )
             if not res:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 return ( self.context.CODE_NOT_FOUND, mainPath, oldFilename, newFilename, extFilename, project)
             else:
                 res = os.path.exists( newpath )
                 if res:
                     return ( self.context.CODE_ALLREADY_EXISTS, mainPath, oldFilename, newFilename, extFilename, project )
 =======
+=======
+>>>>>>> upstream1/master
                 return ( self.context.CODE_NOT_FOUND, mainPath, oldFilename, 
                          newFilename, extFilename, project)
             else:
@@ -1136,7 +1197,10 @@ class RepoManager(Logger.ClassLogger):
                 if res:
                     return ( self.context.CODE_ALLREADY_EXISTS, mainPath, oldFilename, 
                              newFilename, extFilename, project )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
                 else:
                     os.rename( oldpath, newpath )
 
@@ -1159,6 +1223,7 @@ class RepoManager(Logger.ClassLogger):
                     # end of new in v11
                     
 <<<<<<< HEAD
+<<<<<<< HEAD
                     return ( self.context.CODE_OK, mainPath, oldFilename, newFilename, extFilename, project)
         except IOError as e:
             self.error( "io error: %s" % e )
@@ -1167,6 +1232,8 @@ class RepoManager(Logger.ClassLogger):
             self.error( "generic error: %s" %  e )
             return ( self.context.CODE_ERROR, mainPath, oldFilename, newFilename, extFilename, project)
 =======
+=======
+>>>>>>> upstream1/master
                     return ( self.context.CODE_OK, mainPath, oldFilename, 
                              newFilename, extFilename, project)
         except IOError as e:
@@ -1177,7 +1244,10 @@ class RepoManager(Logger.ClassLogger):
             self.error( "generic error: %s" %  e )
             return ( self.context.CODE_ERROR, mainPath, oldFilename, 
                      newFilename, extFilename, project)
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         return ret
 
     def duplicateFile(self, mainPath, oldFilename, newFilename, extFilename, 
@@ -1309,21 +1379,31 @@ class RepoManager(Logger.ClassLogger):
             res = os.path.exists( oldpath )
             if not res:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 return ( self.context.CODE_NOT_FOUND, mainPath, fileName, newPath, extFilename, project)
 =======
                 return ( self.context.CODE_NOT_FOUND, mainPath, fileName, 
                          newPath, extFilename, project)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                return ( self.context.CODE_NOT_FOUND, mainPath, fileName, 
+                         newPath, extFilename, project)
+>>>>>>> upstream1/master
             else:
                 res = os.path.exists( newpath )
                 if res:
                     self.trace( "test name already exists in the destination" )
+<<<<<<< HEAD
 <<<<<<< HEAD
                     return ( self.context.CODE_ALLREADY_EXISTS, mainPath, fileName, newPath, extFilename, project )
 =======
                     return ( self.context.CODE_ALLREADY_EXISTS, mainPath, fileName, 
                              newPath, extFilename, project )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                    return ( self.context.CODE_ALLREADY_EXISTS, mainPath, fileName, 
+                             newPath, extFilename, project )
+>>>>>>> upstream1/master
                 else:
                     shutil.move( oldpath, newpath )
                     
@@ -1345,11 +1425,16 @@ class RepoManager(Logger.ClassLogger):
                     # end of new in v11
                     
 <<<<<<< HEAD
+<<<<<<< HEAD
                     return ( self.context.CODE_OK, mainPath, fileName, newPath, extFilename, project)
 =======
                     return ( self.context.CODE_OK, mainPath, fileName, 
                              newPath, extFilename, project)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                    return ( self.context.CODE_OK, mainPath, fileName, 
+                             newPath, extFilename, project)
+>>>>>>> upstream1/master
         except Exception as e:
             self.error( e )
             return ret

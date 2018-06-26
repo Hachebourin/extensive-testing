@@ -30,17 +30,23 @@ try:
     import EventServerInterface as ESI
     import RepoArchives
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 except ImportError: # python3 support
     from . import RepoManager
     from . import EventServerInterface as ESI
     from . import RepoArchives
 <<<<<<< HEAD
+<<<<<<< HEAD
     # from . import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     
 from Libs import Settings, Logger
 

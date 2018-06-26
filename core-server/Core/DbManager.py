@@ -26,9 +26,13 @@ try:
 except ImportError: # python3 support
     import pymysql as MySQLdb
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+    
+>>>>>>> upstream1/master
 import time
 import inspect
 

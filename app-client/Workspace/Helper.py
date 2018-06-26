@@ -942,6 +942,7 @@ class WHelper(QWidget, Logger.ClassLogger):
                     wsdlData= fd.readAll()
                     wsdlEncoded = base64.b64encode(wsdlData)
 <<<<<<< HEAD
+<<<<<<< HEAD
             
             UCI.instance().generateAdapterFromWSDL(wsdlUrl=url, wsdlFile=wsdlEncoded, 
                                                     pkg=pkg, overwrite=overwrite)
@@ -964,6 +965,8 @@ class WHelper(QWidget, Logger.ClassLogger):
         if reply == QMessageBox.Yes:
             UCI.instance().generateAll()
 =======
+=======
+>>>>>>> upstream1/master
 
             if len(url):
                 RCI.instance().addAdapterByWsdlUrl(packageName=pkg, 
@@ -973,7 +976,10 @@ class WHelper(QWidget, Logger.ClassLogger):
                 RCI.instance().addAdapterByWsdlFile(packageName=pkg, 
                                                     overwriteAdapter=overwrite, 
                                                     wsdlFile=wsdlEncoded)
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
     def generateAdapters(self):
         """
@@ -1121,9 +1127,12 @@ class WHelper(QWidget, Logger.ClassLogger):
         Set not connected
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         # self.labelHelp.setEnabled(False)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.textEdit.setSytleSheetTextEdit()
         self.setDefaultActionsValues()
 

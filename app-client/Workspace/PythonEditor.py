@@ -1013,9 +1013,12 @@ class FindReplace(QWidget):
         
         glayout = QGridLayout()
 <<<<<<< HEAD
+<<<<<<< HEAD
         # glayout.setContentsMargins(0, 0, 0, 0)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
         self.edit = QLineEditMore(parent=self)
         self.edit.setEditable(1)
@@ -1031,6 +1034,7 @@ class FindReplace(QWidget):
         self.replaceEdit.lineEdit().setPlaceholderText("Replace the text with?")
         self.replaceEdit.setMinimumWidth(200)
 <<<<<<< HEAD
+<<<<<<< HEAD
         
         # self.line = QFrame()
         # self.line.setGeometry( QRect(110, 221, 51, 20) )
@@ -1038,6 +1042,8 @@ class FindReplace(QWidget):
         # self.line.setFrameShadow( QFrame.Sunken )
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
         self.caseCheck = QCheckBox( self.tr("Case Sensitive") )
         self.caseCheck.setChecked( 
@@ -1070,11 +1076,14 @@ class FindReplace(QWidget):
                                                          )
                                       )
 <<<<<<< HEAD
+<<<<<<< HEAD
         # hlayout = QHBoxLayout()
         # hlayout.addWidget(self.allCheck)
         # hlayout.addWidget(self.line)
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
         glayout.addWidget( self.edit, 0, 1 )
         glayout.addWidget( self.nextButton, 0, 3 )
@@ -1097,6 +1106,7 @@ class FindReplace(QWidget):
         flags |= Qt.Window
         flags |= Qt.WindowTitleHint
 <<<<<<< HEAD
+<<<<<<< HEAD
         # flags |= Qt.WindowStaysOnTopHint
         flags |= Qt.WindowCloseButtonHint
         flags |= Qt.MSWindowsFixedSizeDialogHint
@@ -1105,6 +1115,10 @@ class FindReplace(QWidget):
         flags |= Qt.WindowCloseButtonHint
         flags |= Qt.MSWindowsFixedSizeDialogHint
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        flags |= Qt.WindowCloseButtonHint
+        flags |= Qt.MSWindowsFixedSizeDialogHint
+>>>>>>> upstream1/master
         self.setWindowFlags(flags)
 
         self.setWindowIcon( QIcon(":/main.png") )

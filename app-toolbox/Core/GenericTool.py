@@ -1043,6 +1043,7 @@ class Tool(NetLayerLib.ClientAgent):
             raise Exception( "addFolderToZip - %s" % str(e) )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def __callXmlrpcFile(self, xmlrpcFunc, pathZip, xmlrpcData={}):
         """
         Internal function to make a xmlrpc call
@@ -1136,10 +1137,14 @@ class Tool(NetLayerLib.ClientAgent):
 =======
     def uploadData(self, fileName, resultPath, data=None, filePath=None, callId=None):
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+    def uploadData(self, fileName, resultPath, data=None, filePath=None, callId=None):
+>>>>>>> upstream1/master
         """
         Send data
         """
         self.trace("Upload binary data")
+<<<<<<< HEAD
 <<<<<<< HEAD
         t = threading.Thread(target=self.__callXmlrpc, args=("uploadLogs", 
                                 { 'filename': fileName, 'result-path': resultPath,
@@ -1154,6 +1159,8 @@ class Tool(NetLayerLib.ClientAgent):
         t = threading.Thread(target=self.__callXmlrpcFile, args=("uploadLogs", pathZip, 
                                                                 { 'filename': fileName, 'result-path': resultPath, 'call-id': callId}) )
 =======
+=======
+>>>>>>> upstream1/master
                       
         if data is not None:
             fileContent = base64.b64encode(data)
@@ -1165,7 +1172,10 @@ class Tool(NetLayerLib.ClientAgent):
 
         t = threading.Thread(target=self.__callRest, args=(resultPath, fileName, 
                                                            fileContent, callId)  )
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         t.start()
         
     def onUploadError(self, callId=None):
@@ -1193,6 +1203,7 @@ class Tool(NetLayerLib.ClientAgent):
     def __callRest(self, resultPath, fileName, fileContent, callId=None):
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         Internal function 
         XMLRPC call
         """
@@ -1217,6 +1228,10 @@ class Tool(NetLayerLib.ClientAgent):
         Rest call
         """
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+        Rest call
+        """
+>>>>>>> upstream1/master
         # set proxy is activated
         proxyDict = {}
         if eval( Settings.get( 'Server', 'proxy-active' ) ):
@@ -1224,6 +1239,7 @@ class Tool(NetLayerLib.ClientAgent):
             proxyPort = Settings.get( 'Server', 'port-proxy-http' )
             self.trace("Proxy activated for rest Ip=%s Port=%s" % (proxyAddr, proxyPort) )
             
+<<<<<<< HEAD
 <<<<<<< HEAD
         if self.defaultTool: 
             httpsMode = False
@@ -1303,3 +1319,22 @@ class Tool(NetLayerLib.ClientAgent):
                                     fileName=fileName,
                                     callId=callId)
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            https_proxy = "https://%s:%s" % (proxyAddr, proxyPort)
+            proxyDict = { "https" : https_proxy}
+            
+        req = '{"result-path": "%s", "file-name": "%s", "file-content": "%s"}' % ( resultPath,
+                                                                                   fileName,
+                                                                                   fileContent.decode("utf8") )
+        r = requests.post("https://%s:%s/rest/results/upload/file" % (self.controllerIp, self.controllerPort),
+                            headers = {'Content-Type': 'application/json;charset=utf-8'},
+                            data = req.encode("utf8"),
+                            proxies=proxyDict, verify=False)
+        if r.status_code != 200:
+            self.error('Unable to reach the rest api: %s - %s' % (r.status_code, r.text) )
+            self.onUploadError(callId=callId)
+        else:
+            self.onUploadTerminated(resultPath=resultPath, 
+                                    fileName=fileName,
+                                    callId=callId)
+>>>>>>> upstream1/master

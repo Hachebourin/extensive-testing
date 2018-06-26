@@ -26,14 +26,18 @@ import sys
 import threading
 import os
 <<<<<<< HEAD
+<<<<<<< HEAD
 # import commands
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 import zlib
 import base64
 import copy
 import subprocess
 from datetime import timedelta
+<<<<<<< HEAD
 <<<<<<< HEAD
 try:
     import hashlib
@@ -51,6 +55,11 @@ except ImportError:
 import hashlib
 import json
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+
+import hashlib
+import json
+>>>>>>> upstream1/master
 
 import platform
 import base64 
@@ -65,6 +74,7 @@ try:
     import RepoAdapters
     import ProjectsManager
 <<<<<<< HEAD
+<<<<<<< HEAD
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import  DbManager
@@ -74,6 +84,8 @@ except ImportError: # python3 support
     from . import  RepoAdapters
     from . import  ProjectsManager
 =======
+=======
+>>>>>>> upstream1/master
     import Common
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
@@ -84,7 +96,10 @@ except ImportError: # python3 support
     from . import RepoAdapters
     from . import ProjectsManager
     from . import Common
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     
 from Libs import Settings, Logger
 
@@ -257,17 +272,23 @@ class Context(Logger.ClassLogger):
         """
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             # phpVersion = commands.getoutput( 'php -v' )
             phpVersion = subprocess.check_output( 'php -v', stderr=subprocess.STDOUT, shell=True )
             phpVersion = phpVersion.strip()
 =======
+=======
+>>>>>>> upstream1/master
             phpVersion = subprocess.check_output( 'php -v', stderr=subprocess.STDOUT, shell=True )
             phpVersion = phpVersion.strip()
             
             if sys.version_info > (3,):
                 phpVersion = phpVersion.decode('utf8')
                 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             self.trace("php version: %s" % phpVersion)
             
             lines = phpVersion.splitlines()
@@ -282,16 +303,22 @@ class Context(Logger.ClassLogger):
         """
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             # versionHttpd = commands.getoutput( 'httpd -v' )
             versionHttpd = subprocess.check_output( 'httpd -v', stderr=subprocess.STDOUT, shell=True )
             versionHttpd = versionHttpd.strip()
 =======
+=======
+>>>>>>> upstream1/master
             versionHttpd = subprocess.check_output( 'httpd -v', stderr=subprocess.STDOUT, shell=True )
             versionHttpd = versionHttpd.strip()
             if sys.version_info > (3,):
                 versionHttpd = versionHttpd.decode('utf8')
                 
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
             self.trace("httpd version: %s" % versionHttpd)
             
             lines = versionHttpd.splitlines()
@@ -341,6 +368,7 @@ class Context(Logger.ClassLogger):
         used = (st.f_blocks - st.f_bfree) * st.f_frsize
         return (total, used, free)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     def readLicence(self):
         """
@@ -414,6 +442,8 @@ class Context(Logger.ClassLogger):
 
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     def getUniqueId(self):
         """
         Return a unique id
@@ -729,10 +759,14 @@ class Context(Logger.ClassLogger):
         usersDb = UsersManager.instance().getUsersByLogin()
         if not login in usersDb:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.trace( "%s account not found" % login )
 =======
             self.trace( "Login=%s account not found" % login )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+            self.trace( "Login=%s account not found" % login )
+>>>>>>> upstream1/master
             return (self.CODE_NOT_FOUND, expires)
         
         user_profile = usersDb[login]
@@ -742,6 +776,7 @@ class Context(Logger.ClassLogger):
             self.trace( "%s account not active" % login )
             return (self.CODE_DISABLED, expires)
 <<<<<<< HEAD
+<<<<<<< HEAD
             
         if not user_profile['web']: 
             self.trace( "api access not authorized for %s account" % login )
@@ -750,6 +785,9 @@ class Context(Logger.ClassLogger):
 =======
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+
+>>>>>>> upstream1/master
         # check password, create a sha1 hash with salt: sha1( salt + sha1(password) )
         sha1 = hashlib.sha1()
         _pwd = "%s%s" % ( Settings.get( 'Misc', 'salt'), password )
@@ -781,6 +819,7 @@ class Context(Logger.ClassLogger):
             expires = time.strftime("%a, %d-%b-%Y %T GMT", end) 
             return  expires
         return ''
+<<<<<<< HEAD
 <<<<<<< HEAD
         
     def checkAuthorization (self, login, password, rightsExpected = [], fromGui=False ):
@@ -949,6 +988,8 @@ class Context(Logger.ClassLogger):
         return ( self.CODE_OK, levels, user_profile['id'] )
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
     def getLevels(self, userProfile):
         """
@@ -1117,17 +1158,23 @@ class Context(Logger.ClassLogger):
         @rtype: string
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         # dt = commands.getoutput( "%s --rfc-3339=seconds" % Settings.get('Bin', 'date') )
         dt = subprocess.check_output( "%s --rfc-3339=seconds" % Settings.get('Bin', 'date'), 
                                         stderr=subprocess.STDOUT, shell=True )
         dt = dt.strip()
 =======
+=======
+>>>>>>> upstream1/master
         dt = subprocess.check_output( "%s --rfc-3339=seconds" % Settings.get('Bin', 'date'), 
                                         stderr=subprocess.STDOUT, shell=True )
         dt = dt.strip()
         if sys.version_info > (3,):
             dt = dt.decode('utf8')
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.trace( 'Date Server: %s' % dt )
         return dt
 
@@ -1162,17 +1209,23 @@ class Context(Logger.ClassLogger):
         default via 204.62.14.1 dev eth0
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         # iproute = commands.getoutput( Settings.get('Bin', 'iproute') )
         iproute = subprocess.check_output(  Settings.get('Bin', 'iproute'), 
                                             stderr=subprocess.STDOUT, shell=True )
         iproute = iproute.strip()
 =======
+=======
+>>>>>>> upstream1/master
         iproute = subprocess.check_output(  Settings.get('Bin', 'iproute'), 
                                             stderr=subprocess.STDOUT, shell=True )
         iproute = iproute.strip()
         if sys.version_info > (3,):
             iproute = iproute.decode('utf8')
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.trace( 'iproute: %s' % iproute )
         
         # save all eths
@@ -1196,6 +1249,7 @@ class Context(Logger.ClassLogger):
         """
         eths = []
 <<<<<<< HEAD
+<<<<<<< HEAD
         
         # detect installed language 
         # currentLang = self.detectLanguage()
@@ -1208,13 +1262,18 @@ class Context(Logger.ClassLogger):
                                           stderr=subprocess.STDOUT, shell=True )
         ipaddr = ipaddr.strip()
 =======
+=======
+>>>>>>> upstream1/master
 
         ipaddr = subprocess.check_output( Settings.get('Bin', 'ipaddr'), 
                                           stderr=subprocess.STDOUT, shell=True )
         ipaddr = ipaddr.strip()
         if sys.version_info > (3,):
             ipaddr = ipaddr.decode('utf8')
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.trace( 'ipaddr: %s' % ipaddr )
         
         try:
@@ -1252,6 +1311,7 @@ class Context(Logger.ClassLogger):
         """
         eths = []
 <<<<<<< HEAD
+<<<<<<< HEAD
         
         # detect installed language 
         # currentLang = self.detectLanguage()
@@ -1264,12 +1324,17 @@ class Context(Logger.ClassLogger):
         ifconfig = subprocess.check_output( Settings.get('Bin', 'ifconfig'),
                                             stderr=subprocess.STDOUT, shell=True )
 =======
+=======
+>>>>>>> upstream1/master
 
         ifconfig = subprocess.check_output( Settings.get('Bin', 'ifconfig'),
                                             stderr=subprocess.STDOUT, shell=True )
         if sys.version_info > (3,):
             ifconfig = ifconfig.decode('utf8')
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.trace( 'ifconfig: %s' % ifconfig )
         
         for eth in ifconfig.split('\n\n'):
@@ -1293,15 +1358,21 @@ class Context(Logger.ClassLogger):
         Detect the language
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         # lang = commands.getoutput( Settings.get('Bin', 'locale') )
         lang = subprocess.check_output( Settings.get('Bin', 'locale'), 
                                         stderr=subprocess.STDOUT, shell=True )
 =======
+=======
+>>>>>>> upstream1/master
         lang = subprocess.check_output( Settings.get('Bin', 'locale'), 
                                         stderr=subprocess.STDOUT, shell=True )
         if sys.version_info > (3,):
             lang = lang.decode('utf8')
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         self.trace( 'lang: %s' % lang )
         
         lines = lang.splitlines()

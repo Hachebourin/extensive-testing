@@ -30,9 +30,12 @@ import time
 
 import os
 <<<<<<< HEAD
+<<<<<<< HEAD
 import tarfile
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
 def indent(code, nbTab = 1):
     """

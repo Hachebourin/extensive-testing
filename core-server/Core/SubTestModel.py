@@ -27,10 +27,15 @@
 # /!\ WARNING /!\
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import sys
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+import sys
+
+>>>>>>> upstream1/master
 try:
     import TestModel
     import RepoAdapters
@@ -43,10 +48,14 @@ except ImportError: # python3 support
     from . import Common
     
 <<<<<<< HEAD
+<<<<<<< HEAD
 indent = Common.indent
 =======
 # indent = Common.indent
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+# indent = Common.indent
+>>>>>>> upstream1/master
 
 # unicode = str with python3
 if sys.version_info > (3,):

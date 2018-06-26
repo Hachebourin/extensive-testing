@@ -35,6 +35,7 @@ import wrapt
 from Libs import Settings, Logger
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 try:
     import Context
     import ProjectsManager
@@ -105,6 +106,9 @@ def _get_user(request):
             raise HTTP_401("Invalid session")
 =======
 try:
+=======
+try:
+>>>>>>> upstream1/master
     import RestTesterFunctions
     import RestAdminFunctions
     import RestCommonFunctions
@@ -112,7 +116,10 @@ except ImportError: # python3 support
     from . import RestTesterFunctions
     from . import RestAdminFunctions
     from . import RestCommonFunctions
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 
 @wrapt.decorator
 def _to_yaml(wrapped, instance, args, kwargs):
@@ -204,6 +211,7 @@ class SwaggerTags(object):
         Everything to get your test reports
         """
         pass  
+<<<<<<< HEAD
 <<<<<<< HEAD
 """
 Sessions handlers
@@ -1246,6 +1254,20 @@ class _NoLoggingWSGIRequestHandler(WSGIRequestHandler, Logger.ClassLogger):
 =======
         self.trace( "RSI - %s %s %s" % args )
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+       
+
+"""
+Logger
+"""
+class _NoLoggingWSGIRequestHandler(WSGIRequestHandler, Logger.ClassLogger):
+    """
+    """
+    def log_message(self, format, *args):
+        """
+        """
+        self.trace( "RSI - %s %s %s" % args )
+>>>>>>> upstream1/master
 
 if sys.version_info > (3,):
     _my_logger = None
@@ -1256,6 +1278,7 @@ else:
     _my_logger.addHandler(_hnd)
 
 """
+<<<<<<< HEAD
 <<<<<<< HEAD
 Adapters handler
 """     
@@ -1362,6 +1385,9 @@ class AdaptersCheckSyntax(Handler):
 =======
 Webservices routing
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+Webservices routing
+>>>>>>> upstream1/master
 """
 class _WebServices(WSGI):
     logger = _my_logger
@@ -1374,6 +1400,7 @@ class _WebServices(WSGI):
         ('/session/context',                            RestCommonFunctions.SessionContext()),
         ('/session/context/notify',                     RestCommonFunctions.SessionContextNotify()),
         ('/session/context/all',                        RestCommonFunctions.SessionContextAll()),
+<<<<<<< HEAD
         
         # agents
         ('/agents/running',                             RestTesterFunctions.AgentsRunning()),
@@ -1466,6 +1493,54 @@ class LibrariesSetGeneric(Handler):
         ('/public/file/remove',                         RestTesterFunctions.PublicRemove()),
         ('/public/file/rename',                         RestTesterFunctions.PublicRename()),
         
+=======
+        
+        # agents
+        ('/agents/running',                             RestTesterFunctions.AgentsRunning()),
+        ('/agents/default',                             RestTesterFunctions.AgentsDefault()),
+        ('/agents/disconnect',                          RestTesterFunctions.AgentsDisconnect()),
+        ('/agents/connect',                             RestTesterFunctions.AgentsConnect()),
+        ('/agents/add',                                 RestTesterFunctions.AgentsAdd()),
+        ('/agents/remove',                              RestTesterFunctions.AgentsRemove()),
+        
+        # probes
+        ('/probes/running',                             RestTesterFunctions.ProbesRunning()),
+        ('/probes/default',                             RestTesterFunctions.ProbesDefault()),
+        ('/probes/disconnect',                          RestTesterFunctions.ProbesDisconnect()),
+        ('/probes/connect',                             RestTesterFunctions.ProbesConnect()),
+        ('/probes/add',                                 RestTesterFunctions.ProbesAdd()),
+        ('/probes/remove',                              RestTesterFunctions.ProbesRemove()),
+        
+        # tasks
+        ('/tasks/running',                              RestCommonFunctions.TasksRunning()),
+        ('/tasks/waiting',                              RestCommonFunctions.TasksWaiting()),
+        ('/tasks/history',                              RestCommonFunctions.TasksHistory()),
+        ('/tasks/history/all',                          RestCommonFunctions.TasksHistoryAll()),
+        ('/tasks/cancel',                               RestCommonFunctions.TasksCancel()),
+        ('/tasks/cancel/selective',                     RestCommonFunctions.TasksCancelSelective()),
+        ('/tasks/cancel/all',                           RestAdminFunctions.TasksCancelAll()),
+        ('/tasks/history/clear',                        RestAdminFunctions.TasksHistoryClear()),
+        ('/tasks/replay',                               RestCommonFunctions.TasksReplay()),
+        ('/tasks/verdict',                              RestCommonFunctions.TasksVerdict()),
+        ('/tasks/review',                               RestCommonFunctions.TasksReview()),
+        ('/tasks/design',                               RestCommonFunctions.TasksDesign()),
+        ('/tasks/comment',                              RestCommonFunctions.TasksComment()),
+        ('/tasks/kill',                                 RestCommonFunctions.TasksKill()),
+        ('/tasks/kill/all',                             RestAdminFunctions.TasksKillAll()),
+        ('/tasks/kill/selective',                       RestCommonFunctions.TasksKillSelective()),
+        ('/tasks/reschedule',                           RestCommonFunctions.TasksReschedule()),
+        
+        # public storage
+        ('/public/basic/listing',                       RestTesterFunctions.PublicListing()),
+        ('/public/directory/add',                       RestTesterFunctions.PublicDirectoryAdd()),
+        ('/public/directory/remove',                    RestTesterFunctions.PublicDirectoryRemove()),
+        ('/public/directory/rename',                    RestTesterFunctions.PublicDirectoryRename()),
+        ('/public/file/download',                       RestTesterFunctions.PublicDownload()),
+        ('/public/file/import',                         RestTesterFunctions.PublicImport()),
+        ('/public/file/remove',                         RestTesterFunctions.PublicRemove()),
+        ('/public/file/rename',                         RestTesterFunctions.PublicRename()),
+        
+>>>>>>> upstream1/master
         # tests
         ('/tests/schedule',                             RestTesterFunctions.TestsSchedule()),
         ('/tests/schedule/tpg',                         RestTesterFunctions.TestsScheduleTpg()),
@@ -1623,6 +1698,7 @@ class LibrariesSetGeneric(Handler):
         ( '/system/usages',                             RestCommonFunctions.SystemUsages()),
         ( '/system/about',                              RestCommonFunctions.SystemAbout()),
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         success, details = HelperManager.instance().generateHelps()
         if not success:
@@ -5815,6 +5891,8 @@ class _WebServices(WSGI):
         # /administration/logs/export
         # /administration/trace/level
 =======
+=======
+>>>>>>> upstream1/master
         # administration
         ( '/administration/configuration/listing',      RestAdminFunctions.AdminConfigListing()),
         ( '/administration/configuration/reload',       RestAdminFunctions.AdminConfigReload()),
@@ -5838,7 +5916,10 @@ class _WebServices(WSGI):
         ( '/administration/projects/search/by/name',    RestCommonFunctions.AdminProjectsSearchByName()),
         ( '/administration/projects/statistics',        RestAdminFunctions.AdminProjectsStatistics()),
         ( '/administration/time/shift',                 RestAdminFunctions.AdminTimeShift()),
+<<<<<<< HEAD
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
         
         # client
         ( '/clients/available',                         RestCommonFunctions.ClientsAvailable()),

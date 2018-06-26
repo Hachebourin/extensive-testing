@@ -33,19 +33,25 @@ try:
     import ProbeServerInterface as PSI
     import AgentServerInterface as ASI
 <<<<<<< HEAD
+<<<<<<< HEAD
     # import StatsManager
     # import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import ProbeServerInterface as PSI
     from . import AgentServerInterface as ASI
 <<<<<<< HEAD
+<<<<<<< HEAD
     # from . import StatsManager
     # from . import Context
 =======
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+>>>>>>> upstream1/master
     
 from Libs import Logger, Settings
 
@@ -228,21 +234,31 @@ class TestServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
                 if _body_['event'] == 'testglobal-stopped':
                     self.statsmgr.addResultTestGlobal( tgResult =_body_['result'], fromUser=_body_['user-id'], 
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                         tgDuration=_body_['duration'], nbTs=_body_['nb-ts'], nbTu=_body_['nb-tu'],
 =======
                                                         tgDuration=_body_['duration'], nbTs=_body_['nb-ts'], 
                                                         nbTu=_body_['nb-tu'],
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                                        tgDuration=_body_['duration'], nbTs=_body_['nb-ts'], 
+                                                        nbTu=_body_['nb-tu'],
+>>>>>>> upstream1/master
                                                         nbTc=_body_['nb-tc'], prjId=_body_['prj-id'] )
 
                 if _body_['event'] == 'testplan-stopped':
                     self.statsmgr.addResultTestPlan( tpResult =_body_['result'], fromUser=_body_['user-id'], 
+<<<<<<< HEAD
 <<<<<<< HEAD
                                                         tpDuration=_body_['duration'], nbTs=_body_['nb-ts'], nbTu=_body_['nb-tu'],
 =======
                                                         tpDuration=_body_['duration'], nbTs=_body_['nb-ts'], 
                                                         nbTu=_body_['nb-tu'],
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+                                                        tpDuration=_body_['duration'], nbTs=_body_['nb-ts'], 
+                                                        nbTu=_body_['nb-tu'],
+>>>>>>> upstream1/master
                                                         nbTc=_body_['nb-tc'], prjId=_body_['prj-id'] )
 
                 if  _body_['task-id'] in self.tests:

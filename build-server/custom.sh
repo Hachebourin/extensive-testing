@@ -82,12 +82,17 @@ LS_BIN="/usr/bin/ls"
 
 # python extensions modified
 <<<<<<< HEAD
+<<<<<<< HEAD
 SELENIUM_ZIP="selenium-3.7.0-extensivetesting"
 SELENIUM="selenium-3.7.0"
 =======
 SELENIUM_ZIP="selenium-3.9.0-extensivetesting"
 SELENIUM="selenium-3.9.0"
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+SELENIUM_ZIP="selenium-3.9.0-extensivetesting"
+SELENIUM="selenium-3.9.0"
+>>>>>>> upstream1/master
 PYCRYPTO_ZIP="pycryptodome-3.4.5-extensivetesting"
 PYCRYPTO="pycryptodome-3.4.5"
 PYCNIC_ZIP="pycnic-0.1.1-extensivetesting"

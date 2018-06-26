@@ -26,10 +26,15 @@ Mobile widget
 """
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import sys
 
 >>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+=======
+import sys
+
+>>>>>>> upstream1/master
 try:
 	from PyQt4.QtGui import (QWidget, QLabel, QCheckBox, QVBoxLayout, QTreeView, QAbstractItemView, 
 							QHBoxLayout, QIcon, QMenu, QCursor, QApplication, QPainter, QPen,
