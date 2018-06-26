@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -25,12 +25,16 @@ import time
 import sys
 import threading
 import os
+<<<<<<< HEAD
 # import commands
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 import zlib
 import base64
 import copy
 import subprocess
 from datetime import timedelta
+<<<<<<< HEAD
 try:
     import hashlib
     sha1_constructor = hashlib.sha1
@@ -42,6 +46,11 @@ try:
     import simplejson as json
 except ImportError:
     import json
+=======
+
+import hashlib
+import json
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 import platform
 import base64 
@@ -55,6 +64,7 @@ try:
     import RepoLibraries
     import RepoAdapters
     import ProjectsManager
+<<<<<<< HEAD
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import  DbManager
@@ -63,9 +73,24 @@ except ImportError: # python3 support
     from . import  RepoLibraries
     from . import  RepoAdapters
     from . import  ProjectsManager
+=======
+    import Common
+except ImportError: # python3 support
+    from . import EventServerInterface as ESI
+    from . import DbManager
+    from . import UsersManager
+    from . import StatsManager
+    from . import RepoLibraries
+    from . import RepoAdapters
+    from . import ProjectsManager
+    from . import Common
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 from Libs import Settings, Logger
 
+# unicode = str with python3
+if sys.version_info > (3,):
+    unicode = str
 
 def getstatusoutput(cmd):
     """
@@ -91,7 +116,7 @@ class UserContext(Logger.ClassLogger):
         self.trace('Preparing user context Login=%s' % login)
         self.login = login
         self.default_prj = ProjectsManager.instance().getDefaultProjectForUser(user=login)
-        self.projects = ProjectsManager.instance().getProjects(user=login, b64=False)
+        self.projects = ProjectsManager.instance().getProjects(user=login)
         self.trace('User context constructed Login=%s' % login)
         
     def __str__(self):
@@ -114,31 +139,7 @@ class UserContext(Logger.ClassLogger):
         """
         Return all projects 
         """
-        if b64:
-            return self.encodeData(data=self.projects)
-        else:
-            return self.projects
-            
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
+        return self.projects
 
 class SessionExpireHandler(threading.Thread, Logger.ClassLogger):
     """
@@ -225,7 +226,6 @@ class Context(Logger.ClassLogger):
         self.mysqlVersion = None
         self.apacheVersion = None
         self.phpVersion = None
-        self.licence = None
         self.networkInterfaces = None
         self.networkRoutes = None
         
@@ -256,9 +256,18 @@ class Context(Logger.ClassLogger):
         Set apache version
         """
         try:
+<<<<<<< HEAD
             # phpVersion = commands.getoutput( 'php -v' )
             phpVersion = subprocess.check_output( 'php -v', stderr=subprocess.STDOUT, shell=True )
             phpVersion = phpVersion.strip()
+=======
+            phpVersion = subprocess.check_output( 'php -v', stderr=subprocess.STDOUT, shell=True )
+            phpVersion = phpVersion.strip()
+            
+            if sys.version_info > (3,):
+                phpVersion = phpVersion.decode('utf8')
+                
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             self.trace("php version: %s" % phpVersion)
             
             lines = phpVersion.splitlines()
@@ -272,9 +281,17 @@ class Context(Logger.ClassLogger):
         Set apache version
         """
         try:
+<<<<<<< HEAD
             # versionHttpd = commands.getoutput( 'httpd -v' )
             versionHttpd = subprocess.check_output( 'httpd -v', stderr=subprocess.STDOUT, shell=True )
             versionHttpd = versionHttpd.strip()
+=======
+            versionHttpd = subprocess.check_output( 'httpd -v', stderr=subprocess.STDOUT, shell=True )
+            versionHttpd = versionHttpd.strip()
+            if sys.version_info > (3,):
+                versionHttpd = versionHttpd.decode('utf8')
+                
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             self.trace("httpd version: %s" % versionHttpd)
             
             lines = versionHttpd.splitlines()
@@ -306,9 +323,6 @@ class Context(Logger.ClassLogger):
                                                                       Settings.get( 'Paths', 'tests')) )
         except Exception as e:
             self.error( "unable to get server usage: %s"  % e )
-        else:
-            if b64:
-                ret = self.encodeData(data=ret)
         return ret
 
     def diskUsage(self, p):
@@ -327,6 +341,7 @@ class Context(Logger.ClassLogger):
         used = (st.f_blocks - st.f_bfree) * st.f_frsize
         return (total, used, free)
 
+<<<<<<< HEAD
     def readLicence(self):
         """
         Read licence
@@ -397,6 +412,8 @@ class Context(Logger.ClassLogger):
         """
         return self.licence
 
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     def getUniqueId(self):
         """
         Return a unique id
@@ -480,6 +497,7 @@ class Context(Logger.ClassLogger):
         Synchronize the dynamic config (dbb) with the file settings (tas.ini)
         """
         self.trace('Synchronize dynamic config')
+        
         # cleanup the database config
         ret, rows = DbManager.instance().querySQL( query = """DELETE FROM `%s`""" % self.table_name)
         if not ret:
@@ -544,27 +562,6 @@ class Context(Logger.ClassLogger):
         """
         return len(self.usersConnected)
 
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
-
     def getStats(self, b64=False):
         """
         Constructs some statistics on tas server
@@ -623,9 +620,7 @@ class Context(Logger.ClassLogger):
                                     + int(nbTests[0]['nbtg']) + int(nbTests[0]['nbta'])
         except Exception as e:
             self.error( "unable get statistics server: %s"  % e )
-        else:
-            if b64:
-                ret = self.encodeData(data=ret)
+
         return ret
 
     def getSize(self, folder):
@@ -693,7 +688,10 @@ class Context(Logger.ClassLogger):
         """
         uuid_val = (uuid.uuid4().hex + uuid.uuid4().hex).encode('utf-8')
         session_id = base64.b64encode( uuid_val )[:45] 
-        return session_id 
+        if sys.version_info > (3,):
+            return session_id.decode('utf8')
+        else:
+            return session_id
          
     def apiAuthorizationV2(self, authorization):
         """
@@ -724,13 +722,17 @@ class Context(Logger.ClassLogger):
         """
         Check authorization for rest api
         """
-        self.trace('[Login=%s] rest authorization called' % (login) )
+        self.trace('Rest authorization called for Login=%s' % (login) )
         expires = ''
         
         # check if this login exists on the database
         usersDb = UsersManager.instance().getUsersByLogin()
         if not login in usersDb:
+<<<<<<< HEAD
             self.trace( "%s account not found" % login )
+=======
+            self.trace( "Login=%s account not found" % login )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             return (self.CODE_NOT_FOUND, expires)
         
         user_profile = usersDb[login]
@@ -739,14 +741,19 @@ class Context(Logger.ClassLogger):
         if not user_profile['active']: 
             self.trace( "%s account not active" % login )
             return (self.CODE_DISABLED, expires)
+<<<<<<< HEAD
             
         if not user_profile['web']: 
             self.trace( "api access not authorized for %s account" % login )
             return (self.CODE_FORBIDDEN, expires)
             
+=======
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         # check password, create a sha1 hash with salt: sha1( salt + sha1(password) )
-        sha1 = sha1_constructor()
-        sha1.update( "%s%s" % ( Settings.get( 'Misc', 'salt'), password )  )
+        sha1 = hashlib.sha1()
+        _pwd = "%s%s" % ( Settings.get( 'Misc', 'salt'), password )
+        sha1.update( _pwd.encode('utf8')  )
         if user_profile['password'] != sha1.hexdigest():
             self.trace( "incorrect password for %s account" % login )
             return (self.CODE_FAILED, expires)
@@ -760,6 +767,7 @@ class Context(Logger.ClassLogger):
                 
         self.userSessions.update( {session_id: user_profile } )
         
+        self.trace('Rest authorized for Login=%s SessionId=%s Expires=%s' % (login, session_id, expires))
         return (session_id, expires)    
     
     def updateSession(self, sessionId):
@@ -773,6 +781,7 @@ class Context(Logger.ClassLogger):
             expires = time.strftime("%a, %d-%b-%Y %T GMT", end) 
             return  expires
         return ''
+<<<<<<< HEAD
         
     def checkAuthorization (self, login, password, rightsExpected = [], fromGui=False ):
         """
@@ -938,6 +947,8 @@ class Context(Logger.ClassLogger):
         # append level of the user authorized and return it
         levels = self.getLevels(userProfile=user_profile)
         return ( self.CODE_OK, levels, user_profile['id'] )
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def getLevels(self, userProfile):
         """
@@ -945,10 +956,10 @@ class Context(Logger.ClassLogger):
         """
         levels = []
         if userProfile['administrator']: levels.append( Settings.get('Server', 'level-admin') )
-        if userProfile['leader']: levels.append( Settings.get('Server', 'level-leader') )
+        if userProfile['leader']: levels.append( Settings.get('Server', 'level-monitor') )
         if userProfile['tester']: levels.append( Settings.get('Server', 'level-tester') )
-        if userProfile['developer']: levels.append( Settings.get('Server', 'level-developer') )
-        if userProfile['system']: levels.append( Settings.get('Server', 'level-system') )
+        # if userProfile['developer']: levels.append( Settings.get('Server', 'level-developer') )
+        # if userProfile['system']: levels.append( Settings.get('Server', 'level-system') )
         return levels
 
     def registerUser (self, user):
@@ -977,9 +988,9 @@ class Context(Logger.ClassLogger):
     
         return True
 
-    def unregisterUserFromXmlrpc(self, login):
+    def unregisterChannelUser(self, login):
         """
-        Deletes user, disconnection from xml rpc
+        Force channel disconnection
         """
         self.info( "Unregister user Login=%s" % login )
         UsersManager.instance().setOnlineStatus(login=login, online=False)
@@ -1037,11 +1048,11 @@ class Context(Logger.ClassLogger):
         """
         found = None
         if not login in self.usersConnected:
-            self.trace( 'user %s not found' % str(login) )
+            self.trace( 'User Login=%s connected with channel? no' % str(login) )
             return found
         else:
             found = self.usersConnected[login]
-            self.trace( 'user %s found' % str(login) )
+            self.trace( 'User Login=%s connected with channel? yes' % str(login) )
         return found
 
     def getInformations(self, user=None, b64=False):
@@ -1066,19 +1077,19 @@ class Context(Logger.ClassLogger):
             if self.networkRoutes is not None:
                 ret.append( {'routes': self.networkRoutes } )
             ret.append( {'server-date': self.getServerDateTime() } )
-            ret.append( {'default-library': "%s" % RepoLibraries.instance().getDefaultV2() } ) # dynamic value
+            ret.append( {'default-library': "%s" % RepoLibraries.instance().getDefault() } ) # dynamic value
             ret.append( {'libraries': "%s" % RepoLibraries.instance().getInstalled() } )
-            ret.append( {'default-adapter': "%s" % RepoAdapters.instance().getDefaultV2() } ) # dynamic value
+            ret.append( {'default-adapter': "%s" % RepoAdapters.instance().getDefault() } ) # dynamic value
             ret.append( {'adapters': "%s" % RepoAdapters.instance().getInstalled() } )
 
             if user is not None:
                 ret.append( {'test-environment': self.getTestEnvironment(user=user) } )
                 
                 if isinstance(user, UserContext):
-                    ret.append( {'projects': user.getProjects(b64=False)  } )
+                    ret.append( {'projects': user.getProjects()  } )
                     ret.append( {'default-project': user.getDefault()  } )
                 else:
-                    ret.append( {'projects': ProjectsManager.instance().getProjects(user=user, b64=False)  } )
+                    ret.append( {'projects': ProjectsManager.instance().getProjects(user=user)  } )
                     ret.append( {'default-project': ProjectsManager.instance().getDefaultProjectForUser(user=user)  } )
 
             for section in Settings.instance().sections():
@@ -1087,9 +1098,7 @@ class Context(Logger.ClassLogger):
 
         except Exception as e:
             self.error( 'unable to construct servers settings: %s' % str(e) )
-        else:
-            if b64:
-                ret = self.encodeData(data=ret)
+
         return  ret
 
     def getUptime(self):
@@ -1107,10 +1116,18 @@ class Context(Logger.ClassLogger):
         @return: server date
         @rtype: string
         """
+<<<<<<< HEAD
         # dt = commands.getoutput( "%s --rfc-3339=seconds" % Settings.get('Bin', 'date') )
         dt = subprocess.check_output( "%s --rfc-3339=seconds" % Settings.get('Bin', 'date'), 
                                         stderr=subprocess.STDOUT, shell=True )
         dt = dt.strip()
+=======
+        dt = subprocess.check_output( "%s --rfc-3339=seconds" % Settings.get('Bin', 'date'), 
+                                        stderr=subprocess.STDOUT, shell=True )
+        dt = dt.strip()
+        if sys.version_info > (3,):
+            dt = dt.decode('utf8')
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         self.trace( 'Date Server: %s' % dt )
         return dt
 
@@ -1128,23 +1145,11 @@ class Context(Logger.ClassLogger):
         rn_ret = ''
         try:
             f = open( '%s/releasenotes.txt' % pathRn  )
-            rn = f.read()
+            rn_ret = f.read()
             f.close()
         except Exception as e:
             self.error( "Unable to read release notes: %s" % str(e) )
-        else:
-            if not b64:
-                rn_ret = rn
-            else:
-                try: 
-                    rn_zipped = zlib.compress(rn)
-                except Exception as e:
-                    self.error( "Unable to compress release notes: %s" % str(e) )
-                else:
-                    try: 
-                        rn_ret = base64.b64encode(rn_zipped)
-                    except Exception as e:
-                        self.error( "Unable to encode in base 64: %s" % str(e) )
+
         return rn_ret
 
     def listRoutes(self):
@@ -1156,10 +1161,18 @@ class Context(Logger.ClassLogger):
         10.0.0.0/8 dev eth1  proto kernel  scope link  src 10.9.1.132
         default via 204.62.14.1 dev eth0
         """
+<<<<<<< HEAD
         # iproute = commands.getoutput( Settings.get('Bin', 'iproute') )
         iproute = subprocess.check_output(  Settings.get('Bin', 'iproute'), 
                                             stderr=subprocess.STDOUT, shell=True )
         iproute = iproute.strip()
+=======
+        iproute = subprocess.check_output(  Settings.get('Bin', 'iproute'), 
+                                            stderr=subprocess.STDOUT, shell=True )
+        iproute = iproute.strip()
+        if sys.version_info > (3,):
+            iproute = iproute.decode('utf8')
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         self.trace( 'iproute: %s' % iproute )
         
         # save all eths
@@ -1182,6 +1195,7 @@ class Context(Logger.ClassLogger):
             inet 10.9.1.132/8 brd 10.255.255.255 scope global eth1
         """
         eths = []
+<<<<<<< HEAD
         
         # detect installed language 
         # currentLang = self.detectLanguage()
@@ -1193,6 +1207,14 @@ class Context(Logger.ClassLogger):
         ipaddr = subprocess.check_output( Settings.get('Bin', 'ipaddr'), 
                                           stderr=subprocess.STDOUT, shell=True )
         ipaddr = ipaddr.strip()
+=======
+
+        ipaddr = subprocess.check_output( Settings.get('Bin', 'ipaddr'), 
+                                          stderr=subprocess.STDOUT, shell=True )
+        ipaddr = ipaddr.strip()
+        if sys.version_info > (3,):
+            ipaddr = ipaddr.decode('utf8')
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         self.trace( 'ipaddr: %s' % ipaddr )
         
         try:
@@ -1229,6 +1251,7 @@ class Context(Logger.ClassLogger):
         @rtype: list
         """
         eths = []
+<<<<<<< HEAD
         
         # detect installed language 
         # currentLang = self.detectLanguage()
@@ -1240,6 +1263,13 @@ class Context(Logger.ClassLogger):
         # ifconfig = commands.getoutput( Settings.get('Bin', 'ifconfig') )
         ifconfig = subprocess.check_output( Settings.get('Bin', 'ifconfig'),
                                             stderr=subprocess.STDOUT, shell=True )
+=======
+
+        ifconfig = subprocess.check_output( Settings.get('Bin', 'ifconfig'),
+                                            stderr=subprocess.STDOUT, shell=True )
+        if sys.version_info > (3,):
+            ifconfig = ifconfig.decode('utf8')
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         self.trace( 'ifconfig: %s' % ifconfig )
         
         for eth in ifconfig.split('\n\n'):
@@ -1262,9 +1292,16 @@ class Context(Logger.ClassLogger):
         """
         Detect the language
         """
+<<<<<<< HEAD
         # lang = commands.getoutput( Settings.get('Bin', 'locale') )
         lang = subprocess.check_output( Settings.get('Bin', 'locale'), 
                                         stderr=subprocess.STDOUT, shell=True )
+=======
+        lang = subprocess.check_output( Settings.get('Bin', 'locale'), 
+                                        stderr=subprocess.STDOUT, shell=True )
+        if sys.version_info > (3,):
+            lang = lang.decode('utf8')
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         self.trace( 'lang: %s' % lang )
         
         lines = lang.splitlines()
@@ -1435,9 +1472,9 @@ class Context(Logger.ClassLogger):
         self.trace("Return the test environment for the user: %s" % user)
         
         if isinstance(user, UserContext):
-            projects = user.getProjects(b64=False)
+            projects = user.getProjects()
         else:
-            projects = ProjectsManager.instance().getProjects(user=user, b64=False)
+            projects = ProjectsManager.instance().getProjects(user=user)
         testEnvironment = []
         for prj in projects:
             if int( Settings.get( 'MySql', 'test-environment-encrypted' ) ):
@@ -1458,17 +1495,20 @@ class Context(Logger.ClassLogger):
                     try:
                         env_json = json.loads(env['value'])
                         
-                        # convert unicode to str encoded in utf8
-                        if sys.version_info > (2,6,):
-                            if isinstance(env_json, unicode):
-                                env_json = env_json.encode("utf8")
-                            elif isinstance(env_json, dict):
-                                env_json = self.__parseDict(d=env_json)
-                            elif isinstance(env_json, list):
-                                env_json = self.__parseList(d=env_json)
-                            else:
-                                env_json = env_json
-                            
+                        if sys.version_info > (3,):
+                            pass
+                        else:
+                            # convert unicode to str encoded in utf8
+                            if sys.version_info > (2,6,):
+                                if isinstance(env_json, unicode):
+                                    env_json = env_json.encode("utf8")
+                                elif isinstance(env_json, dict):
+                                    env_json = self.__parseDict(d=env_json)
+                                elif isinstance(env_json, list):
+                                    env_json = self.__parseList(d=env_json)
+                                else:
+                                    env_json = env_json
+                                
                     except Exception as e:
                         self.error( "Unable to encode in json: %s" % str(e) )
                     else:
@@ -1477,10 +1517,7 @@ class Context(Logger.ClassLogger):
         
         self.trace( "Test environment retrieved for Login=%s" % (user) )
 
-        if b64:
-            return self.encodeData(data=testEnvironment)
-        else:
-            return testEnvironment
+        return testEnvironment
 
     def refreshTestEnvironment(self):
         """
@@ -1488,8 +1525,9 @@ class Context(Logger.ClassLogger):
         And notify all connected user
         """
         for user_login, user_profile in self.usersConnected.items():
-            if user_profile['profile']['administrator'] or user_profile['profile']['tester'] or user_profile[cur_user]['profile']['developer'] :
-                data = ( 'context-server', ( "update", self.getInformations(user=user_login, b64=False) ) )
+            if user_profile['profile']['administrator'] or user_profile['profile']['tester'] or \
+                user_profile[cur_user]['profile']['developer'] :
+                data = ( 'context-server', ( "update", self.getInformations(user=user_login) ) )
                 ESI.instance().notify(body=data, toUser=user_login)
         return True
     
@@ -1509,13 +1547,21 @@ class Context(Logger.ClassLogger):
         @param portable:
         @type portable: boolean
         """
-        self.trace('Check update client requested client Version=%s OS=%s Portable=%s' % (currentVersion, systemOs, portable) )
-        ret = False
+        self.trace('Check update client requested client Version=%s OS=%s Portable=%s' % (currentVersion, 
+                                                                                          systemOs, 
+                                                                                          portable) )
+        available = self.CODE_NOT_FOUND
         
         # avoid exception during version check, provide default values
         if not len(currentVersion): currentVersion = '0.0.0'
         if not len(systemOs): systemOs = 'win32'  
         
+        if "beta" in currentVersion:
+            currentVersion = currentVersion.replace("beta", "")
+        
+        if "alpha" in currentVersion:
+            currentVersion = currentVersion.replace("alpha", "")
+            
         # new in v17, win32 is deprecated
         if systemOs == "win32": 
             systemOs = "win64"
@@ -1527,7 +1573,8 @@ class Context(Logger.ClassLogger):
         clientPackagePath = '%s%s/%s/' % ( Settings.getDirExec(), Settings.get( 'Paths', 'clt-package' ), systemOs )
         pkgs = os.listdir( clientPackagePath )
         latestPkg = (0,0,0)
-        latestPkgName = None
+        latestPkgStr = ''
+        latestPkgName = ''
         try:
             # discovers the latest client
             for pkg in pkgs:
@@ -1560,13 +1607,15 @@ class Context(Logger.ClassLogger):
             self.trace( 'latest client in server: %s' % str(latestPkg) )
             # check the latest version with the version passed on argument
             if latestPkg > tuple(map(int, currentVersion.split("."))):
-                ret = ( ".".join( map(str,latestPkg) ) , latestPkgName )
+                available = self.CODE_OK
+                latestPkgStr = ".".join( map(str,latestPkg) )
         except Exception as e:
             self.error("unable to check client update: %s" % str(e) )
-        
+            available = self.CODE_ERROR
+            
         # returns the result
-        self.trace('check update client returned with result %s' % str(ret) )
-        return ret
+        self.trace('check update client returned with result %s' % available )
+        return (available, latestPkgStr, latestPkgName)
         
     def trace(self, txt):
         """

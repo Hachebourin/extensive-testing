@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -29,12 +29,18 @@ try:
     import RepoManager
     import EventServerInterface as ESI
     import RepoArchives
+<<<<<<< HEAD
     # import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 except ImportError: # python3 support
     from . import RepoManager
     from . import EventServerInterface as ESI
     from . import RepoArchives
+<<<<<<< HEAD
     # from . import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 from Libs import Settings, Logger
 
@@ -228,7 +234,8 @@ class StorageDataAdapters(RepoManager.RepoManager, Logger.ClassLogger):
                             notif['archive'] = m 
 
                             data = ( 'archive', ( None, notif) )    
-                            ESI.instance().notifyByUserTypes(body = data, admin=True, leader=False, tester=True, developer=False)
+                            ESI.instance().notifyByUserTypes(body = data, admin=True, leader=False, 
+                                                             tester=True, developer=False)
                     else:
                         self.error( 'error to zip data adapters' )
                         ret = False

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -28,11 +28,17 @@ import os
 try:
     import EventServerInterface as ESI
     import RepoArchives
+<<<<<<< HEAD
     # import Context
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import RepoArchives
     # from . import Context
+=======
+except ImportError: # python3 support
+    from . import EventServerInterface as ESI
+    from . import RepoArchives
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 import Libs.NetLayerLib.ServerAgent as NetLayerLib
 import Libs.NetLayerLib.Messages as Messages
@@ -195,7 +201,6 @@ class ProbeServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         """
         try:
             if request['cmd'] == Messages.RSQ_CMD:
-            ############################################################
                 body = request['body']
                 if 'cmd' in body:
                     if body['cmd'] == Messages.CMD_HELLO:
@@ -207,11 +212,11 @@ class ProbeServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
                         NetLayerLib.ServerAgent.failed(self, client, tid, body = rsp )
                 else:
                     self.error( 'cmd is missing')
-            ############################################################
+ 
             elif request['cmd'] == Messages.RSQ_NOTIFY:
                 self.trace( '<-- NOTIFY: %s' % tid )
                 self.moveNewFile( data=request['body'] )
-            ############################################################
+                
             else:
                 self.error( 'request unknown %s' % request['cmd'])
         except Exception as e:
@@ -288,10 +293,14 @@ class ProbeServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         self.trace(" on registration" )
         self.__mutex.acquire()
         doNotify=False
+<<<<<<< HEAD
         if len(self.probesRegistered) >= self.context.getLicence()[ 'probes' ] [ 'instance' ]:
             self.info('license probes reached')
             NetLayerLib.ServerAgent.forbidden(self, client, tid)
         elif request['userid'] in  self.probesRegistered:
+=======
+        if request['userid'] in  self.probesRegistered:
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             self.info('duplicate probe registration: %s' % request['userid'] )
             NetLayerLib.ServerAgent.failed(self, client, tid)
         else:
@@ -360,7 +369,6 @@ class ProbeServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         """
         Logger.ClassLogger.trace(self, txt="PSI - %s" % txt)
 
-#############
 PSI = None
 def instance ():
     """

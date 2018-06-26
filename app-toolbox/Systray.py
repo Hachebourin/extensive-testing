@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -78,9 +78,13 @@ __CONTRIBUTORS__ = [ "" ]
 # project start in year
 __BEGIN__ = "2010"
 # year of the latest build
-__END__="2017"
+__END__="2018"
 # date and time of the buid
+<<<<<<< HEAD
 __BUILDTIME__="04/11/2017 18:04:27"
+=======
+__BUILDTIME__="09/02/2018 18:13:18"
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 # Redirect stdout and stderr to log file only on production
 REDIRECT_STD=True
 
@@ -273,7 +277,9 @@ class PluginProcess(QProcess):
         # send command
         datagram = json.dumps( msg ) 
         datagramEncoded = base64.b64encode( bytes(datagram, "utf8")  )
-        self.write( str(datagramEncoded, "utf8") + "\n\n" )
+        
+        self.write( datagramEncoded + b"\n\n" )
+        # self.write( str(datagramEncoded, "utf8") + "\n\n" )
 
 class QListItemEnhanced(QListWidgetItem):
     """
@@ -827,10 +833,15 @@ class ToolPage(QWidget):
 
             try:
                 self.toolObj = plugins[(self.toolType, toolPlugin)].initialize( 
-                                    controllerIp=str(self.controllerIp), toolName=str(self.toolName), toolDesc=str(self.toolDescr), 
-                                    defaultTool=False, controllerPort=int(self.controllerPort), supportProxy=self.proxyEnable,
-                                    proxyIp=str(self.proxyIp), proxyPort=int(self.proxyPort), 
-                                    sslSupport=str2bool(Settings.instance().get( 'Server', 'ssl-support' ))
+                                                controllerIp=str(self.controllerIp), 
+                                                toolName=str(self.toolName), 
+                                                toolDesc=str(self.toolDescr), 
+                                                defaultTool=False, 
+                                                controllerPort=int(self.controllerPort), 
+                                                supportProxy=self.proxyEnable,
+                                                proxyIp=str(self.proxyIp), 
+                                                proxyPort=int(self.proxyPort), 
+                                                sslSupport=str2bool(Settings.instance().get( 'Server', 'ssl-support' ))
                                 )
                 self.toolObj.checkPrerequisites()
                 initPlugin = True
@@ -839,21 +850,35 @@ class ToolPage(QWidget):
                 
         elif toolPlugin in PLUGINS_AGENT_EXTERNAL:
             self.toolObj = GenericTool.Tool( 
-                                controllerIp=str(self.controllerIp), controllerPort=int(self.controllerPort), 
-                                toolName=str(self.toolName), toolDesc=str(self.toolDescr), defaultTool=False, 
-                                supportProxy=self.proxyEnable, proxyIp=str(self.proxyIp), proxyPort=int(self.proxyPort), 
-                                sslSupport=str2bool(Settings.instance().get( 'Server', 'ssl-support' )),
-                                toolType = "Agent", fromCmd=False, name=toolPlugin.title()
+                                            controllerIp=str(self.controllerIp), 
+                                            controllerPort=int(self.controllerPort), 
+                                            toolName=str(self.toolName), 
+                                            toolDesc=str(self.toolDescr), 
+                                            defaultTool=False, 
+                                            supportProxy=self.proxyEnable, 
+                                            proxyIp=str(self.proxyIp), 
+                                            proxyPort=int(self.proxyPort), 
+                                            sslSupport=str2bool(Settings.instance().get( 'Server', 'ssl-support' )),
+                                            toolType = "Agent", 
+                                            fromCmd=False, 
+                                            name=toolPlugin.title()
                             )
             initPlugin = True
             
         elif toolPlugin in PLUGINS_PROBE_EXTERNAL:
             self.toolObj = GenericTool.Tool( 
-                                controllerIp=str(self.controllerIp), controllerPort=int(self.controllerPort), 
-                                toolName=str(self.toolName), toolDesc=str(self.toolDescr), defaultTool=False, 
-                                supportProxy=self.proxyEnable, proxyIp=str(self.proxyIp), proxyPort=int(self.proxyPort), 
-                                sslSupport=str2bool(Settings.instance().get( 'Server', 'ssl-support' )),
-                                toolType = "Probe", fromCmd=False, name=toolPlugin.title()
+                                            controllerIp=str(self.controllerIp), 
+                                            controllerPort=int(self.controllerPort), 
+                                            toolName=str(self.toolName), 
+                                            toolDesc=str(self.toolDescr), 
+                                            defaultTool=False, 
+                                            supportProxy=self.proxyEnable, 
+                                            proxyIp=str(self.proxyIp), 
+                                            proxyPort=int(self.proxyPort), 
+                                            sslSupport=str2bool(Settings.instance().get( 'Server', 'ssl-support' )),
+                                            toolType = "Probe", 
+                                            fromCmd=False, 
+                                            name=toolPlugin.title()
                             )
             initPlugin = True
             
@@ -898,7 +923,12 @@ class ToolPage(QWidget):
         if self.pluginProcess is None: 
             return
         
+<<<<<<< HEAD
         self.pluginProcess.sendCommand(cmd="start-probe", data='', more={'callid': tid, 'data': data, 'tid': tid})
+=======
+        self.pluginProcess.sendCommand(cmd="start-probe", data='', 
+                                       more={'callid': tid, 'data': data, 'tid': tid})
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
     def onStoppingProbe(self,  tid, data):
         """
@@ -916,7 +946,8 @@ class ToolPage(QWidget):
         if self.pluginProcess is None: 
             return
         
-        self.pluginProcess.sendCommand(cmd="notify", data=request, more={'tid': tid, 'client': client})
+        self.pluginProcess.sendCommand(cmd="notify", data=request, 
+                                       more={'tid': tid, 'client': client})
         
     def onAgentReset(self, client, tid, request): 
         """
@@ -925,7 +956,8 @@ class ToolPage(QWidget):
         if self.pluginProcess is None: 
             return
         
-        self.pluginProcess.sendCommand(cmd="reset", data=request, more={'tid': tid, 'client': client})
+        self.pluginProcess.sendCommand(cmd="reset", data=request, 
+                                       more={'tid': tid, 'client': client})
         
     def onAgentInit(self, client, tid, request): 
         """
@@ -934,8 +966,8 @@ class ToolPage(QWidget):
         if self.pluginProcess is None: 
             return
         
-        self.pluginProcess.sendCommand(cmd="init", data=request, more={'tid': tid, 'client': client})
-        
+        self.pluginProcess.sendCommand(cmd="init", data=request, 
+                                       more={'tid': tid, 'client': client})
 
     def onAgentAlive(self, client, tid, request): 
         """
@@ -944,8 +976,8 @@ class ToolPage(QWidget):
         if self.pluginProcess is None: 
             return
         
-        self.pluginProcess.sendCommand(cmd="alive", data=request, more={'tid': tid, 'client': client})
-        
+        self.pluginProcess.sendCommand(cmd="alive", data=request, 
+                                       more={'tid': tid, 'client': client})
         
     def onUserConfirm(self, msg):
         """
@@ -1240,8 +1272,85 @@ class PluginObj(object):
         if description is not None:
             self.__RESUME__ = description
         self.__WITH_IDE__ = withIde
+      
+class WelcomePage(QWidget):
+    """
+    Welcome page widget
+    """
+    ConnectTool = pyqtSignal(int)  
+    def __init__(self, parent):
+        """
+        Constructor
+        """
+        super(WelcomePage, self).__init__()
         
+<<<<<<< HEAD
 class OptionPage(QWidget):
+=======
+        self.defaultProxyHttpAddr = Settings.get( 'Server', 'addr-proxy-http' )
+        self.defaultProxyHttpPort = Settings.get( 'Server', 'port-proxy-http' )
+
+        self.createWidget()
+        self.createConnections()
+
+    def createConnections(self):
+        """
+        Create qt connections
+        """
+        pass
+
+    def createWidget(self):
+        """
+        Create qt widget
+        """        
+        # controler ip
+        self.controlerIpEdit = QLineEdit( Settings.get('Server','ip') )
+        self.controlerPortEdit = QLineEdit( Settings.get('Server','port') )
+        validator2Proxy = QIntValidator (self)
+        self.controlerPortEdit.setValidator(validator2Proxy)
+        
+        self.proxyHttpAddrEdit = QLineEdit(self.defaultProxyHttpAddr)
+        self.proxyHttpAddrEdit.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Fixed )
+        self.proxyHttpAddrEdit.setDisabled(True)
+        self.proxyHttpPortEdit = QLineEdit(self.defaultProxyHttpPort)
+        self.proxyHttpPortEdit.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Fixed )
+        self.proxyHttpPortEdit.setDisabled(True)
+        validatorProxy = QIntValidator (self)
+        self.proxyHttpPortEdit.setValidator(validatorProxy)
+        self.proxyHttpPortEdit.setMinimumWidth(60)
+        
+        # proxy support
+        self.withProxyCheckBox = QCheckBox( "Use a HTTPS proxy server" )
+        if QtHelper.str2bool(Settings.get( 'Server','proxy-active' )):
+            self.withProxyCheckBox.setChecked(True)
+            self.proxyHttpAddrEdit.setDisabled(False)
+            self.proxyHttpPortEdit.setDisabled(False)
+
+        
+        tool2Layout = QGridLayout()
+        tool2Layout.addWidget( QLabel( "My %s" % Settings.get( 'Common','acronym-server' ) ), 0, 0  )
+        
+        tool2Layout.addWidget(QLabel("Address:"), 1, 1)
+        tool2Layout.addWidget(self.controlerIpEdit, 1, 2)
+        tool2Layout.addWidget(QLabel("Port:"), 2, 1)
+        tool2Layout.addWidget(self.controlerPortEdit, 2, 2)
+        tool2Layout.addWidget(self.withProxyCheckBox, 3, 1)
+        tool2Layout.addWidget(QLabel("Proxy Address:"), 4, 1)
+        tool2Layout.addWidget(self.proxyHttpAddrEdit, 4, 2)
+        tool2Layout.addWidget(QLabel("Proxy Port:"), 5, 1)
+        tool2Layout.addWidget(self.proxyHttpPortEdit, 5, 2)
+        tool2Layout.addWidget( QLabel(""), 6, 0)
+
+        # final layout
+        mainLayout = QVBoxLayout()
+        mainLayout.addLayout(tool2Layout)
+
+        self.setMinimumWidth(600)
+                
+        self.setLayout(mainLayout)
+        
+class DeployPage(QWidget):
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     """
     Option page widget
     """
@@ -1250,7 +1359,7 @@ class OptionPage(QWidget):
         """
         Constructor
         """
-        super(OptionPage, self).__init__()
+        super(DeployPage, self).__init__()
        
         self.nbPluginSaved = 0
         self.mainApp = parent
@@ -1976,13 +2085,15 @@ class Window(QDialog):
                 p.loadFromData(icon, format="png")
             
                 plugAction = QtHelper.createAction(parent=self, label="About\n%s Plugin" % pluginCfg["plugin"]["name"], icon=QIcon(p), 
-                                                callback=self.onAboutPlugin, cb_arg= { 'plugId': plugId, 'plugPath': plugPath,
-                                                                                'plugCfg': pluginCfg } )
+                                                    callback=self.onAboutPlugin, cb_arg= { 'plugId': plugId, 
+                                                                                           'plugPath': plugPath,
+                                                                                           'plugCfg': pluginCfg } )
                 self.dockToolbar.addAction(plugAction)
             else:
                 plugAction =  QtHelper.createAction( parent=self, label="About\n%s Plugin" % pluginCfg["plugin"]["name"],
-                                                callback=self.onAboutPlugin, cb_arg={ 'plugId': plugId, 'plugPath': plugPath,
-                                                                                'plugCfg': pluginCfg} )
+                                                    callback=self.onAboutPlugin, cb_arg={ 'plugId': plugId, 
+                                                                                          'plugPath': plugPath,
+                                                                                          'plugCfg': pluginCfg} )
                 self.dockToolbar.addAction(plugAction)
                 
     def onAboutPlugin(self, plugInfo):
@@ -2018,7 +2129,9 @@ class Window(QDialog):
         if pluginType == TOOL_EXT_AGENT:
             plugPath, plugExe, pluginCfg  = PLUGINS_AGENT_EXTERNAL[pluginId]
 
-            p = PluginProcess(self, cmd='"%s/%s"' % (plugPath, plugExe), toolPage=toolPage, tmpArea=toolPage.plugin().getTemp())
+            p = PluginProcess(self, cmd='"%s/%s"' % (plugPath, plugExe), 
+                              toolPage=toolPage, 
+                              tmpArea=toolPage.plugin().getTemp())
             toolPage.pluginProcess = p
             p.DataReceived.connect(self.onPluginData)
             p.startPlugin()
@@ -2028,7 +2141,9 @@ class Window(QDialog):
         elif pluginType == TOOL_EXT_PROBE:
             plugPath, plugExe, pluginCfg  = PLUGINS_PROBE_EXTERNAL[pluginId]
             
-            p = PluginProcess(self, cmd='"%s/%s"' % (plugPath, plugExe), toolPage=toolPage, tmpArea=toolPage.plugin().getTemp())
+            p = PluginProcess(self, cmd='"%s/%s"' % (plugPath, plugExe), 
+                              toolPage=toolPage, 
+                              tmpArea=toolPage.plugin().getTemp())
             toolPage.pluginProcess = p
             p.DataReceived.connect(self.onPluginData)
             p.startPlugin()
@@ -2317,8 +2432,11 @@ class Window(QDialog):
         self.mainTab = QTabWidget( )
         self.mainTab.setTabPosition(QTabWidget.North)
 
-        self.mainPage = OptionPage(parent=self)
-        self.mainTab.addTab( self.mainPage, "Options" )
+        # self.welcomePage = WelcomePage(parent=self)
+        # self.mainTab.addTab( self.welcomePage, "Welcome" )
+        
+        self.mainPage = DeployPage(parent=self)
+        self.mainTab.addTab( self.mainPage, "Deploy" )
         
         globalLayout = QHBoxLayout()
         
@@ -2488,7 +2606,8 @@ class Window(QDialog):
         thumbnailRaw =  thumbnailIo.read()
         
         # finalize generation
-        tool.plugin().onFinalizeScreenshot(request, action, actionId, adapterId, testcaseName, replayId, screenRaw, thumbnailRaw)
+        tool.plugin().onFinalizeScreenshot(request, action, actionId, adapterId, testcaseName, 
+                                           replayId, screenRaw, thumbnailRaw)
 
     def onQuit(self):
         """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -25,19 +25,31 @@ import time
 import threading
 import base64
 import zlib
+<<<<<<< HEAD
 try:
     import simplejson as json # python 2.4 support
 except ImportError:
     import json
+=======
+import json
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 try:
     import EventServerInterface as ESI
     import DbManager
     import TaskManager
+<<<<<<< HEAD
+=======
+    import Common
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import DbManager
     from . import TaskManager
+<<<<<<< HEAD
+=======
+    from . import Common
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 from Libs import Settings, Logger
 
@@ -61,27 +73,6 @@ class StatsManager(Logger.ClassLogger):
         self.dbt_scripts = '%s-scripts-stats' % Settings.get( 'MySql', 'table-prefix')
         self.dbt_writing = '%s-writing-stats' % Settings.get( 'MySql', 'table-prefix')
         self.notifyUsers =  Settings.getInt( 'Notifications', 'statistics')
-
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
 
     def getStats (self):
         """
@@ -431,7 +422,7 @@ class StatsManager(Logger.ClassLogger):
                 raise Exception("sql problem to reset %s" % self.dbt_writing)
             ret = True
         except Exception as e:
-            raise Exception( "[resetStats]%s" % str(e) )
+            self.error( "[resetStats]%s" % str(e) )
         return ret
 
     def addResultScript (self, scriptResult, scriptUser, scriptDuration, scriptProject ):
@@ -692,7 +683,7 @@ class StatsManager(Logger.ClassLogger):
         @type isTg: boolean
         """
         rlt = True
-        if not Settings.getInt( 'MySql', 'insert-test-statistics'): return rlt
+        # if not Settings.getInt( 'MySql', 'insert-test-statistics'): return rlt
         self.trace( 'add writing duration %s sec.' % writingDuration )
         self.__mutex__.acquire()
         try:

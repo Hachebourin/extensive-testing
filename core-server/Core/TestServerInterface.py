@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -32,14 +32,20 @@ try:
     import EventServerInterface as ESI
     import ProbeServerInterface as PSI
     import AgentServerInterface as ASI
+<<<<<<< HEAD
     # import StatsManager
     # import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 except ImportError: # python3 support
     from . import EventServerInterface as ESI
     from . import ProbeServerInterface as PSI
     from . import AgentServerInterface as ASI
+<<<<<<< HEAD
     # from . import StatsManager
     # from . import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 from Libs import Logger, Settings
 
@@ -181,7 +187,8 @@ class TestServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
             # handle notify and save some statistics on the database
             if request['cmd'] == Messages.RSQ_NOTIFY:
                 try:
-                    if _body_['event'] in [ 'agent-data', 'agent-notify', 'agent-init', 'agent-reset', 'agent-alive', 'agent-ready' ]:
+                    if _body_['event'] in [ 'agent-data', 'agent-notify', 'agent-init', 
+                                            'agent-reset', 'agent-alive', 'agent-ready' ]:
                         
                         if _body_['event'] == 'agent-ready':
                             self.testsConnected[client]['agents'].append( 
@@ -220,12 +227,22 @@ class TestServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
 
                 if _body_['event'] == 'testglobal-stopped':
                     self.statsmgr.addResultTestGlobal( tgResult =_body_['result'], fromUser=_body_['user-id'], 
+<<<<<<< HEAD
                                                         tgDuration=_body_['duration'], nbTs=_body_['nb-ts'], nbTu=_body_['nb-tu'],
+=======
+                                                        tgDuration=_body_['duration'], nbTs=_body_['nb-ts'], 
+                                                        nbTu=_body_['nb-tu'],
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                                                         nbTc=_body_['nb-tc'], prjId=_body_['prj-id'] )
 
                 if _body_['event'] == 'testplan-stopped':
                     self.statsmgr.addResultTestPlan( tpResult =_body_['result'], fromUser=_body_['user-id'], 
+<<<<<<< HEAD
                                                         tpDuration=_body_['duration'], nbTs=_body_['nb-ts'], nbTu=_body_['nb-tu'],
+=======
+                                                        tpDuration=_body_['duration'], nbTs=_body_['nb-ts'], 
+                                                        nbTu=_body_['nb-tu'],
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                                                         nbTc=_body_['nb-tc'], prjId=_body_['prj-id'] )
 
                 if  _body_['task-id'] in self.tests:
@@ -367,7 +384,6 @@ class Interact(object):
 
         instance().ok( self.client, self.tid, body = _data_ )
 
-#############
 TSI = None
 def instance ():
     """

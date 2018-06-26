@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -25,10 +25,15 @@ import Libs.NetLayerLib.ServerAgent as NetLayerLib
 from Libs import Logger, Settings
 
 try:
+<<<<<<< HEAD
     # import Context
     import ProjectsManager
 except ImportError: # python3 support
     # from . import Context
+=======
+    import ProjectsManager
+except ImportError: # python3 support
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     from . import ProjectsManager
 
 import threading
@@ -81,7 +86,11 @@ class EventServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         @type client:
         """
         self.trace("New connection Client=%s" % str(client.client_address) )
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         NetLayerLib.ServerAgent.onConnection( self, client )
         if not self.wsSupport:
             self.trace('sending notify to channel id: %s' % str(client.client_address) )
@@ -159,7 +168,11 @@ class EventServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         @type body:
         """
         self.trace('Sending notify to all users')
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         connected = self.context.getUsersConnectedCopy()
         for cur_user in connected:
             NetLayerLib.ServerAgent.notify( self, client = connected[cur_user]['address'], 

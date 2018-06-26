@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -23,14 +23,19 @@
 
 import base64
 import zlib
+<<<<<<< HEAD
 # import ConfigParser
 import os
 # import signal
 # import shlex
+=======
+import os
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 import subprocess
 import sys
 import time
 import shutil
+<<<<<<< HEAD
 # import tarfile
 
 try:
@@ -41,6 +46,18 @@ except ImportError:
 
 try:
     import ProbeServerInterface as PSI
+=======
+
+# unicode = str with python3
+if sys.version_info > (3,):
+    unicode = str
+    
+import json
+
+try:
+    import ProbeServerInterface as PSI
+    import AgentServerInterface as ASI
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     import EventServerInterface as ESI
     import Context
     import Common
@@ -48,6 +65,10 @@ try:
     import AgentsManager
 except ImportError: # python3 support
     from . import ProbeServerInterface as PSI
+<<<<<<< HEAD
+=======
+    from . import AgentServerInterface as ASI
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     from . import EventServerInterface as ESI
     from . import Context
     from . import Common
@@ -70,7 +91,6 @@ class ToolboxManager(Logger.ClassLogger):
         if Settings.getInt( 'WebServices', 'local-tools-enabled' ):
             if pkg is not None:
                 self.info( 'Deploying local tools %s...' % pkg)
-                # self.installPkg(pkgName=pkg)
                 self.installPkgV2(pkgName=pkg)
 
         self.TOOLS_INSTALLED = False
@@ -83,27 +103,6 @@ class ToolboxManager(Logger.ClassLogger):
             self.trace( "More details: %s" % unicode(e).encode('utf-8') )
         self.configsFile = None
         self.__pids__ = {}
-
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
 
     def preInstall(self):
         """
@@ -153,12 +152,25 @@ class ToolboxManager(Logger.ClassLogger):
         t = time.time()
         try:
             DEVNULL = open(os.devnull, 'w')
-            __cmd__ = "%s xf %s/%s -C %s" % (Settings.get( 'Bin', 'tar' ), self.pkgsToolsPath, pkgName, Settings.getDirExec())
+            __cmd__ = "%s xf %s/%s -C %s" % (Settings.get( 'Bin', 'tar' ), 
+                                             self.pkgsToolsPath, 
+                                             pkgName, 
+                                             Settings.getDirExec())
             ret = subprocess.call(__cmd__, shell=True, stdout=DEVNULL, stderr=DEVNULL)  
             if ret: raise Exception("unable to untar toolbox pkg")
         except Exception as e:
             self.error("toolbox installation failed: %s" % str(e) )
         self.trace("uncompress toolbox in %s sec." % (time.time()-t) )
+        
+    def disconnectRunningTools(self):
+        """
+        """
+        for k1, c1 in ASI.instance().agentsRegistered.items():
+            ASI.instance().stopClient(client=c1['address'] )
+            
+        for k2, c2 in PSI.instance().probesRegistered.items():
+            PSI.instance().stopClient(client=c2['address'] )
+        return True
         
     def stopDefault(self):
         """
@@ -232,8 +244,12 @@ class ToolboxManager(Logger.ClassLogger):
             return ''
         else:
             return Context.instance().getRn( pathRn="%s/%s/" % ( Settings.getDirExec(),
+<<<<<<< HEAD
                                                                 Settings.get( 'Paths', 'tools' )  ),
                                              b64=b64 )
+=======
+                                                                Settings.get( 'Paths', 'tools' ) ) )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def trace(self, txt):
         """

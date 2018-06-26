@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@ import shutil
 import base64
 import zlib
 import parser
+<<<<<<< HEAD
 # import compiler
 import re
 import tempfile
@@ -47,13 +48,32 @@ try:
     # import Context
     import RepoManager
     # import TaskManager
+=======
+import re
+import tempfile
+import tarfile
+try:
+    import ConfigParser
+except ImportError: # python3 support
+    import configparser as ConfigParser
+import json
+
+try:
+    import Common
+    import RepoManager
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     import RepoLibraries
     import Common
     import EventServerInterface as ESI
 except ImportError: # python3 support
+<<<<<<< HEAD
     # from . import Context
     from . import RepoManager
     # from . import TaskManager
+=======
+    from . import Common
+    from . import RepoManager
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     from . import RepoLibraries
     from . import Common
     from . import EventServerInterface as ESI
@@ -224,7 +244,7 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
             self.error('unable to set the generic adapter: %s' % e)
         return ret
         
-    def getDefaultV2(self):
+    def getDefault(self):
         """
         Return the default adapters package
         """
@@ -398,7 +418,7 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
         ret =  self.context.CODE_ERROR
         try:
             # remove all files and folders
-            ret = self.emptyRepo()
+            ret = self.emptyRepo(projectId='')
 
             # create default __init__ file
             initCreated = self.updateMainInit()
@@ -448,19 +468,22 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
         @return: 
         @rtype: 
         """
+<<<<<<< HEAD
         nb, nbf, backups, stats = self.getListingFilesV2(path=self.destBackup, 
                                                          extensionsSupported=[RepoManager.ZIP_EXT])
         backups_ret = self.encodeData(data=backups)
         return backups_ret
+=======
+        _, _, backups, _ = self.getListingFilesV2(path=self.destBackup, 
+                                                  extensionsSupported=[RepoManager.ZIP_EXT])
+        return backups
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def getTree(self, b64=False):
         """
         Get tree folders
         """
-        adps_ret = []
-        nb_adps, nb_adps_f, adps, stats =self.getListingFilesV2(path=self.testsPath)
-        adps_ret = self.encodeData(data=adps)
-        return nb_adps, nb_adps_f, adps_ret, stats
+        return self.getListingFilesV2(path=self.testsPath)
 
     def getLastBackupIndex(self, pathBackups ):
         """
@@ -562,7 +585,7 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
         @return: 
         @rtype: string
         """
-        rn_ret = ''
+        # rn_ret = ''
         rns = []
         adps = self.getInstalled(asList=True)
         adps.reverse()
@@ -584,6 +607,7 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
                 if match:
                     version_name = f[1:]
                 rns.append( "\n%s\n%s" % (version_name, Common.indent(rn,1) ) )
+<<<<<<< HEAD
                 
         # zip and encode in b64
         try: 
@@ -596,6 +620,10 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
             except Exception as e:
                 self.error( "Unable to encode in base 64 all release notes: %s" % str(e) )
         return rn_ret
+=======
+
+        return '\n'.join(rns)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def checkSyntax(self, content):
         """
@@ -610,7 +638,10 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
         try:
             content_decoded = base64.b64decode(content)
             parser.suite(content_decoded).compile()
+<<<<<<< HEAD
             # compiler.parse(content_decoded)
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         except SyntaxError as e:
             syntax_msg = str(e)
             return False, str(e)
@@ -870,12 +901,9 @@ class RepoAdapters(RepoManager.RepoManager, Logger.ClassLogger):
 
         except Exception as e:
             self.error( "unable to generate adapter from wsdl: %s" % e )
-            
-        # remove the temp file
-        #if len(wsdlFile):
-        #    if f is not None: f.close()
+
         return ret
-###############################
+
 RA = None
 def instance ():
     """

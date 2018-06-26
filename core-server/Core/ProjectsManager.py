@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -29,12 +29,16 @@ import os
 import base64
 import zlib
 import shutil
-try:
-    # python 2.4 support
-    import simplejson as json
-except ImportError:
-    import json
+import json
 
+try:
+    import DbManager
+    import Common
+except ImportError: # python3 support
+    from . import DbManager
+    from . import Common
+
+<<<<<<< HEAD
 try:
     import DbManager
     # import Context
@@ -42,6 +46,8 @@ except ImportError: # python3 support
     from . import DbManager
     # from . import Context
 
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 from Libs import Settings, Logger
 
 DEFAULT_PRJ_ID = "1"
@@ -64,28 +70,6 @@ class ProjectsManager(Logger.ClassLogger):
 
         # new in v17
         self.addReservedFolders()
-        # end of new
-        
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
 
     def addReservedFolders(self):
         """
@@ -136,10 +120,8 @@ class ProjectsManager(Logger.ClassLogger):
         else:
             self.trace( "List of projects for user %s: %s" % (user,rows) )
             prjs = rows
-        if b64:
-            return self.encodeData(data=prjs)
-        else:
-            return prjs
+
+        return prjs
             
     def checkProjectsAuthorization(self, user, projectId):
         """
@@ -327,6 +309,8 @@ class ProjectsManager(Logger.ClassLogger):
         prefix = Settings.get( 'MySql', 'table-prefix')
         escape = MySQLdb.escape_string
         
+        projectId = str(projectId)
+        
         # not possible to delete default project common
         if int(projectId) == 1:
             self.error("delete the default project not authorized")
@@ -359,10 +343,12 @@ class ProjectsManager(Logger.ClassLogger):
         
     def delProjectFromDB(self, projectId):
         """
+        Delete a project from DB and disk
         """
         # init some shortcut
         prefix = Settings.get( 'MySql', 'table-prefix')
         escape = MySQLdb.escape_string
+        projectId = str(projectId)
         
         # not possible to delete default project common
         if int(projectId) == 1:
@@ -384,7 +370,12 @@ class ProjectsManager(Logger.ClassLogger):
             self.error( "unable to read project relations" )
             return (self.context.CODE_ERROR, "unable to read project relations")
         if dbRows[0]["nbrelation"]:
+<<<<<<< HEAD
             return (self.context.CODE_ERROR, "unable to remove project because this project is linked with %s users" % dbRows["nbrelation"] )
+=======
+            msg = "unable to remove project because this project is linked with %s user(s)" % dbRows[0]["nbrelation"]
+            return (self.context.CODE_ERROR, msg )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
         # delete from db
         sql = """DELETE FROM `%s-projects` WHERE  id='%s'""" % ( prefix, escape(projectId) )
@@ -404,6 +395,7 @@ class ProjectsManager(Logger.ClassLogger):
         
     def getProjectsFromDB(self):
         """
+        Delete all projects
         """
         # init some shortcut
         prefix = Settings.get( 'MySql', 'table-prefix')
@@ -414,7 +406,11 @@ class ProjectsManager(Logger.ClassLogger):
         dbRet, dbRows = DbManager.instance().querySQL( query = sql, columnName=True  )
         if not dbRet: 
             self.error( "unable to read project's table" )
+<<<<<<< HEAD
             return (self.context.CODE_ERROR, "unable to read project's table")
+=======
+            return (self.context.CODE_ERROR, [])
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
         return (self.context.CODE_OK, dbRows )
         

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -62,7 +62,9 @@ if sys.version_info > (3,):
 __TOOL_TYPE__ = GenericTool.TOOL_AGENT
 __WITH_IDE__ = True
   
-__APP_PATH__ = '%s\%s\%s' % (Settings.getDirExec(), Settings.get('Paths', 'bin'), Settings.get('BinWin', 'sikuli') )
+__APP_PATH__ = '%s\%s\%s' % (Settings.getDirExec(), 
+                             Settings.get('Paths', 'bin'), 
+                             Settings.get('BinWin', 'sikuli') )
 if sys.platform == "linux2": __APP_PATH__ = Settings.get('BinLinux', 'sikulix')
 
 __TYPE__="""sikulix-server"""
@@ -527,8 +529,15 @@ class SikulixServer(GenericTool.Tool):
 
         # send through notify only a thumbnail
         try:
+<<<<<<< HEAD
             self.sendData(request=request, data={   'data': thumbnail, 'filename': '%s_%s.%s' % (action, actionId, extension),
                                                     'action': action, 'action-id': "%s" % actionId, 
+=======
+            self.sendData(request=request, data={   'data': thumbnail, 
+                                                    'filename': '%s_%s.%s' % (action, actionId, extension),
+                                                    'action': action, 
+                                                    'action-id': "%s" % actionId, 
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                                                     'adapter-id': "%s" % adapterId  } )
         except Exception as e:
             self.error("unable to send notify through notify: %s" % e)
@@ -540,8 +549,15 @@ class SikulixServer(GenericTool.Tool):
         Exec action
         """
         # globalID = <id_script>_<test_replay_id>_<id_adapter>_<id_action>
+<<<<<<< HEAD
         globalId = "%s_%s_%s_%s" % (request['script_id'], request['test-replay-id'],
                                     request['source-adapter'], request['data']['action-id'] )
+=======
+        globalId = "%s_%s_%s_%s" % (request['script_id'], 
+                                    request['test-replay-id'],
+                                    request['source-adapter'], 
+                                    request['data']['action-id'] )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         self.onToolLogWarningCalled( "<< Action (%s) called: %s" % (globalId, request['data']['action'])  )
         
         # dispatch action

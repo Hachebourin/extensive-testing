@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -20,25 +20,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301 USA
 # -------------------------------------------------------------------
-from functools import wraps
-from pycnic.core import WSGI, Handler
+
+from pycnic.core import WSGI
 from pycnic.errors import HTTP_401, HTTP_400, HTTP_500, HTTP_403, HTTP_404
 
 from wsgiref.simple_server import make_server
 from wsgiref.simple_server import WSGIRequestHandler
 
-import multiprocessing
-
 import threading
 import logging
 import sys
-import os
-import platform
-import json
 import wrapt
 
 from Libs import Settings, Logger
 
+<<<<<<< HEAD
 try:
     import Context
     import ProjectsManager
@@ -107,6 +103,16 @@ def _get_user(request):
             return Context.instance().getSessions()[sess_id]
         else:
             raise HTTP_401("Invalid session")
+=======
+try:
+    import RestTesterFunctions
+    import RestAdminFunctions
+    import RestCommonFunctions
+except ImportError: # python3 support
+    from . import RestTesterFunctions
+    from . import RestAdminFunctions
+    from . import RestCommonFunctions
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 @wrapt.decorator
 def _to_yaml(wrapped, instance, args, kwargs):
@@ -198,6 +204,7 @@ class SwaggerTags(object):
         Everything to get your test reports
         """
         pass  
+<<<<<<< HEAD
 """
 Sessions handlers
 """
@@ -716,9 +723,14 @@ class TasksReset(Handler):
             raise HTTP_500(details)
         return { "cmd": self.request.path, "message": "tasks successfully reseted" }
     
+=======
+       
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 """
-Public storage handlers
+Logger
 """
+<<<<<<< HEAD
 class PublicListing(Handler):
     """
     /rest/public/listing
@@ -1205,18 +1217,15 @@ class PublicRename(Handler):
         return { "cmd": self.request.path, "message": "file sucessfully renamed" }
 
 class PublicDownload(Handler):
+=======
+class _NoLoggingWSGIRequestHandler(WSGIRequestHandler, Logger.ClassLogger):
     """
-    Download file from the public storage
-    """   
-    def post(self):
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+    """
+    def log_message(self, format, *args):
         """
-        Download file from the public storage in base64 format
-        Send POST request (uri /rest/public/file/download) with the following body JSON { "file-path": "/" }
-        Cookie session_id is mandatory.
-
-        @return: file content encoding in base64
-        @rtype: dict 
         """
+<<<<<<< HEAD
         user_profile = _get_user(request=self.request)
         
         try:
@@ -1234,10 +1243,20 @@ class PublicDownload(Handler):
         success, _, _, _, content, _, _ = RepoTests.instance().getFile(pathFile=filePath, binaryMode=True, addLock=False)  
         if success == Context.instance().CODE_NOT_FOUND:
             raise HTTP_500("Unable to download file")
+=======
+        self.trace( "RSI - %s %s %s" % args )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
-        return { "cmd": self.request.path, "file-content": content }
+if sys.version_info > (3,):
+    _my_logger = None
+else:
+    _my_logger = logging.Logger(__name__)
+    _my_logger.setLevel(logging.DEBUG)
+    _hnd = logging.StreamHandler(sys.stdout)
+    _my_logger.addHandler(_hnd)
 
 """
+<<<<<<< HEAD
 Adapters handler
 """     
 class AdaptersStatistics(Handler):
@@ -1340,46 +1359,31 @@ class AdaptersCheckSyntax(Handler):
         
         return { "cmd": self.request.path, "syntax-status": success, "syntax-error": details }
 
+=======
+Webservices routing
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 """
-Libraries handler
-"""     
-class LibrariesStatistics(Handler):
-    """
-    Get the libraries statistics 
-    """   
-    # @_requires_login()
-    def get(self):
-        """
-        Get the libraries statistics  (uri /rest/libraries/statistics).
-        Cookie session_id is mandatory.
+class _WebServices(WSGI):
+    logger = _my_logger
+    debug = False
+    routes = [
+        # session
+        ('/session/login',                              RestCommonFunctions.SessionLogin()),
+        ('/session/logout',                             RestCommonFunctions.SessionLogout()),
+        ('/session/refresh',                            RestCommonFunctions.SessionRefresh()),
+        ('/session/context',                            RestCommonFunctions.SessionContext()),
+        ('/session/context/notify',                     RestCommonFunctions.SessionContextNotify()),
+        ('/session/context/all',                        RestCommonFunctions.SessionContextAll()),
         
-        @return: statistics or error
-        @rtype: dict 
-        """
-        user_profile = _get_user(self.request)
+        # agents
+        ('/agents/running',                             RestTesterFunctions.AgentsRunning()),
+        ('/agents/default',                             RestTesterFunctions.AgentsDefault()),
+        ('/agents/disconnect',                          RestTesterFunctions.AgentsDisconnect()),
+        ('/agents/connect',                             RestTesterFunctions.AgentsConnect()),
+        ('/agents/add',                                 RestTesterFunctions.AgentsAdd()),
+        ('/agents/remove',                              RestTesterFunctions.AgentsRemove()),
         
-        if not user_profile['administrator']: raise HTTP_401("Access refused")
-
-        _, _, _, statistics = RepoLibraries.instance().getTree(b64=True)
-        
-        return { "cmd": self.request.path, "libraries-statistics": statistics }
-
-class LibrariesSetDefault(Handler):
-    """
-    Configure libraries as default
-    """   
-    # @_requires_login()
-    def post(self):
-        """
-        Configure libraries as default or generic
-        Send POST request (uri /rest/libraries/configure)  with the following body JSON { "libraries": "v1000" }
-        Cookie session_id is mandatory.
-
-        @return: success message or error
-        @rtype: dict 
-        """
-        user_profile = _get_user(self.request)
-        
+<<<<<<< HEAD
         try:
             libraries = self.request.data.get("libraries")
             if not libraries: raise EmptyValue("Please specify the libraries")
@@ -1423,64 +1427,203 @@ class LibrariesSetGeneric(Handler):
             raise HTTP_500("Unable to set as generic the package %s" % libraries )
                 
         return { "cmd": self.request.path,  "status": success }
+=======
+        # probes
+        ('/probes/running',                             RestTesterFunctions.ProbesRunning()),
+        ('/probes/default',                             RestTesterFunctions.ProbesDefault()),
+        ('/probes/disconnect',                          RestTesterFunctions.ProbesDisconnect()),
+        ('/probes/connect',                             RestTesterFunctions.ProbesConnect()),
+        ('/probes/add',                                 RestTesterFunctions.ProbesAdd()),
+        ('/probes/remove',                              RestTesterFunctions.ProbesRemove()),
         
-class LibrariesCheckSyntax(Handler):
-    """
-    Check the syntax of the libraries
-    """   
-    # @_requires_login()
-    def get(self):
-        """
-        Check the syntax of the libraries  (uri /rest/libraries/check/syntax).
-        Cookie session_id is mandatory.
+        # tasks
+        ('/tasks/running',                              RestCommonFunctions.TasksRunning()),
+        ('/tasks/waiting',                              RestCommonFunctions.TasksWaiting()),
+        ('/tasks/history',                              RestCommonFunctions.TasksHistory()),
+        ('/tasks/history/all',                          RestCommonFunctions.TasksHistoryAll()),
+        ('/tasks/cancel',                               RestCommonFunctions.TasksCancel()),
+        ('/tasks/cancel/selective',                     RestCommonFunctions.TasksCancelSelective()),
+        ('/tasks/cancel/all',                           RestAdminFunctions.TasksCancelAll()),
+        ('/tasks/history/clear',                        RestAdminFunctions.TasksHistoryClear()),
+        ('/tasks/replay',                               RestCommonFunctions.TasksReplay()),
+        ('/tasks/verdict',                              RestCommonFunctions.TasksVerdict()),
+        ('/tasks/review',                               RestCommonFunctions.TasksReview()),
+        ('/tasks/design',                               RestCommonFunctions.TasksDesign()),
+        ('/tasks/comment',                              RestCommonFunctions.TasksComment()),
+        ('/tasks/kill',                                 RestCommonFunctions.TasksKill()),
+        ('/tasks/kill/all',                             RestAdminFunctions.TasksKillAll()),
+        ('/tasks/kill/selective',                       RestCommonFunctions.TasksKillSelective()),
+        ('/tasks/reschedule',                           RestCommonFunctions.TasksReschedule()),
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
-        @return: success message or error
-        @rtype: dict 
-        """
-        user_profile = _get_user(self.request)
+        # public storage
+        ('/public/basic/listing',                       RestTesterFunctions.PublicListing()),
+        ('/public/directory/add',                       RestTesterFunctions.PublicDirectoryAdd()),
+        ('/public/directory/remove',                    RestTesterFunctions.PublicDirectoryRemove()),
+        ('/public/directory/rename',                    RestTesterFunctions.PublicDirectoryRename()),
+        ('/public/file/download',                       RestTesterFunctions.PublicDownload()),
+        ('/public/file/import',                         RestTesterFunctions.PublicImport()),
+        ('/public/file/remove',                         RestTesterFunctions.PublicRemove()),
+        ('/public/file/rename',                         RestTesterFunctions.PublicRename()),
+        
+        # tests
+        ('/tests/schedule',                             RestTesterFunctions.TestsSchedule()),
+        ('/tests/schedule/tpg',                         RestTesterFunctions.TestsScheduleTpg()),
+        ('/tests/schedule/group',                       RestTesterFunctions.TestsScheduleGroup()),
+        ('/tests/basic/listing',                        RestTesterFunctions.TestsBasicListing()),
+        ('/tests/listing',                              RestTesterFunctions.TestsListing()),
+        ('/tests/statistics',                           RestAdminFunctions.TestsStatistics()),
+        ('/tests/directory/add',                        RestTesterFunctions.TestsDirectoryAdd()),
+        ('/tests/directory/remove',                     RestTesterFunctions.TestsDirectoryRemove()),
+        ('/tests/directory/remove/all',                 RestAdminFunctions.TestsDirectoryRemoveAll()),
+        ('/tests/directory/rename',                     RestTesterFunctions.TestsDirectoryRename()),
+        ('/tests/directory/duplicate',                  RestTesterFunctions.TestsDirectoryDuplicate()),
+        ('/tests/directory/move',                       RestTesterFunctions.TestsDirectoryMove()),
+        ('/tests/file/download',                        RestTesterFunctions.TestsFileDownload()),
+        ('/tests/file/open',                            RestTesterFunctions.TestsFileOpen()),
+        ('/tests/file/upload',                          RestTesterFunctions.TestsFileUpload()),
+        ('/tests/file/remove',                          RestTesterFunctions.TestsFileRemove()),
+        ('/tests/file/rename',                          RestTesterFunctions.TestsFileRename()),
+        ('/tests/file/duplicate',                       RestTesterFunctions.TestsFileDuplicate()),
+        ('/tests/file/move',                            RestTesterFunctions.TestsFileMove()),
+        ('/tests/file/default/all',                     RestAdminFunctions.TestsFileDefaultAll()),
+        ('/tests/file/unlock/all',                      RestAdminFunctions.TestsFileUnlockAll()),
+        ('/tests/file/unlock',                          RestTesterFunctions.TestsFileUnlock()),
+        ('/tests/build/samples',                        RestAdminFunctions.TestsBuild()),
+        ('/tests/backup',                               RestAdminFunctions.TestsBackup()),
+        ('/tests/backup/listing',                       RestAdminFunctions.TestsBackupListing()),
+        ('/tests/backup/download',                      RestAdminFunctions.TestsBackupDownload()),
+        ('/tests/backup/remove/all',                    RestAdminFunctions.TestsBackupRemoveAll()),
+        ('/tests/reset',                                RestAdminFunctions.TestsReset()),
+        ('/tests/snapshot/add',                         RestTesterFunctions.TestsSnapshotAdd()),
+        ('/tests/snapshot/restore',                     RestTesterFunctions.TestsSnapshotRestore()),
+        ('/tests/snapshot/remove',                      RestTesterFunctions.TestsSnapshotRemove()),
+        ('/tests/snapshot/remove/all',                  RestAdminFunctions.TestsSnapshotRemoveAll()),
+        ('/tests/check/syntax',                         RestTesterFunctions.TestsCheckSyntax()),
+        ('/tests/check/syntax/tpg',                     RestTesterFunctions.TestsCheckSyntaxTpg()),
+        ('/tests/create/design',                        RestTesterFunctions.TestsCreateDesign()),
+        ('/tests/create/design/tpg',                    RestTesterFunctions.TestsCreateDesignTpg()),
 
-        success, details = RepoLibraries.instance().checkGlobalSyntax()
-        
-        return { "cmd": self.request.path, "syntax-status": success, "syntax-error": details }
- 
-"""
-Documentations handler
-"""     
-class DocumentationsListing(Handler):
-    """
-    Get the documentations
-    """   
-    # @_requires_login()
-    def get(self):
-        """
-        Get the documentations  (uri /rest/documentations/listing).
-        Cookie session_id is mandatory.
-        
-        @return: documentations
-        @rtype: dict 
-        """
-        user_profile = _get_user(self.request)
+        # dbr13 >>>
+        ('/tests/update/adapter-library',               RestTesterFunctions.TestsUpdateAdapterLibrary()),
+        ('/tests/find/file-usage',                      RestTesterFunctions.TestsFindFileUsage()),
+        # dbr13 <<<
+        # variables
+        ('/variables/listing',                          RestTesterFunctions.VariablesListing()),
+        ('/variables/add',                              RestTesterFunctions.VariablesAdd()),
+        ('/variables/update',                           RestTesterFunctions.VariablesUpdate()),
+        ('/variables/remove',                           RestTesterFunctions.VariablesRemove()),
+        ('/variables/duplicate',                        RestTesterFunctions.VariablesDuplicate()),
+        ('/variables/reset',                            RestAdminFunctions.VariablesReset()),
+        ('/variables/search/by/name',                   RestTesterFunctions.VariablesSearchByName()),
+        ('/variables/search/by/id',                     RestTesterFunctions.VariablesSearchById()),
 
-        docs = {}
-        docs["online"] = HelperManager.instance().getHelps()
+        # tests results storage
+        ('/results/listing/files',                      RestTesterFunctions.ResultsListingFiles()),
+        ('/results/listing/id/by/datetime',             RestTesterFunctions.ResultsListingIdByDateTime()),
+        ('/results/reset',                              RestAdminFunctions.ResultsReset()),
+        ('/results/remove/by/id',                       RestTesterFunctions.ResultsRemoveById()),
+        ('/results/remove/by/date',                     RestTesterFunctions.ResultsRemoveByDate()),
+        ('/results/follow',                             RestTesterFunctions.ResultsFollow()),
+        ('/results/status',                             RestTesterFunctions.ResultsStatus()),
+        ('/results/verdict',                            RestTesterFunctions.ResultsVerdict()),
+        ('/results/report/verdicts',                    RestTesterFunctions.ResultsReportVerdicts()),
+        ('/results/report/reviews',                     RestTesterFunctions.ResultsReportReviews()),
+        ('/results/report/designs',                     RestTesterFunctions.ResultsReportDesigns()),
+        ('/results/report/comments',                    RestTesterFunctions.ResultsReportComments()),
+        ('/results/report/events',                      RestTesterFunctions.ResultsReportEvents()),
+        ('/results/reports',                            RestTesterFunctions.ResultsReports()),
+        ('/results/compress/zip',                       RestTesterFunctions.ResultsCompressZip()),
+        ('/results/upload/file',                        RestTesterFunctions.ResultsUploadFile()),
+        ('/results/download/image',                     RestTesterFunctions.ResultsDownloadImage()),
+        ('/results/download/result',                    RestTesterFunctions.ResultsDownloadResult()),
+        ('/results/download/uncomplete',                RestTesterFunctions.ResultsDownloadResultUncomplete()),
+        ('/results/comment/add',                        RestTesterFunctions.ResultsCommentAdd()),
+        ('/results/comments/remove',                    RestTesterFunctions.ResultsCommentsRemove()),
+        ('/results/backup',                             RestAdminFunctions.ResultsBackup()),
+        ('/results/backup/listing',                     RestAdminFunctions.ResultsBackupListing()),
+        ('/results/backup/download',                    RestAdminFunctions.ResultsBackupDownload()),
+        ('/results/backup/remove/all',                  RestAdminFunctions.ResultsBackupRemoveAll()),
+        ('/results/statistics',                         RestAdminFunctions.ResultsStatistics()),
         
-        return { "cmd": self.request.path, "documentations": docs }
+        # metrics for test 
+        ('/metrics/tests/reset',                        RestAdminFunctions.MetricsTestsReset()),
+        ('/metrics/tests/duration/writing',             RestTesterFunctions.MetricsTestsWritingDuration()),
         
-class DocumentationsBuild(Handler):
-    """
-    Build the cache for the documentations
-    """   
-    # @_requires_login()
-    def get(self):
-        """
-        Build the cache for the documentations (uri /rest/documentations/build).
-        Cookie session_id is mandatory.
+        # adapters
+        ( '/adapters/statistics',                       RestAdminFunctions.AdaptersStatistics()),
+        ( '/adapters/check/syntax/all',                 RestAdminFunctions.AdaptersCheckSyntaxAll()),
+        ( '/adapters/check/syntax',                     RestTesterFunctions.AdaptersCheckSyntax()),
+        ( '/adapters/adapter/add',                      RestTesterFunctions.AdaptersAdapterAdd()),
+        ( '/adapters/package/add',                      RestTesterFunctions.AdaptersPackageAdd()),
+        ( '/adapters/adapter/add/by/wsdl/url',          RestTesterFunctions.AdaptersAdapterAddByWsdlUrl()),
+        ( '/adapters/adapter/add/by/wsdl/file',         RestTesterFunctions.AdaptersAdapterAddByWsdlFile()),
+        ( '/adapters/package/default',                  RestTesterFunctions.AdaptersPackageDefault()),
+        ( '/adapters/package/generic',                  RestTesterFunctions.AdaptersPackageGeneric()),
+        ( '/adapters/build',                            RestTesterFunctions.AdaptersBuild()),
+        ( '/adapters/backup',                           RestAdminFunctions.AdaptersBackup()),
+        ( '/adapters/backup/listing',                   RestAdminFunctions.AdaptersBackupListing()),
+        ( '/adapters/backup/download',                  RestAdminFunctions.AdaptersBackupDownload()),
+        ( '/adapters/backup/remove/all',                RestAdminFunctions.AdaptersBackupRemoveAll()),
+        ( '/adapters/reset',                            RestAdminFunctions.AdaptersReset()),
+        ( '/adapters/listing',                          RestTesterFunctions.AdaptersListing()),
+        ( '/adapters/file/move',                        RestTesterFunctions.AdaptersFileMove()),
+        ( '/adapters/file/unlock/all',                  RestAdminFunctions.AdaptersFileUnlockAll()),
+        ( '/adapters/file/unlock',                      RestTesterFunctions.AdaptersFileUnlock()),
+        ( '/adapters/file/rename',                      RestTesterFunctions.AdaptersFileRename()),
+        ( '/adapters/file/duplicate',                   RestTesterFunctions.AdaptersFileDuplicate()),
+        ( '/adapters/file/remove',                      RestTesterFunctions.AdaptersFileRemove()),
+        ( '/adapters/file/upload',                      RestTesterFunctions.AdaptersFileUpload()),
+        ( '/adapters/file/download',                    RestTesterFunctions.AdaptersFileDownload()),
+        ( '/adapters/file/open',                        RestTesterFunctions.AdaptersFileOpen()),
+        ( '/adapters/directory/move',                   RestTesterFunctions.AdaptersDirectoryMove()),
+        ( '/adapters/directory/rename',                 RestTesterFunctions.AdaptersDirectoryRename()),
+        ( '/adapters/directory/duplicate',              RestTesterFunctions.AdaptersDirectoryDuplicate()),
+        ( '/adapters/directory/remove',                 RestTesterFunctions.AdaptersDirectoryRemove()),
+        ( '/adapters/directory/remove/all',             RestAdminFunctions.AdaptersDirectoryRemoveAll()),
+        ( '/adapters/directory/add',                    RestTesterFunctions.AdaptersDirectoryAdd()),
         
-        @return: documentations
-        @rtype: dict 
-        """
-        user_profile = _get_user(self.request)
+        # libraries
+        ( '/libraries/statistics',                      RestAdminFunctions.LibrariesStatistics()),
+        ( '/libraries/check/syntax/all',                RestAdminFunctions.LibrariesCheckSyntaxAll()),
+        ( '/libraries/check/syntax',                    RestTesterFunctions.LibrariesCheckSyntax()),
+        ( '/libraries/library/add',                     RestTesterFunctions.LibrariesLibraryAdd()),
+        ( '/libraries/package/add',                     RestTesterFunctions.LibrariesPackageAdd()),
+        ( '/libraries/package/default',                 RestTesterFunctions.LibrariesPackageDefault()),
+        ( '/libraries/package/generic',                 RestTesterFunctions.LibrariesPackageGeneric()),
+        ( '/libraries/build',                           RestTesterFunctions.LibrariesBuild()),
+        ( '/libraries/backup',                          RestAdminFunctions.LibrariesBackup()),
+        ( '/libraries/backup/listing',                  RestAdminFunctions.LibrariesBackupListing()),
+        ( '/libraries/backup/download',                 RestAdminFunctions.LibrariesBackupDownload()),
+        ( '/libraries/backup/remove/all',               RestAdminFunctions.LibrariesBackupRemoveAll()),
+        ( '/libraries/reset',                           RestAdminFunctions.LibrariesReset()),
+        ( '/libraries/listing',                         RestTesterFunctions.LibrariesListing()),
+        ( '/libraries/file/move',                       RestTesterFunctions.LibrariesFileMove()),
+        ( '/libraries/file/unlock/all',                 RestAdminFunctions.LibrariesFileUnlockAll()),
+        ( '/libraries/file/unlock',                     RestTesterFunctions.LibrariesFileUnlock()),
+        ( '/libraries/file/rename',                     RestTesterFunctions.LibrariesFileRename()),
+        ( '/libraries/file/duplicate',                  RestTesterFunctions.LibrariesFileDuplicate()),
+        ( '/libraries/file/remove',                     RestTesterFunctions.LibrariesFileRemove()),
+        ( '/libraries/file/upload',                     RestTesterFunctions.LibrariesFileUpload()),
+        ( '/libraries/file/download',                   RestTesterFunctions.LibrariesFileDownload()),
+        ( '/libraries/file/open',                       RestTesterFunctions.LibrariesFileOpen()),
+        ( '/libraries/directory/move',                  RestTesterFunctions.LibrariesDirectoryMove()),
+        ( '/libraries/directory/rename',                RestTesterFunctions.LibrariesDirectoryRename()),
+        ( '/libraries/directory/duplicate',             RestTesterFunctions.LibrariesDirectoryDuplicate()),
+        ( '/libraries/directory/remove',                RestTesterFunctions.LibrariesDirectoryRemove()),
+        ( '/libraries/directory/remove/all',            RestAdminFunctions.LibrariesDirectoryRemoveAll()),
+        ( '/libraries/directory/add',                   RestTesterFunctions.LibrariesDirectoryAdd()),
+        
+        # documentation
+        ( '/documentations/cache',                      RestCommonFunctions.DocumentationsCache()),
+        ( '/documentations/build',                      RestCommonFunctions.DocumentationsBuild()),
+        
+        # system
+        ( '/system/status',                             RestCommonFunctions.SystemStatus()),
+        ( '/system/usages',                             RestCommonFunctions.SystemUsages()),
+        ( '/system/about',                              RestCommonFunctions.SystemAbout()),
 
+<<<<<<< HEAD
         success, details = HelperManager.instance().generateHelps()
         if not success:
             raise HTTP_500("Unable to build the documentations")
@@ -5671,21 +5814,35 @@ class _WebServices(WSGI):
         ( '/administration/projects/statistics',        AdminProjectsStatistics()),
         # /administration/logs/export
         # /administration/trace/level
+=======
+        # administration
+        ( '/administration/configuration/listing',      RestAdminFunctions.AdminConfigListing()),
+        ( '/administration/configuration/reload',       RestAdminFunctions.AdminConfigReload()),
+        ( '/administration/clients/deploy',             RestAdminFunctions.AdminClientsDeploy()),
+        ( '/administration/users/profile',              RestAdminFunctions.AdminUsersProfile()),
+        ( '/administration/users/listing',              RestAdminFunctions.AdminUsersListing()),
+        ( '/administration/users/add',                  RestAdminFunctions.AdminUsersAdd()),
+        ( '/administration/users/remove',               RestAdminFunctions.AdminUsersRemove()),
+        ( '/administration/users/channel/disconnect',   RestAdminFunctions.AdminUsersChannelDisconnect()),
+        ( '/administration/users/update',               RestAdminFunctions.AdminUsersUpdate()),
+        ( '/administration/users/status',               RestAdminFunctions.AdminUsersStatus()),
+        ( '/administration/users/duplicate',            RestAdminFunctions.AdminUsersDuplicate()),
+        ( '/administration/users/password/reset',       RestAdminFunctions.AdminUsersPasswordReset()),
+        ( '/administration/users/password/update',      RestAdminFunctions.AdminUsersPasswordUpdate()),
+        ( '/administration/users/search',               RestAdminFunctions.AdminUsersSearch()),
+        ( '/administration/users/statistics',           RestAdminFunctions.AdminUsersStatistics()),
+        ( '/administration/projects/listing',           RestAdminFunctions.AdminProjectsListing()),
+        ( '/administration/projects/add',               RestAdminFunctions.AdminProjectsAdd()),
+        ( '/administration/projects/remove',            RestAdminFunctions.AdminProjectsRemove()),
+        ( '/administration/projects/rename',            RestAdminFunctions.AdminProjectsRename()),
+        ( '/administration/projects/search/by/name',    RestCommonFunctions.AdminProjectsSearchByName()),
+        ( '/administration/projects/statistics',        RestAdminFunctions.AdminProjectsStatistics()),
+        ( '/administration/time/shift',                 RestAdminFunctions.AdminTimeShift()),
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
         # client
-        # /clients/available
-        
-        # toolbox
-        # /tools/available
-        
-        # plugins
-        # /plugins/available
-        
-        # about
-        ('/about/changes/core',                         AboutChangesCore()),
-        ('/about/changes/adapters',                     AboutChangesAdapters()),
-        ('/about/changes/libraries',                    AboutChangesLibraries()),
-        ('/about/changes/toolbox',                      AboutChangesToolbox()),
+        ( '/clients/available',                         RestCommonFunctions.ClientsAvailable()),
+        ( '/clients/download',                          RestCommonFunctions.ClientsDownload())
     ]
 
 class _RestServerInterface(Logger.ClassLogger, threading.Thread):
@@ -5699,8 +5856,10 @@ class _RestServerInterface(Logger.ClassLogger, threading.Thread):
         threading.Thread.__init__(self)
         self._stopEvent = threading.Event()
 
-        self.httpd = make_server( host=listeningAddress[0], port=listeningAddress[1], 
-                                    app=_WebServices, handler_class=_NoLoggingWSGIRequestHandler )
+        self.httpd = make_server( host=listeningAddress[0], 
+                                  port=listeningAddress[1], 
+                                  app=_WebServices, 
+                                  handler_class=_NoLoggingWSGIRequestHandler )
 
     def run(self):
         """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -73,8 +73,7 @@ class RepoPublic(RepoManager.RepoManager, Logger.ClassLogger):
             else:
                 listing.extend( self.__getBasicListing(testPath=entry.path, initialPath=initialPath) )
         return listing
-        
-###############################
+
 RepoPublicMng = None
 def instance ():
     """

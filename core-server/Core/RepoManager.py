@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -28,14 +28,23 @@ import shutil
 import zipfile
 import time
 import scandir
-try:
-    # python 2.4 support
-    import simplejson as json
-except ImportError:
-    import json
+import json
+import sys
 
+# unicode = str with python3
+if sys.version_info > (3,):
+    unicode = str
+    
 from Libs import Logger
+<<<<<<< HEAD
 # import Context
+=======
+
+try:
+    import Common
+except ImportError: # python3 support
+    from . import Common
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 TEST_ABSTRACT_EXT               = 'tax'
 TEST_UNIT_EXT                   = 'tux'
@@ -86,27 +95,6 @@ class RepoManager(Logger.ClassLogger):
         Trace message
         """
         Logger.ClassLogger.trace(self, txt="RMG - %s" % txt)
-
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
 
     def getTimestamp(self):
         """
@@ -295,7 +283,9 @@ class RepoManager(Logger.ClassLogger):
             if os.path.isfile(file):
                 zip_file.write(file)
             else:
-                self.addFolderToZip(zip_file, file, extToInclude=extToInclude, fileToExclude=fileToExclude, extToExclude=extToExclude, keepTree=keepTree)
+                self.addFolderToZip(zip_file, file, extToInclude=extToInclude, 
+                                    fileToExclude=fileToExclude, extToExclude=extToExclude, 
+                                    keepTree=keepTree)
             zip_file.close()
             ret = self.context.CODE_OK
         except IOError as e:
@@ -351,7 +341,12 @@ class RepoManager(Logger.ClassLogger):
                             else:
                                 zip_file.write(filename=full_path, arcname=file)
                 elif os.path.isdir(full_path):
+<<<<<<< HEAD
                     self.addFolderToZip(zip_file, full_path, extToInclude, fileToExclude, extToExclude, keepTree)
+=======
+                    self.addFolderToZip(zip_file, full_path, extToInclude, 
+                                        fileToExclude, extToExclude, keepTree)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         except IOError as e:
             raise IOError(e)
         except Exception as e:
@@ -402,7 +397,10 @@ class RepoManager(Logger.ClassLogger):
                 if entry.is_dir(follow_symlinks=False) and not entry.name.startswith(".") :
                     nbFolders += 1
                     
-                    folderName = entry.name.decode("utf-8")
+                    if sys.version_info > (3,):
+                        folderName = entry.name
+                    else:
+                        folderName = entry.name.decode("utf-8")
                     
                     # get the testresult name
                     if archiveMode:
@@ -416,6 +414,10 @@ class RepoManager(Logger.ClassLogger):
                                     folderNameList = entry.name.split(".")
                                     folderNameList[2] = base64.b64encode(newFolderName.encode("utf8"))
                                     virtualFolderName = ".".join(folderNameList)
+<<<<<<< HEAD
+=======
+                                    del folderNameList
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                                 del newFolderName
                                 f.close()
                             except Exception as e:
@@ -447,8 +449,10 @@ class RepoManager(Logger.ClassLogger):
                         else:
                             statistics[d_key]['nb'] += d_value['nb']
                             statistics[d_key]['total'] += d_value['total']
-                            if d_value['max'] > statistics[d_key]['max']: statistics[d_key]['max'] = d_value['max']
-                            if d_value['min'] < statistics[d_key]['min']: statistics[d_key]['min'] = d_value['min']
+                            if d_value['max'] > statistics[d_key]['max']: 
+                                statistics[d_key]['max'] = d_value['max']
+                            if d_value['min'] < statistics[d_key]['min']: 
+                                statistics[d_key]['min'] = d_value['min']
                                 
                     # max loop
                     if nbDirs is not None:
@@ -462,8 +466,15 @@ class RepoManager(Logger.ClassLogger):
                     if entry.name.lower().endswith( tuple(extSupported) ) and not entry.name.startswith(".") :
                         nbFiles += 1
                         sizeFile = entry.stat(follow_symlinks=False).st_size
-                        dictFile = { "type": "file", "name": entry.name.decode("utf-8"), 'size': "%s" % sizeFile,
-                                     'modification': entry.stat(follow_symlinks=False).st_mtime, 'project': "%s" % project }
+                        
+                        if sys.version_info > (3,):
+                            fileName = entry.name
+                        else:
+                            fileName = entry.name.decode("utf-8")
+                        dictFile = { "type": "file", "name": fileName, 
+                                     'size': "%s" % sizeFile,
+                                     'modification': entry.stat(follow_symlinks=False).st_mtime, 
+                                     'project': "%s" % project }
                         ext = entry.name.rsplit(".", 1)[1]
                         ext = ext.lower()
                         # new in v11.3
@@ -496,7 +507,8 @@ class RepoManager(Logger.ClassLogger):
                 ret.append( dictSnap )
         return ret
         
-    def getFile(self, pathFile, binaryMode=True, project='', addLock=True, login='', forceOpen=False, readOnly=False, projectsList=[]):
+    def getFile(self, pathFile, binaryMode=True, project='', addLock=True, login='', 
+                forceOpen=False, readOnly=False):
         """
         Returns the content of the file gived in argument
 
@@ -512,20 +524,21 @@ class RepoManager(Logger.ClassLogger):
         @return: 
         @rtype: list
         """
+        # read the file
+        self.trace( "get file ProjectId=%s FilePath=%s LockSupport=%s ForceOpen=%s ReadOnly=%s" % 
+                    (project, pathFile, addLock, forceOpen, readOnly) )
+        
+        # extract filename, extension and path file
+        ext_file = str(pathFile).rsplit(".", 1)[1]
+        path_file = str(pathFile).rsplit("/", 1)[0]
+        if len( str(pathFile).rsplit("/", 1) ) > 1:
+            name_file = str(pathFile).rsplit("/", 1)[1].rsplit(".", 1)[0]
+        else:
+            path_file = ""
+            name_file = str(pathFile).rsplit(".", 1)[0]
+        
+        ret = (path_file, name_file, ext_file, project)
         try:
-            # read the file
-            self.trace( "get file ProjectId=%s FilePath=%s LockSupport=%s ForceOpen=%s ReadOnly=%s" % 
-                        (project, pathFile, addLock, forceOpen, readOnly) )
-            
-            # extract filename, extension and path file
-            ext_file = str(pathFile).rsplit(".", 1)[1]
-            path_file = str(pathFile).rsplit("/", 1)[0]
-            if len( str(pathFile).rsplit("/", 1) ) > 1:
-                name_file = str(pathFile).rsplit("/", 1)[1].rsplit(".", 1)[0]
-            else:
-                path_file = ""
-                name_file = str(pathFile).rsplit(".", 1)[0]
-                
             # prepare lock file path
             is_locked = False
             locked_by = ''
@@ -544,7 +557,11 @@ class RepoManager(Logger.ClassLogger):
                         locked_by = ''
             
             if is_locked and not forceOpen and addLock and not readOnly:
+<<<<<<< HEAD
                 return [ self.context.CODE_LOCKED, path_file, name_file, ext_file, base64.b64encode(""), project, (is_locked,locked_by) ]
+=======
+                return (self.context.CODE_OK,) +  ret +  (base64.b64encode(""), is_locked, locked_by)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                 
             # open the file in binary mode ? yes by default
             if binaryMode:
@@ -554,7 +571,10 @@ class RepoManager(Logger.ClassLogger):
                 
             # read the content, encode in base64 and return it
             data_read = f.read()
+<<<<<<< HEAD
             ret =  [ self.context.CODE_OK, path_file, name_file, ext_file, base64.b64encode(data_read), project, (is_locked,locked_by) ]
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             f.close()
             
             # create lock file only if activated
@@ -564,14 +584,24 @@ class RepoManager(Logger.ClassLogger):
                     fd_lock = open(lockPath, 'w')
                     fd_lock.write(base64.b64encode(login))
                     fd_lock.close()
+            
+            return (self.context.CODE_OK,) + ret + (base64.b64encode(data_read), is_locked, locked_by)
         except IOError as e:
             self.error( e )
+<<<<<<< HEAD
             ret =  [ self.context.CODE_FORBIDDEN, False, False, False, False, False, (False,'') ]
         except Exception as e:
             self.error( e )
             ret =  [ self.context.CODE_NOT_FOUND, False, False, False, False, False, (False,'') ]
         return ret
         
+=======
+            return (self.context.CODE_FORBIDDEN,) + ret + ( '', False,'')
+        except Exception as e:
+            self.error( e )
+            return (self.context.CODE_NOT_FOUND,)+ ret + ( '', False,'')
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     def getBackup(self, pathFile, binaryMode=True, project=''):
         """
         Returns the content of the backp gived in argument
@@ -604,62 +634,74 @@ class RepoManager(Logger.ClassLogger):
             else:
                 f = open( "%s/%s/%s" % (self.destBackup, project, pathFile), 'r')
             data_read = f.read()
+<<<<<<< HEAD
             ret =  [ self.context.CODE_OK, path_file, name_file, ext_file, base64.b64encode(data_read), project ]
+=======
+            ret =  [ self.context.CODE_OK, path_file, name_file, 
+                     ext_file, base64.b64encode(data_read), project ]
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             f.close()
         except Exception as e:
             self.error( e )
             ret =  [ self.context.CODE_NOT_FOUND, False, False, False, False, False ]
         return ret
         
-    def importFile(self, pathFile, nameFile, extFile, contentFile, binaryMode=True, project='', makeDirs=False):
+    def uploadFile(self, pathFile, nameFile, extFile, contentFile, login='', project='', 
+                    overwriteFile=False, createFolders=False, lockMode=False, 
+                    binaryMode=True, closeAfter=False):
         """
-        Save data in the file passed in argument
-
-        @param pathFile: 
-        @type pathFile:
-
-        @param nameFile: 
-        @type nameFile:
-
-        @param extFile: 
-        @type extFile:
-
-        @param contentFile: file content in base64
-        @type contentFile:
-
-        @param updateFile: 
-        @type updateFile:
-
-        @param binaryMode: 
-        @type binaryMode:
-
-        @return: 
-        @rtype: list
         """
+        ret = (pathFile, nameFile, extFile, project, overwriteFile, closeAfter)
+        lockedBy = ''
+        is_locked = False
         try:
-            if extFile.lower() not in [ PY_EXT, PNG_EXT, TXT_EXT, TEST_UNIT_EXT, TEST_SUITE_EXT, 
-                                    TEST_PLAN_EXT, TEST_GLOBAL_EXT, TEST_CONFIG_EXT, TEST_DATA_EXT]:
-                raise Exception('Extension: %s not supported!' % extFile)
+            # checking extension
+            if extFile.lower() not in [ PY_EXT, PNG_EXT, TXT_EXT, TEST_UNIT_EXT, 
+                                        TEST_SUITE_EXT, TEST_ABSTRACT_EXT, TEST_PLAN_EXT, 
+                                        TEST_GLOBAL_EXT, TEST_CONFIG_EXT, TEST_DATA_EXT]:
+                return (self.context.CODE_FORBIDDEN,)+ ret + (is_locked, lockedBy,)
 
+            # prepare path files
             if len(pathFile) > 0:
+                lockPath = "%s/%s/%s/.%s.%s.lock" % (self.testsPath, project, pathFile, nameFile, extFile)
                 complete_path = "%s/%s/%s/%s.%s" % (self.testsPath, project, pathFile, nameFile, extFile)
             else:
                 complete_path = "%s/%s/%s.%s" % (self.testsPath, project, nameFile, extFile)
+<<<<<<< HEAD
             self.trace( "importing file %s" % complete_path  ) 
             res = os.path.exists( complete_path )
             if res:
                 return ( self.context.CODE_ALLREADY_EXISTS, pathFile, nameFile, extFile, project )
             
+=======
+                lockPath = "%s/%s/.%s.%s.lock" % (self.testsPath, project,  nameFile, extFile)
+
+            # refuse to save if a lock already exist with a diffent login name
+            if lockMode:
+                if os.path.exists( lockPath ): 
+                    is_locked=True
+                    fd_lock = open(lockPath, 'r')
+                    lockedBy = fd_lock.read()
+                    fd_lock.close()
+                    
+                    # cancel lock when login
+                    if base64.b64encode(login) != lockedBy:
+                        return (self.context.CODE_OK,) + ret + (is_locked, lockedBy,)
+                                
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             # create missing directory
-            if makeDirs:
+            if createFolders:
                 folderPath = "%s/%s/%s/" % (self.testsPath, project, pathFile)
                 if not os.path.exists( folderPath ):
                     os.makedirs(folderPath)
-                
-            # decode the content
-            content_decoded = base64.b64decode(contentFile)
+                    
+            # overwrite the file ?
+            if not overwriteFile:
+                if os.path.exists( complete_path ):
+                    return (self.context.CODE_ALLREADY_EXISTS,) + ret + (is_locked, lockedBy,)
             
             # write the file
+            content_decoded = base64.b64decode(contentFile)
             if binaryMode:
                 f = open( complete_path, 'wb')
             else:
@@ -667,12 +709,21 @@ class RepoManager(Logger.ClassLogger):
             f.write( content_decoded )
             f.close()
             
+<<<<<<< HEAD
             ret = (  self.context.CODE_OK, pathFile, nameFile, extFile, project )
         except Exception as e:
             self.error( e )
             ret = (  self.context.CODE_ERROR, False, False, False, project)
         return ret
         
+=======
+            return ( self.context.CODE_OK,) + ret + (is_locked, lockedBy,)
+                    
+        except Exception as e:
+            self.error( e )
+            return (self.context.CODE_ERROR,) + ret + (is_locked, lockedBy,)
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     def unlockFile(self, pathFile, nameFile, extFile, project='', login=''):
         """
         Save data in the file passed in argument
@@ -700,7 +751,11 @@ class RepoManager(Logger.ClassLogger):
         """
         ret = self.context.CODE_OK
         try:
-            completepath = "%s/%s/%s/.%s.%s.lock" % ( self.testsPath, project, unicode(pathFile), nameFile, extFile )
+            completepath = "%s/%s/%s/.%s.%s.lock" % ( self.testsPath, 
+                                                      project, 
+                                                      unicode(pathFile), 
+                                                      nameFile, 
+                                                      extFile )
             
             self.trace( "trying to unlock file=%s" % completepath )
             res = os.path.exists( completepath )
@@ -714,6 +769,7 @@ class RepoManager(Logger.ClassLogger):
         except Exception as e:
             self.error( "unable to unlock file: %s" % e )
             ret = self.context.CODE_ERROR
+<<<<<<< HEAD
         return ret
 
     def putFile(self, pathFile, nameFile, extFile, contentFile, updateFile, binaryMode=True,
@@ -791,6 +847,8 @@ class RepoManager(Logger.ClassLogger):
         except Exception as e:
             self.error( e )
             ret = (  self.context.CODE_ERROR, False, False, False, False, project, closeAfter, lockedBy)
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         return ret
 
     def addDir(self, pathFolder, folderName, project=''):
@@ -809,7 +867,10 @@ class RepoManager(Logger.ClassLogger):
         ret = self.context.CODE_ERROR
         try:
             if str(pathFolder) != "":
-                completepath = "%s/%s/%s/%s" % ( self.testsPath, project, unicode(pathFolder) , unicode(folderName ) )
+                completepath = "%s/%s/%s/%s" % ( self.testsPath, 
+                                                 project, 
+                                                 unicode(pathFolder), 
+                                                 unicode(folderName ) )
             else:
                 completepath = "%s/%s/%s" % ( self.testsPath, project, unicode(folderName) )
             self.trace( "adding folder %s" %completepath )
@@ -1046,19 +1107,36 @@ class RepoManager(Logger.ClassLogger):
         ret = self.context.CODE_ERROR
         if not len(newFilename):
             self.error( "empty filename" )
+<<<<<<< HEAD
             return ( self.context.CODE_ERROR, mainPath, oldFilename, newFilename, extFilename, project)
+=======
+            return ( self.context.CODE_ERROR, mainPath, oldFilename, 
+                     newFilename, extFilename, project)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         try:
-            oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, unicode(oldFilename), extFilename )
-            newpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, unicode(newFilename), extFilename )
+            oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, 
+                                           unicode(oldFilename), extFilename )
+            newpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, 
+                                           unicode(newFilename), extFilename )
 
             self.trace( "renaming %s to  %s" % ( oldpath,newpath ) )
             res = os.path.exists( oldpath )
             if not res:
+<<<<<<< HEAD
                 return ( self.context.CODE_NOT_FOUND, mainPath, oldFilename, newFilename, extFilename, project)
             else:
                 res = os.path.exists( newpath )
                 if res:
                     return ( self.context.CODE_ALLREADY_EXISTS, mainPath, oldFilename, newFilename, extFilename, project )
+=======
+                return ( self.context.CODE_NOT_FOUND, mainPath, oldFilename, 
+                         newFilename, extFilename, project)
+            else:
+                res = os.path.exists( newpath )
+                if res:
+                    return ( self.context.CODE_ALLREADY_EXISTS, mainPath, oldFilename, 
+                             newFilename, extFilename, project )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                 else:
                     os.rename( oldpath, newpath )
 
@@ -1080,6 +1158,7 @@ class RepoManager(Logger.ClassLogger):
                         self.trace( "snapshots renamed too")    
                     # end of new in v11
                     
+<<<<<<< HEAD
                     return ( self.context.CODE_OK, mainPath, oldFilename, newFilename, extFilename, project)
         except IOError as e:
             self.error( "io error: %s" % e )
@@ -1087,9 +1166,22 @@ class RepoManager(Logger.ClassLogger):
         except Exception as e:
             self.error( "generic error: %s" %  e )
             return ( self.context.CODE_ERROR, mainPath, oldFilename, newFilename, extFilename, project)
+=======
+                    return ( self.context.CODE_OK, mainPath, oldFilename, 
+                             newFilename, extFilename, project)
+        except IOError as e:
+            self.error( "io error: %s" % e )
+            return ( self.context.CODE_FORBIDDEN, mainPath, oldFilename, 
+                     newFilename, extFilename, project)
+        except Exception as e:
+            self.error( "generic error: %s" %  e )
+            return ( self.context.CODE_ERROR, mainPath, oldFilename, 
+                     newFilename, extFilename, project)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         return ret
 
-    def duplicateFile(self, mainPath, oldFilename, newFilename, extFilename, project='', newProject='', newMainPath=''):
+    def duplicateFile(self, mainPath, oldFilename, newFilename, extFilename, 
+                      project='', newProject='', newMainPath=''):
         """
         Duplicate the file gived in argument
 
@@ -1110,8 +1202,10 @@ class RepoManager(Logger.ClassLogger):
         """
         ret = self.context.CODE_ERROR
         try:
-            oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, unicode(oldFilename), extFilename )
-            newpath = "%s/%s/%s/%s.%s" % ( self.testsPath, newProject, newMainPath, unicode(newFilename), extFilename )
+            oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, 
+                                           unicode(oldFilename), extFilename )
+            newpath = "%s/%s/%s/%s.%s" % ( self.testsPath, newProject, newMainPath, 
+                                           unicode(newFilename), extFilename )
 
             self.trace( "duplicating %s to  %s" % ( oldpath,newpath ) )
             res = os.path.exists( oldpath )
@@ -1184,7 +1278,8 @@ class RepoManager(Logger.ClassLogger):
             self.error( e )
             return ( self.context.CODE_ERROR, mainPath, folderName, newPath, project)
 
-    def moveFile(self, mainPath, fileName, extFilename, newPath, project='', newProject='', supportSnapshot=False):
+    def moveFile(self, mainPath, fileName, extFilename, newPath, project='', 
+                 newProject='', supportSnapshot=False):
         """
         Move the file gived in argument
 
@@ -1205,18 +1300,30 @@ class RepoManager(Logger.ClassLogger):
         """
         ret = self.context.CODE_ERROR
         try:
-            oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, unicode(fileName), extFilename )
-            newpath = "%s/%s/%s/%s.%s" % ( self.testsPath, newProject, newPath, unicode(fileName), extFilename )
+            oldpath = "%s/%s/%s/%s.%s" % ( self.testsPath, project, mainPath, 
+                                           unicode(fileName), extFilename )
+            newpath = "%s/%s/%s/%s.%s" % ( self.testsPath, newProject, newPath, 
+                                           unicode(fileName), extFilename )
 
             self.trace( "moving file from %s to %s" % ( oldpath,newpath ) )
             res = os.path.exists( oldpath )
             if not res:
+<<<<<<< HEAD
                 return ( self.context.CODE_NOT_FOUND, mainPath, fileName, newPath, extFilename, project)
+=======
+                return ( self.context.CODE_NOT_FOUND, mainPath, fileName, 
+                         newPath, extFilename, project)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             else:
                 res = os.path.exists( newpath )
                 if res:
                     self.trace( "test name already exists in the destination" )
+<<<<<<< HEAD
                     return ( self.context.CODE_ALLREADY_EXISTS, mainPath, fileName, newPath, extFilename, project )
+=======
+                    return ( self.context.CODE_ALLREADY_EXISTS, mainPath, fileName, 
+                             newPath, extFilename, project )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
                 else:
                     shutil.move( oldpath, newpath )
                     
@@ -1237,7 +1344,12 @@ class RepoManager(Logger.ClassLogger):
                         self.trace( "snapshots moved too")    
                     # end of new in v11
                     
+<<<<<<< HEAD
                     return ( self.context.CODE_OK, mainPath, fileName, newPath, extFilename, project)
+=======
+                    return ( self.context.CODE_OK, mainPath, fileName, 
+                             newPath, extFilename, project)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         except Exception as e:
             self.error( e )
             return ret

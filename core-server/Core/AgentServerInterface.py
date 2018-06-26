@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@ import threading
 
 try:
     import EventServerInterface as ESI
+<<<<<<< HEAD
     # import TestServerInterface as TSI
     # import Context
 except ImportError: # python3 support
@@ -32,6 +33,11 @@ except ImportError: # python3 support
     # from . import TestServerInterface as TSI
     # from . import Context
     
+=======
+except ImportError: # python3 support
+    from . import EventServerInterface as ESI
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 import Libs.NetLayerLib.ServerAgent as NetLayerLib
 import Libs.NetLayerLib.Messages as Messages
 import Libs.NetLayerLib.ClientAgent as ClientAgent
@@ -212,10 +218,14 @@ class AgentServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         self.trace("on registration" )
         self.__mutex.acquire()
         doNotify=False
+<<<<<<< HEAD
         if len(self.agentsRegistered) >= self.context.getLicence()[ 'agents' ] [ 'instance' ]:
             self.info('license agents reached')
             NetLayerLib.ServerAgent.forbidden(self, client, tid)
         elif request['userid'] in  self.agentsRegistered:
+=======
+        if request['userid'] in  self.agentsRegistered:
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             self.info('duplicate agents registration: %s' % request['userid'] )
             NetLayerLib.ServerAgent.failed(self, client, tid)
         else:
@@ -285,7 +295,6 @@ class AgentServerInterface(Logger.ClassLogger, NetLayerLib.ServerAgent):
         """
         Logger.ClassLogger.trace(self, txt="ASI - %s" % txt)
 
-#############
 ASI = None
 def instance ():
     """

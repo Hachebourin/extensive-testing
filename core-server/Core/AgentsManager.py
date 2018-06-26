@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -23,21 +23,31 @@
 
 import base64
 import zlib
+<<<<<<< HEAD
 try:
     # python 2.4 support
     import simplejson as json
 except ImportError:
     import json
+=======
+import json
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 try:
     import AgentServerInterface as ASI
     import EventServerInterface as ESI
+<<<<<<< HEAD
     # import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     import Common
 except ImportError: # python3 support
     from . import AgentServerInterface as ASI
     from . import  EventServerInterface as ESI
+<<<<<<< HEAD
     # from . import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     from . import  Common
     
 from Libs import Settings, Logger
@@ -69,6 +79,7 @@ class AgentsManager(Logger.ClassLogger):
         self.configsFile = None
         self.__pids__ = {}
 
+<<<<<<< HEAD
     def encodeData(self, data):
         """
         Encode data
@@ -109,6 +120,8 @@ class AgentsManager(Logger.ClassLogger):
                 ret = self.encodeData(data=ret)
         return ret
 
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     def getDefaultAgents(self, b64=False):
         """
         Read default agents to start on boot
@@ -128,8 +141,6 @@ class AgentsManager(Logger.ClassLogger):
                     tpl[optKey] = optValue
                 # {'enable': '1', 'type': 'textual', 'name': 'textual01', 'description': 'default probe'},
                 agents.append( tpl )  
-        if b64:
-            agents = self.encodeData(data=agents)
         return agents
 
     def addDefaultAgent(self, aName, aType, aDescr):
@@ -151,6 +162,7 @@ class AgentsManager(Logger.ClassLogger):
         ret = self.context.CODE_ERROR
         try:
             if self.configsFile is not None:
+<<<<<<< HEAD
                 # check licence
                 if len(self.configsFile.sections()) >=  self.context.getLicence()[ 'agents' ] [ 'default' ]:
                     ret = self.context.CODE_FORBIDDEN
@@ -172,6 +184,25 @@ class AgentsManager(Logger.ClassLogger):
                     
                     # return OK
                     ret = self.context.CODE_OK
+=======
+                # add the section in the config file object
+                self.configsFile.add_section(aName)
+                self.configsFile.set( aName, 'enable', 1)
+                self.configsFile.set( aName, 'type', aType)
+                self.configsFile.set( aName, 'description', aDescr)
+                
+                # write date the file 
+                f = open(  "%s/agents.ini" % Settings.getDirExec() , 'w')
+                self.configsFile.write(f)
+                f.close()
+
+                # notify all admin and tester
+                notif = ( 'agents-default', ( 'add', self.getDefaultAgents() ) )
+                ESI.instance().notifyByUserTypes(body = notif, admin=True, leader=False, tester=True, developer=False)
+                
+                # return OK
+                ret = self.context.CODE_OK
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         except ConfigParser.DuplicateSectionError:
             self.error( "agent already exist %s" % str(aName) ) 
             ret = self.context.CODE_ALLREADY_EXISTS
@@ -203,13 +234,15 @@ class AgentsManager(Logger.ClassLogger):
 
                 # notify all admin and tester
                 notif = ( 'agents-default', ( 'del', self.getDefaultAgents() ) )
-                ESI.instance().notifyByUserTypes(body = notif, admin=True, leader=False, tester=True, developer=False)
+                ESI.instance().notifyByUserTypes(body = notif, admin=True, leader=False, 
+                                                 tester=True, developer=False)
 
                 runningAgent = ASI.instance().getAgent(aname=aName)
                 if runningAgent is not None:
                     runningAgent['auto-startup'] = False
                 notif2 = ( 'agents', ( 'del', ASI.instance().getAgents() ) )
-                ESI.instance().notifyByUserTypes(body = notif2, admin=True, leader=False, tester=True, developer=False)
+                ESI.instance().notifyByUserTypes(body = notif2, admin=True, leader=False, 
+                                                 tester=True, developer=False)
 
 
                 # return OK
@@ -231,8 +264,6 @@ class AgentsManager(Logger.ClassLogger):
         """
         self.trace("get running agents" )
         ret = ASI.instance().getAgents()
-        if b64:
-            ret = self.encodeData(data=ret)
         return ret
 
     def getInstalled (self, b64=False):
@@ -264,8 +295,6 @@ class AgentsManager(Logger.ClassLogger):
                         a['description'] = agentDescr
                     if  len(a) > 0:
                         pluginsInstalled.append( a )
-        if b64:
-            pluginsInstalled = self.encodeData(data=pluginsInstalled)
         return pluginsInstalled
 
     def disconnectAgent(self, name):
@@ -377,7 +406,6 @@ class AgentsManager(Logger.ClassLogger):
         """
         Logger.ClassLogger.trace(self, txt="ATM - %s" % txt)
 
-###############################
 AM = None
 def instance ():
     """

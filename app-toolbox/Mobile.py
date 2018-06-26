@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -25,6 +25,11 @@
 Mobile widget
 """
 
+<<<<<<< HEAD
+=======
+import sys
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 try:
 	from PyQt4.QtGui import (QWidget, QLabel, QCheckBox, QVBoxLayout, QTreeView, QAbstractItemView, 
 							QHBoxLayout, QIcon, QMenu, QCursor, QApplication, QPainter, QPen,
@@ -421,7 +426,13 @@ class MobileWidget(QWidget):
                 bounds_str = attribute.nodeValue()
  
         self.tableModel.mylist = attributes
-        self.tableModel.reset()
+
+        if sys.version_info > (3,):
+            self.tableModel.beginResetModel()
+            self.tableModel.endResetModel()
+        else:
+            self.tableModel.reset()
+            
         self.mobileTableView.resizeColumnsToContents ()
         self.mobileTableView.resizeRowsToContents()
         

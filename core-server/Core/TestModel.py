@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 
 import os
 import base64
+import sys
 
 from Libs import Settings
 import Libs.FileModels.TestData as TestData
@@ -46,11 +47,19 @@ except ImportError: # support python 3
     from . import RepoLibraries
     from . import ProjectsManager
     from . import Common 
+<<<<<<< HEAD
     
+=======
+
+# unicode = str with python3
+if sys.version_info > (3,):
+    unicode = str
+        
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 TS_ENABLED				= "2"
 TS_DISABLED				= "0"
 
-indent = Common.indent
+# indent = Common.indent
 
 def getTestsPath(envTmp=False):
     """
@@ -91,7 +100,7 @@ import re
 IMPORT_TE_LIBS = """
 try:
 	from Libs import Scheduler
-except ImportError, e:
+except ImportError as e:
 	pass
 import TestExecutorLib.TestLoggerXml as TLX
 import TestExecutorLib.TestDataStorage as TDS
@@ -367,11 +376,16 @@ INPUT_CUSTOM = """
 				cache_args = cache_args[1:]
 			new_line = new_line.replace(c, "%s" % v, 1)
 
-		inputs = re.findall("\[!INPUT:[\w-]+\:\]", new_line)
-		for c in inputs:
-			inputs_args = c.split(":")[1:-1]
-			v = input(inputs_args[0])
-			new_line = new_line.replace(c, "%s" % v, 1)
+		inputs = re.findall("\[!INPUT:[\w-]+(?:\:[\w-]+)*\:\]", new_line)
+                for c in inputs:
+                        input_args = c.split(":")[1:-1]
+                        v = input(input_args[0])
+                        i=1
+                        while i<len(input_args):
+                                if isinstance(v, dict):
+                                        v = v[input_args[i]]
+                                i=i+1
+                        new_line = new_line.replace(c, "%s" % v, 1)
             
 		captures = re.findall("\[!CAPTURE:[\w-]+(?:\:.*?)?\:\]", new_line)
 		for c in captures:
@@ -525,7 +539,7 @@ def loadDataset(parameters, inputs=True, user=''):
 
 def createTestDesign(   dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
                         projectId=0, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                         testLocation='' ):
+                         testLocation='', taskUuid='' ):
     """
     Creates and returns the test executable for design only
 
@@ -535,35 +549,33 @@ def createTestDesign(   dataTest, userName, testName, trPath, logFilename, witho
     @return:
     @rtype: string
     """
-    if 'testglobal' in dataTest:
+    if dataTest["test-extension"] == "tgx":
         return createTestDesignForTg( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary,
-                                        defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
-                                            runningAgents, runningProbes, testLocation)
+                                    defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
+                                    runningAgents, runningProbes, testLocation, taskUuid)
+    elif dataTest["test-extension"] == "tpx":
+        return createTestDesignForTp( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary,
+                                    defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
+                                    runningAgents, runningProbes, testLocation, taskUuid)
+    elif dataTest["test-extension"] == "tux":
+        return createTestDesignForTu( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
+                                    defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
+                                    runningAgents, runningProbes, testLocation, taskUuid)
+    elif dataTest["test-extension"] == "tax":
+        return createTestDesignForTa( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
+                                    defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
+                                    runningAgents, runningProbes, testLocation, taskUuid)
     else:
-        if 'testplan' in dataTest:
-            return createTestDesignForTp( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary,
-                                            defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
-                                                runningAgents, runningProbes, testLocation)
-        else:
-            if 'testunit' in dataTest:
-                return createTestDesignForTu( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                                defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
-                                                    runningAgents, runningProbes, testLocation)
-            elif 'testabstract' in dataTest:
-                return createTestDesignForTa( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                                defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
-                                                    runningAgents, runningProbes, testLocation)
-            else:
-                return createTestDesignForTs( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                                defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
-                                                    runningAgents, runningProbes, testLocation)
+        return createTestDesignForTs( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
+                                    defaultAdapter, userId, projectId, parametersShared, stepByStep, breakpoint, testId,
+                                    runningAgents, runningProbes, testLocation, taskUuid)
 
 def createTestDesignForTg(dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
                             projectId=0, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                            testLocation='' ):
+                            testLocation='', taskUuid=''  ):
     """
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -586,8 +598,8 @@ def createTestDesignForTg(dataTest, userName, testName, trPath, logFilename, wit
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
     
-    testglobal = dataTest['testglobal']
-
+    testglobal = dataTest['test-execution']
+    
     # prepare datasets
     missingDataset = loadDataset(parameters=parameters, user=userName)
     missingDatasetOut = loadDataset(parameters=parametersOut, inputs=False, user=userName)
@@ -605,7 +617,8 @@ def createTestDesignForTg(dataTest, userName, testName, trPath, logFilename, wit
 
     # import static arguments
     te.append( getStaticArgs(envTmp=True) )
-
+    
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
     te.append( """projectid_ = '%s'\n""" % projectId )
@@ -803,7 +816,7 @@ try:
                 isTa=True
         if ts['enable'] == TS_ENABLED:
             ts['depth'] = 1 # bypass depath
-            te.append(indent("""
+            te.append(Common.indent("""
 	try:
 """, nbTab = ts['depth'] -1 ))
             # prepare datasets
@@ -815,18 +828,18 @@ try:
             missingImagesTsOut = loadImages(parameters=ts['properties']['outputs-parameters']['parameter'], user=userName)
 
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=%s, testPath="%s", testProject="%s", nameAlias="%s")
 if %s:""" % (ts['path'], ts['enable'], ts["testpath"], ts["testproject"], ts["alias"], ts['enable']) , nbTab = ts['depth'] + 1 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTa(name="%s", isEnabled=%s, testPath="%s", testProject="%s", nameAlias="%s")
 if %s:""" % (ts['path'], ts['enable'], ts["testpath"], ts["testproject"], ts["alias"], ts['enable']) , nbTab = ts['depth'] + 1 ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTu(name="%s", isEnabled=%s, testPath="%s", testProject="%s", nameAlias="%s")
 if %s:""" % (ts['path'], ts['enable'], ts["testpath"], ts["testproject"], ts["alias"], ts['enable']) , nbTab = ts['depth'] + 1 ) )
-            te.append(indent("""
+            te.append(Common.indent("""
 
 TLX.instance().setUniqueId("%s", tsId = "%s")
 	""" % ( ts['path'], ts['id'] ), nbTab = ts['depth'] + 2 ) )
@@ -836,30 +849,30 @@ TLX.instance().setUniqueId("%s", tsId = "%s")
             te.append("\n")
             te.append("\n")
 
-            te.append( indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['inputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['outputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
                         ts['properties']['descriptions']['description'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
                         ts['properties']['agents']['agent'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
             if isTs:
-                te.append(indent(ts['src'], nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent(ts['test-definition'], nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("class TESTCASE(TestCase):", nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("class TESTCASE(TestCase):", nbTab = ts['depth'] + 2 ))
                 te.append("\n")
-                te.append(indent(ts['src'], nbTab = ts['depth'] + 3 ))
+                te.append(Common.indent(ts['test-definition'], nbTab = ts['depth'] + 3 ))
             te.append("\n")
             if isTs:
-                te.append(indent(ts['src2'], nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent(ts['test-execution'], nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
-            te.append(indent("""
+                te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
+            te.append(Common.indent("""
 	except Exception as e:
 		sys.stderr.write( '%s\\n' % str(e) )
 		return_code = RETURN_CODE_TE_ERROR""", nbTab = ts['depth'] - 1) )
@@ -880,10 +893,10 @@ sys.exit(return_code)
 
 def createTestDesignForTp(dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
                             projectId=0, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                            testLocation='' ):
+                            testLocation='' , taskUuid='' ):
     """
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -906,8 +919,9 @@ def createTestDesignForTp(dataTest, userName, testName, trPath, logFilename, wit
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
     
-    testplan = dataTest['testplan']
-
+    # testplan = dataTest['testplan']
+    testplan = dataTest['test-execution']
+    
     # prepare datasets
     missingDataset = loadDataset(parameters=parameters, user=userName)
     missingDatasetOut = loadDataset(parameters=parametersOut, inputs=False, user=userName)
@@ -925,7 +939,8 @@ def createTestDesignForTp(dataTest, userName, testName, trPath, logFilename, wit
 
     # import static arguments
     te.append( getStaticArgs(envTmp=True) )
-
+    
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
     te.append( """projectid_ = '%s'\n""" % projectId )
@@ -966,7 +981,7 @@ return_code = RETURN_CODE_OK
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_=userid_)
 
 TestExecutorLib.dontExecute()
@@ -1124,7 +1139,7 @@ try:
                 isTa=True
         if ts['enable'] == TS_ENABLED:
             ts['depth'] = 1 # bypass depath
-            te.append(indent("""
+            te.append(Common.indent("""
 	try:
 """, nbTab = ts['depth'] -1 ))
             # prepare datasets
@@ -1136,18 +1151,18 @@ try:
             missingImagesTsOut = loadImages(parameters=ts['properties']['outputs-parameters']['parameter'], user=userName)
 
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=%s, testPath="%s", testProject="%s", nameAlias="%s")
 if %s:""" % (ts['path'], ts['enable'], ts["testpath"], ts["testproject"], ts["alias"], ts['enable']) , nbTab = ts['depth'] + 1 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTa(name="%s", isEnabled=%s, testPath="%s", testProject="%s", nameAlias="%s")
 if %s:""" % (ts['path'], ts['enable'], ts["testpath"], ts["testproject"], ts["alias"], ts['enable']) , nbTab = ts['depth'] + 1 ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTu(name="%s", isEnabled=%s, testPath="%s", testProject="%s", nameAlias="%s")
 if %s:""" % (ts['path'], ts['enable'], ts["testpath"], ts["testproject"], ts["alias"], ts['enable']) , nbTab = ts['depth'] + 1 ) )
-            te.append(indent("""
+            te.append(Common.indent("""
 
 TLX.instance().setUniqueId("%s", tsId = "%s")
 	""" % ( ts['path'], ts['id'] ), nbTab = ts['depth'] + 2 ) )
@@ -1157,30 +1172,30 @@ TLX.instance().setUniqueId("%s", tsId = "%s")
             te.append("\n")
             te.append("\n")
 
-            te.append( indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['inputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['outputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
                         ts['properties']['descriptions']['description'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
                         ts['properties']['agents']['agent'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
             if isTs:
-                te.append(indent(ts['src'], nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent(ts['test-definition'], nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("class TESTCASE(TestCase):", nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("class TESTCASE(TestCase):", nbTab = ts['depth'] + 2 ))
                 te.append("\n")
-                te.append(indent(ts['src'], nbTab = ts['depth'] + 3 ))
+                te.append(Common.indent(ts['test-definition'], nbTab = ts['depth'] + 3 ))
             te.append("\n")
             if isTs:
-                te.append(indent(ts['src2'], nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent(ts['test-execution'], nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
-            te.append(indent("""
+                te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
+            te.append(Common.indent("""
 	except Exception as e:
 		sys.stderr.write( '%s\\n' % str(e) )
 		return_code = RETURN_CODE_TE_ERROR""", nbTab = ts['depth'] - 1) )
@@ -1201,10 +1216,10 @@ sys.exit(return_code)
 
 def createTestDesignForTs(dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
                             projectId=0, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                            testLocation='' ):
+                            testLocation='', taskUuid=''  ):
     """
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -1226,15 +1241,9 @@ def createTestDesignForTs(dataTest, userName, testName, trPath, logFilename, wit
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
-    if 'src-exec' in dataTest:
-        srcExec = dataTest['src-exec']
 
-    if 'testunit' in dataTest:
-        srcTest = "class TESTCASE_01(TestCase):\t%s"% indent(srcTest)
-        srcExec = "TESTCASE_01(suffix=None, testName='%s' % description('name')).execute()"
+    srcTest = dataTest['test-definition']
+    srcExec = dataTest['test-execution']
 
     # prepare datasets
     missingDataset = loadDataset(parameters=parameters, user=userName)
@@ -1253,7 +1262,8 @@ def createTestDesignForTs(dataTest, userName, testName, trPath, logFilename, wit
 
     # import static arguments
     te.append( getStaticArgs(envTmp=True) )
-
+    
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
     te.append( """projectid_ = '%s'\n""" % projectId )
@@ -1295,7 +1305,7 @@ return_code = RETURN_CODE_OK
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_ = userid_)
 
 TestExecutorLib.dontExecute()
@@ -1430,12 +1440,12 @@ try:
     te.append("""
 	# !! test injection
 """)
-    te.append(indent(srcTest))
+    te.append(Common.indent(srcTest))
     te.append("\n")
     te.append("""
 	# !! test exec injection
 """)
-    te.append(indent(srcExec))
+    te.append(Common.indent(srcExec))
     te.append("""
 except Exception as e:
 	sys.stderr.write( '%s\\n' % str(e) )
@@ -1452,10 +1462,10 @@ sys.exit(return_code)
 
 def createTestDesignForTu(dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
                             projectId=0, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                            testLocation='' ):
+                            testLocation='', taskUuid=''  ):
     """
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -1478,9 +1488,11 @@ def createTestDesignForTu(dataTest, userName, testName, trPath, logFilename, wit
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
     
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
+    # if 'src-test' in dataTest:
+        # srcTest = dataTest['src-test']
 
+    srcTest = dataTest['test-definition']
+    
     # prepare datasets
     missingDataset = loadDataset(parameters=parameters, user=userName)
     missingDatasetOut = loadDataset(parameters=parametersOut, inputs=False, user=userName)
@@ -1498,7 +1510,8 @@ def createTestDesignForTu(dataTest, userName, testName, trPath, logFilename, wit
 
     # import static arguments
     te.append( getStaticArgs(envTmp=True) )
-
+    
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
     te.append( """projectid_ = '%s'\n""" % projectId )
@@ -1540,7 +1553,7 @@ return_code = RETURN_CODE_OK
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_ = userid_)
 
 TestExecutorLib.dontExecute()
@@ -1676,9 +1689,9 @@ try:
 	# !! test injection
 	class TESTCASE(TestCase):
 """)
-    te.append(indent(srcTest, nbTab=2))
+    te.append(Common.indent(srcTest, nbTab=2))
     te.append("\n")
-    te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
+    te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
     te.append("""
 except Exception as e:
 	sys.stderr.write( '%s\\n' % str(e) )
@@ -1694,10 +1707,10 @@ sys.exit(return_code)
 
 def createTestDesignForTa(dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
                             projectId=0, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                            testLocation='' ):
+                            testLocation='', taskUuid=''  ):
     """
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -1719,10 +1732,9 @@ def createTestDesignForTa(dataTest, userName, testName, trPath, logFilename, wit
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
 
+    srcTest = dataTest['test-definition']
+    
     # prepare datasets
     missingDataset = loadDataset(parameters=parameters, user=userName)
     missingDatasetOut = loadDataset(parameters=parametersOut, inputs=False, user=userName)
@@ -1740,7 +1752,8 @@ def createTestDesignForTa(dataTest, userName, testName, trPath, logFilename, wit
 
     # import static arguments
     te.append( getStaticArgs(envTmp=True) )
-
+    
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
     te.append( """projectid_ = '%s'\n""" % projectId )
@@ -1782,7 +1795,7 @@ return_code = RETURN_CODE_OK
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_ = userid_)
 
 TestExecutorLib.dontExecute()
@@ -1919,9 +1932,9 @@ try:
 	# !! test injection
 	class TESTCASE(TestCase):
 """)
-    te.append(indent(srcTest, nbTab=2))
+    te.append(Common.indent(srcTest, nbTab=2))
     te.append("\n")
-    te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
+    te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
     te.append("""
 except Exception as e:
 	sys.stderr.write( '%s\\n' % str(e) )
@@ -1935,9 +1948,11 @@ sys.exit(return_code)
 """)
     return unicode(''.join(te)).encode('utf-8')
 
-def createTestExecutable( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', defaultAdapter='', userId=0,
-                            projectId=0, subTEs=1, parametersShared=[], stepByStep=False, breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
-                            channelId=False, testLocation=''):
+def createTestExecutable( dataTest, userName, testName, trPath, logFilename, withoutProbes, 
+                          defaultLibrary='', defaultAdapter='', userId=0,
+                          projectId=0, subTEs=1, parametersShared=[], stepByStep=False, 
+                          breakpoint=False, testId=0, runningAgents=[], runningProbes=[],
+                          channelId=False, testLocation='', taskUuid=''):
     """
     Creates and returns the test executable: testplan or testsuite
 
@@ -1947,28 +1962,26 @@ def createTestExecutable( dataTest, userName, testName, trPath, logFilename, wit
     @return:
     @rtype: string
     """
-    if 'testglobal' in dataTest:
+    if dataTest["test-extension"] == "tgx":
         return createTestGlobal( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                    defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
-                                        runningAgents, runningProbes, channelId, testLocation)
+                                defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
+                                runningAgents, runningProbes, channelId, testLocation, taskUuid)
+    elif dataTest["test-extension"] == "tpx":
+        return createTestPlan( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
+                                defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
+                                runningAgents, runningProbes, channelId, testLocation, taskUuid)
+    elif dataTest["test-extension"] == "tux":
+        return createTestUnit( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
+                                defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
+                                runningAgents, runningProbes, channelId, testLocation, taskUuid)
+    elif dataTest["test-extension"] == "tax":
+        return createTestAbstract( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
+                                defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
+                                runningAgents, runningProbes, channelId, testLocation, taskUuid)
     else:
-        if 'testplan' in dataTest:
-            return createTestPlan( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                    defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
-                                        runningAgents, runningProbes, channelId, testLocation)
-        else:
-            if 'testunit' in dataTest:
-                return createTestUnit( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                        defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
-                                            runningAgents, runningProbes, channelId, testLocation)
-            elif 'testabstract' in dataTest:
-                return createTestAbstract( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary, 
-                                        defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
-                                            runningAgents, runningProbes, channelId, testLocation)
-            else:
-                return createTestSuite( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary,
-                                        defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
-                                            runningAgents, runningProbes, channelId, testLocation)
+        return createTestSuite( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary,
+                                defaultAdapter, userId, projectId, subTEs, parametersShared, stepByStep, breakpoint, testId,
+                                runningAgents, runningProbes, channelId, testLocation, taskUuid)
 
 # -------- Events test global -----------
 
@@ -2041,7 +2054,7 @@ def createTestExecutable( dataTest, userName, testName, trPath, logFilename, wit
 
 def createTestGlobal ( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='', 
                         defaultAdapter='', userId=0, projectId=0, subTEs=1, parametersShared=[], stepByStep=False, breakpoint=False, testId=0,
-                        runningAgents=[], runningProbes=[], channelId=False, testLocation=''):
+                        runningAgents=[], runningProbes=[], channelId=False, testLocation='', taskUuid=''):
     """
     Creates and returns a test global executable 
 
@@ -2051,7 +2064,7 @@ def createTestGlobal ( dataTest, userName, testName, trPath, logFilename, withou
     @return:
     @rtype: string
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -2073,9 +2086,9 @@ def createTestGlobal ( dataTest, userName, testName, trPath, logFilename, withou
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    testglobal = dataTest['testglobal']
 
+    testglobal = dataTest['test-execution']
+    
     projectName = ProjectsManager.instance().getProjectName(prjId=projectId)
     
     # prepare datasets
@@ -2093,7 +2106,7 @@ def createTestGlobal ( dataTest, userName, testName, trPath, logFilename, withou
 
     # import static arguments
     te.append( getStaticArgs() )
-
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """channelid_ = %s\n""" % channelId )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
@@ -2150,7 +2163,7 @@ return_message = None
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_=userid_, channelid_=channelid_)
 
 def initialize_te():
@@ -2359,14 +2372,14 @@ try:
                 isTpFromTg = True
             if ts['extension'] == RepoManager.TEST_PLAN_EXT and "separator" in ts:
                 isTp = True
-                te.append( indent("""
+                te.append( Common.indent("""
 TLX.instance().setMainTpId(tpId='%s-0')
 if not TLX.instance().allPassed(tsId = "%s-0"):
 	TLX.instance().setMainTpResult(tpId='%s-0')
 else:
     """ % (ts['id'], ts['parent'], ts['id']), nbTab = ts['depth'] ) )
                 if ts['separator'] == 'terminated':
-                    te.append( indent("""
+                    te.append( Common.indent("""
 	testplanstop_time = time.time()
 	testplanduration = testplanstop_time - testplanstart_time
 	tsMgr.addSubTestPlanDuration(duration=testplanduration)
@@ -2374,7 +2387,7 @@ else:
 	TLX.instance().log_testplan_separator_terminated(tid='%s', testname='%s', duration=testplanduration, alias='%s')
 	""" % ( ts['testname'], ts['alias'], ts['id'], ts['testname'], ts['alias']), nbTab = ts['depth'] ) )
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 	ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s) 
 	tsMgr.newStartTpInTg(name="%s", nameAlias="%s", summary=ParametersHandler.description(name="summary", tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath='%s', testProject='%s')
 	testplanstart_time = time.time()
@@ -2390,32 +2403,32 @@ else:
             if isTp:
                 pass
             elif isTpFromTg:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=0, isTpFromTg=True, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")""" % (ts['path'], ts['alias'], ts["testpath"], ts["testproject"]) , nbTab = ts['depth'] ) )
             elif isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ))""" % (ts['path'], ts['alias']) , nbTab = ts['depth'] ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTa(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ))""" % (ts['path'], ts['alias']) , nbTab = ts['depth'] ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTu(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ))""" % (ts['path'], ts['alias']) , nbTab = ts['depth'] ) )
 
         if ts['enable'] == TS_ENABLED:
             ts['depth'] = 1 # bypass depath
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 	testsuitestart_time = time.time()
 	try:
 """, nbTab = ts['depth'] -1 ))
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 	testabstractstart_time = time.time()
 	try:
 """, nbTab = ts['depth'] -1 ))
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 	testunitstart_time = time.time()
 	try:
 """, nbTab = ts['depth'] -1 ))
@@ -2438,41 +2451,41 @@ tsMgr.newTu(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%
             # end of new
             
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=%s, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")
 if %s TLX.instance().allPassed(tsId = "%s", notCond="%s"):""" % (ts['path'], ts['enable'], ts['alias'], ts["testpath"], ts["testproject"], notCond, parentId, notCond) , nbTab = ts['depth'] + 1 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTa(name="%s", isEnabled=%s, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")
 if %s TLX.instance().allPassed(tsId = "%s", notCond="%s"):""" % (ts['path'], ts['enable'], ts['alias'], ts["testpath"], ts["testproject"], notCond, parentId, notCond) , nbTab = ts['depth'] + 1 ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTu(name="%s", isEnabled=%s, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")
 if %s TLX.instance().allPassed(tsId = "%s", notCond="%s"):""" % (ts['path'], ts['enable'], ts['alias'], ts["testpath"], ts["testproject"], notCond, parentId, notCond) , nbTab = ts['depth'] + 1 ) )
             
             tstId = "%s-0" % ts['id']
             if 'tpid' in ts:
                 tstId = "%s-0-%s" % (ts['tpid'], ts['id'])
-            te.append(indent("""
+            te.append(Common.indent("""
 
 TLX.instance().setUniqueId("%s", tsId = "%s")
 	""" % ( ts['path'], tstId ), nbTab = ts['depth'] + 2 ) )
             if isTs:
-                te.append( indent("""
+                te.append( Common.indent("""
 tsMgr.isTestStarted()
 TLX.instance().log_testsuite_started(tid='%s', alias='%s')
 TLX.instance().log_testsuite_info(message = 'BEGIN', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=False, flagBegin=True)
 # !! test injection
 	""" % (ts['id'], ts['alias']), nbTab = ts['depth']  + 2 ) )
             elif isTa:
-                te.append( indent("""
+                te.append( Common.indent("""
 tsMgr.isTestStarted()
 TLX.instance().log_testabstract_started(tid='%s', alias='%s')
 TLX.instance().log_testabstract_info(message = 'BEGIN', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=False, flagBegin=True)
 # !! test injection
 	""" % (ts['id'],ts['alias']), nbTab = ts['depth']  + 2 ) )
             else:
-                te.append( indent("""
+                te.append( Common.indent("""
 tsMgr.isTestStarted()
 TLX.instance().log_testunit_started(tid='%s', alias='%s')
 TLX.instance().log_testunit_info(message = 'BEGIN', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=False, flagBegin=True)
@@ -2481,116 +2494,116 @@ TLX.instance().log_testunit_info(message = 'BEGIN', component = 'TESTUNIT', from
 
             for dsTs in missingDatasetTs:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Dataset %s is missing in inputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )	
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Dataset %s is missing in inputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )	
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Dataset %s is missing in inputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )	
             te.append("\n")
             for dsTs in missingDatasetTsOut:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Dataset %s is missing in outputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Dataset %s is missing in outputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Dataset %s is missing in outputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )
             te.append("\n")
 
             for imgTs in missingImagesTs:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Image %s is missing in inputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )	
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Image %s is missing in inputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )	
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Image %s is missing in inputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )	
             te.append("\n")
             for imgTs in missingImagesTsOut:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Image %s is missing in outputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Image %s is missing in outputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Image %s is missing in outputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )
             te.append("\n")
 
-            te.append( indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['inputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['outputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
                         ts['properties']['descriptions']['description'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
                         ts['properties']['agents']['agent'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """tsMgr.addSummary(summary=ParametersHandler.description(name="summary", tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
+            te.append( Common.indent( """tsMgr.addSummary(summary=ParametersHandler.description(name="summary", tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
             te.append("\n")
-            te.append( indent( """tsMgr.addInputs(dataInputs=ParametersHandler.data(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutInputs=ParametersHandler.sut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
+            te.append( Common.indent( """tsMgr.addInputs(dataInputs=ParametersHandler.data(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutInputs=ParametersHandler.sut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
             te.append("\n")
-            te.append( indent( """tsMgr.addOutputs(dataOutputs=ParametersHandler.dataOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutOutputs=ParametersHandler.sutOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
+            te.append( Common.indent( """tsMgr.addOutputs(dataOutputs=ParametersHandler.dataOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutOutputs=ParametersHandler.sutOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
             te.append("\n")
             if isTs:
-                te.append(indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
             elif isTa:
-                te.append(indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
             te.append("\n")
             if isTs:
-                te.append(indent(ts['src2'], nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent(ts['test-execution'], nbTab = ts['depth'] + 2 ))
             elif isTa:
-                te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 TLX.instance().log_testsuite_info(message = 'END', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=True, flagBegin=False)
 testsuitestop_time = time.time()
 testsuiteduration = testsuitestop_time - testsuitestart_time
 TLX.instance().log_testsuite_stopped(result=tsMgr.getVerdictTs(), duration=testsuiteduration, nbTc=tsMgr.getNbTc(), prjId=projectid_)
 tsMgr.addTestDuration(duration=testsuiteduration)""", nbTab = ts['depth'] + 2 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 TLX.instance().log_testabstract_info(message = 'END', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=True, flagBegin=False)
 testabstractstop_time = time.time()
 testabstractduration = testabstractstop_time - testabstractstart_time
 TLX.instance().log_testabstract_stopped(result=tsMgr.getVerdictTs(), duration=testabstractduration, nbTc=tsMgr.getNbTc(), prjId=projectid_)
 tsMgr.addTestDuration(duration=testabstractduration)""", nbTab = ts['depth'] + 2 ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 TLX.instance().log_testunit_info(message = 'END', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=True, flagBegin=False)
 testunitstop_time = time.time()
 testunitduration = testunitstop_time - testunitstart_time
 TLX.instance().log_testunit_stopped(result=tsMgr.getVerdictTs(), duration=testunitduration, nbTc=tsMgr.getNbTc(), prjId=projectid_)
 tsMgr.addTestDuration(duration=testunitduration)""", nbTab = ts['depth'] + 2 ) )
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 	except Exception as e:
 		if not isinstance(e, ForceStopException):
 			return_message = "ERR_TE_000: %s" % str( e )
@@ -2606,7 +2619,7 @@ tsMgr.addTestDuration(duration=testunitduration)""", nbTab = ts['depth'] + 2 ) )
         
 		if isinstance(e, ForceStopException): raise ForceStopException(e)""", nbTab = ts['depth'] -1 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 	except Exception as e:
 		if not isinstance(e, ForceStopException):
 			return_message = "ERR_TE_000: %s" % str( e )
@@ -2622,7 +2635,7 @@ tsMgr.addTestDuration(duration=testunitduration)""", nbTab = ts['depth'] + 2 ) )
         
 		if isinstance(e, ForceStopException): raise ForceStopException(e)""", nbTab = ts['depth'] - 1) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 	except Exception as e:
 		if not isinstance(e, ForceStopException):
 			return_message = "ERR_TE_000: %s" % str( e )
@@ -2724,7 +2737,8 @@ sys.exit(return_code)
 
 def createTestPlan ( dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='',
                         defaultAdapter='', userId=0, projectId=0, subTEs=1, parametersShared=[], stepByStep=False,
-                        breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, testLocation='' ):
+                        breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, 
+                        testLocation='', taskUuid='' ):
     """
     Creates and returns a test suite executable 
 
@@ -2734,7 +2748,7 @@ def createTestPlan ( dataTest, userName, testName, trPath, logFilename, withoutP
     @return:
     @rtype: string
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -2756,9 +2770,9 @@ def createTestPlan ( dataTest, userName, testName, trPath, logFilename, withoutP
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    testplan = dataTest['testplan']
 
+    testplan = dataTest['test-execution']
+    
     projectName = ProjectsManager.instance().getProjectName(prjId=projectId)
     
     # prepare datasets
@@ -2776,7 +2790,7 @@ def createTestPlan ( dataTest, userName, testName, trPath, logFilename, withoutP
 
     # import static arguments
     te.append( getStaticArgs() )
-
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """channelid_ = %s\n""" % channelId )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
@@ -2833,7 +2847,7 @@ return_message = None
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_=userid_, channelid_=channelid_)
 
 def initialize_te():
@@ -3041,29 +3055,29 @@ try:
         if ts['enable'] != TS_ENABLED:
             ts['depth'] = 1 # bypass depath
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ))""" % (ts['path'], ts['alias']) , nbTab = ts['depth']  ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTa(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ))""" % (ts['path'], ts['alias']) , nbTab = ts['depth'] ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTu(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ))""" % (ts['path'], ts['alias']) , nbTab = ts['depth'] ) )
 
         if ts['enable'] == TS_ENABLED:
             ts['depth'] = 1 # bypass depath
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 	testsuitestart_time = time.time()
 	try:
 """, nbTab = ts['depth'] -1 ))
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 	testabstractstart_time = time.time()
 	try:
 """, nbTab = ts['depth'] -1 ))
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 	testunitstart_time = time.time()
 	try:
 """, nbTab = ts['depth'] -1 ))
@@ -3082,37 +3096,37 @@ tsMgr.newTu(name="%s", isEnabled=0, nameAlias="%s", startedAt=time.strftime( "%%
             # end of new
             
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTs(name="%s", isEnabled=%s, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")
 if %s TLX.instance().allPassed(tsId = "%s", notCond="%s"):""" % (ts['path'], ts['enable'], ts['alias'], ts["testpath"], ts["testproject"], notCond, ts['parent'], notCond) , nbTab = ts['depth'] + 1 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTa(name="%s", isEnabled=%s, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")
 if %s TLX.instance().allPassed(tsId = "%s", notCond="%s"):""" % (ts['path'], ts['enable'], ts['alias'], ts["testpath"], ts["testproject"], notCond, ts['parent'], notCond) , nbTab = ts['depth'] + 1 ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 tsMgr.newTu(name="%s", isEnabled=%s, nameAlias="%s", startedAt=time.strftime( "%%d/%%m/%%Y %%H:%%M:%%S", time.localtime(time.time()) ), testPath="%s", testProject="%s")
 if %s TLX.instance().allPassed(tsId = "%s", notCond="%s"):""" % (ts['path'], ts['enable'], ts['alias'], ts["testpath"], ts["testproject"], notCond, ts['parent'], notCond) , nbTab = ts['depth'] + 1 ) )
-            te.append(indent("""
+            te.append(Common.indent("""
 
 TLX.instance().setUniqueId("%s", tsId = "%s")
 	""" % ( ts['path'], ts['id'] ), nbTab = ts['depth'] + 2 ) )
             if isTs:
-                te.append( indent("""
+                te.append( Common.indent("""
 tsMgr.isTestStarted()
 TLX.instance().log_testsuite_started(tid='%s', alias='%s')
 TLX.instance().log_testsuite_info(message = 'BEGIN', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=False, flagBegin=True)
 # !! test injection
 	""" % (ts['id'], ts['alias']), nbTab = ts['depth']  + 2 ) )
             elif isTa:
-                te.append( indent("""
+                te.append( Common.indent("""
 tsMgr.isTestStarted()
 TLX.instance().log_testabstract_started(tid='%s', alias='%s')
 TLX.instance().log_testabstract_info(message = 'BEGIN', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=False, flagBegin=True)
 # !! test injection
 	""" % (ts['id'], ts['alias']), nbTab = ts['depth']  + 2 ) )
             else:
-                te.append( indent("""
+                te.append( Common.indent("""
 tsMgr.isTestStarted()
 TLX.instance().log_testunit_started(tid='%s', alias='%s')
 TLX.instance().log_testunit_info(message = 'BEGIN', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=False, flagBegin=True)
@@ -3121,116 +3135,116 @@ TLX.instance().log_testunit_info(message = 'BEGIN', component = 'TESTUNIT', from
 
             for dsTs in missingDatasetTs:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Dataset %s is missing in inputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )	
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Dataset %s is missing in inputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )	
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Dataset %s is missing in inputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )	
             te.append("\n")
             for dsTs in missingDatasetTsOut:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Dataset %s is missing in outputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Dataset %s is missing in outputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Dataset %s is missing in outputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % dsTs, nbTab = ts['depth'] + 2 ) )
             te.append("\n")
 
             for imgTs in missingImagesTs:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Image %s is missing in inputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )	
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Image %s is missing in inputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )	
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Image %s is missing in inputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )	
             te.append("\n")
             for imgTs in missingImagesTsOut:
                 if isTs:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testsuite_warning(message = 'Image %s is missing in outputs parameters', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )
                 elif isTa:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testabstract_warning(message = 'Image %s is missing in outputs parameters', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )
                 else:
-                    te.append( indent("""
+                    te.append( Common.indent("""
 TLX.instance().log_testunit_warning(message = 'Image %s is missing in outputs parameters', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER)
 """ % imgTs, nbTab = ts['depth'] + 2 ) )
             te.append("\n")
 
-            te.append( indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParameters(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['inputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addParametersOut(parametersId=TLX.instance().scriptId, parameters = %s)""" %
                         ts['properties']['outputs-parameters']['parameter'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addDescriptions(descriptionsId=TLX.instance().scriptId, descriptions = %s)""" %
                         ts['properties']['descriptions']['description'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
+            te.append( Common.indent( """ParametersHandler.addAgents(agentsId=TLX.instance().scriptId, agents = %s)""" %
                         ts['properties']['agents']['agent'], nbTab = ts['depth'] + 2 ))
             te.append("\n")
-            te.append( indent( """tsMgr.addSummary(summary=ParametersHandler.description(name="summary", tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
+            te.append( Common.indent( """tsMgr.addSummary(summary=ParametersHandler.description(name="summary", tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
             te.append("\n")
-            te.append( indent( """tsMgr.addInputs(dataInputs=ParametersHandler.data(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutInputs=ParametersHandler.sut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
+            te.append( Common.indent( """tsMgr.addInputs(dataInputs=ParametersHandler.data(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutInputs=ParametersHandler.sut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
             te.append("\n")
-            te.append( indent( """tsMgr.addOutputs(dataOutputs=ParametersHandler.dataOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutOutputs=ParametersHandler.sutOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
+            te.append( Common.indent( """tsMgr.addOutputs(dataOutputs=ParametersHandler.dataOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId), sutOutputs=ParametersHandler.sutOut(tpId=TLX.instance().mainScriptId, tsId=TLX.instance().scriptId))""" , nbTab = ts['depth'] + 2 ) )
             te.append("\n")
             if isTs:
-                te.append(indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
             elif isTa:
-                te.append(indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("from SubTE%s import *" % i , nbTab = ts['depth'] + 2 ))
             te.append("\n")
             if isTs:
-                te.append(indent(ts['src2'], nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent(ts['test-execution'], nbTab = ts['depth'] + 2 ))
             elif isTa:
-                te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
             else:
-                te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
+                te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name')).execute()", nbTab = ts['depth'] + 2 ))
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 TLX.instance().log_testsuite_info(message = 'END', component = 'TESTSUITE', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=True, flagBegin=False)
 testsuitestop_time = time.time()
 testsuiteduration = testsuitestop_time - testsuitestart_time
 TLX.instance().log_testsuite_stopped(result=tsMgr.getVerdictTs(), duration=testsuiteduration, nbTc=tsMgr.getNbTc(), prjId=projectid_)
 tsMgr.addTestDuration(duration=testsuiteduration)""", nbTab = ts['depth'] + 2 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 TLX.instance().log_testabstract_info(message = 'END', component = 'TESTABSTRACT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=True, flagBegin=False)
 testabstractstop_time = time.time()
 testabstractduration = testabstractstop_time - testabstractstart_time
 TLX.instance().log_testabstract_stopped(result=tsMgr.getVerdictTs(), duration=testabstractduration, nbTc=tsMgr.getNbTc(), prjId=projectid_)
 tsMgr.addTestDuration(duration=testabstractduration)""", nbTab = ts['depth'] + 2 ) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 TLX.instance().log_testunit_info(message = 'END', component = 'TESTUNIT', fromlevel=LEVEL_TE, tolevel=LEVEL_USER, flagEnd=True, flagBegin=False)
 testunitstop_time = time.time()
 testunitduration = testunitstop_time - testunitstart_time
 TLX.instance().log_testunit_stopped(result=tsMgr.getVerdictTs(), duration=testunitduration, nbTc=tsMgr.getNbTc(), prjId=projectid_)
 tsMgr.addTestDuration(duration=testunitduration)""", nbTab = ts['depth'] + 2 ) )
             if isTs:
-                te.append(indent("""
+                te.append(Common.indent("""
 	except Exception as e:
 		if not isinstance(e, ForceStopException):
 			return_message = "ERR_TE_000: %s" % str( e )
@@ -3246,7 +3260,7 @@ tsMgr.addTestDuration(duration=testunitduration)""", nbTab = ts['depth'] + 2 ) )
         
 		if isinstance(e, ForceStopException): raise ForceTerminateTestException(e)""", nbTab = ts['depth'] -1 ) )
             elif isTa:
-                te.append(indent("""
+                te.append(Common.indent("""
 	except Exception as e:
 		if not isinstance(e, ForceStopException):
 			return_message = "ERR_TE_000: %s" % str( e )
@@ -3262,7 +3276,7 @@ tsMgr.addTestDuration(duration=testunitduration)""", nbTab = ts['depth'] + 2 ) )
         
 		if isinstance(e, ForceStopException): raise ForceTerminateTestException(e)""", nbTab = ts['depth'] - 1) )
             else:
-                te.append(indent("""
+                te.append(Common.indent("""
 	except Exception as e:
 		if not isinstance(e, ForceStopException):
 			return_message = "ERR_TE_000: %s" % str( e )
@@ -3358,7 +3372,8 @@ sys.exit(return_code)
 
 def createTestSuite (	dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='',
                             defaultAdapter='', userId=0, projectId=0, subTEs=1, parametersShared=[], stepByStep=False,
-                            breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, testLocation='' ):
+                            breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, 
+                            testLocation='', taskUuid='' ):
     """
     Creates and returns a test suite executable 
 
@@ -3368,7 +3383,7 @@ def createTestSuite (	dataTest, userName, testName, trPath, logFilename, without
     @return:
     @rtype: string
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -3390,15 +3405,9 @@ def createTestSuite (	dataTest, userName, testName, trPath, logFilename, without
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
-    if 'src-exec' in dataTest:
-        srcExec = dataTest['src-exec']
 
-    if 'testunit' in dataTest:
-        srcTest = "class TESTCASE_01(TestCase):\t%s"% indent(srcTest)
-        srcExec = "TESTCASE_01(suffix=None, testName='%s' % description('name')).execute()"
+    srcTest = dataTest['test-definition']
+    srcExec = dataTest['test-execution']
 
     projectName = ProjectsManager.instance().getProjectName(prjId=projectId)
     
@@ -3417,7 +3426,7 @@ def createTestSuite (	dataTest, userName, testName, trPath, logFilename, without
 
     # import static arguments
     te.append( getStaticArgs() )
-
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """channelid_ = %s\n""" % channelId )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
@@ -3474,7 +3483,7 @@ return_message = None
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_ = userid_, channelid_=channelid_)
 
 def initialize_te():
@@ -3672,7 +3681,7 @@ try:
     te.append("""
 	# !! test exec injection
 """)
-    te.append(indent(srcExec))
+    te.append(Common.indent(srcExec))
     te.append("""
 except Exception as e:
     if not isinstance(e, ForceStopException):
@@ -3751,7 +3760,8 @@ sys.exit(return_code)
 
 def createTestUnit (	dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='',
                         defaultAdapter='', userId=0, projectId=0, subTEs=1, parametersShared=[], stepByStep=False, 
-                        breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, testLocation=''):
+                        breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, 
+                        testLocation='', taskUuid=''):
     """
     Creates and returns a test suite executable 
 
@@ -3761,7 +3771,7 @@ def createTestUnit (	dataTest, userName, testName, trPath, logFilename, withoutP
     @return:
     @rtype: string
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -3783,10 +3793,9 @@ def createTestUnit (	dataTest, userName, testName, trPath, logFilename, withoutP
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
+  
+    srcTest = dataTest['test-definition']
     
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
-
     projectName = ProjectsManager.instance().getProjectName(prjId=projectId)
     
     # prepare datasets
@@ -3804,6 +3813,7 @@ def createTestUnit (	dataTest, userName, testName, trPath, logFilename, withoutP
 
     # import static arguments
     te.append( getStaticArgs() )
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """channelid_ = %s\n""" % channelId )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
@@ -3859,7 +3869,7 @@ return_message = None
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_ = userid_, channelid_=channelid_)
 
 def initialize_te():
@@ -4052,7 +4062,7 @@ try:
 """ % str(nbSubTe) )
 
     te.append("\n")
-    te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
+    te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
     te.append("""
 except Exception as e:
     if not isinstance(e, ForceStopException):
@@ -4128,7 +4138,8 @@ sys.exit(return_code)
 
 def createTestAbstract (	dataTest, userName, testName, trPath, logFilename, withoutProbes, defaultLibrary='',
                         defaultAdapter='', userId=0, projectId=0, subTEs=1, parametersShared=[], stepByStep=False, 
-                        breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, testLocation=''):
+                        breakpoint=False, testId=0, runningAgents=[], runningProbes=[], channelId=False, 
+                        testLocation='', taskUuid=''):
     """
     Creates and returns a test abstract executable 
 
@@ -4138,7 +4149,7 @@ def createTestAbstract (	dataTest, userName, testName, trPath, logFilename, with
     @return:
     @rtype: string
     """
-    properties = dataTest['properties']
+    properties = dataTest['test-properties']
     parameters = properties['inputs-parameters']['parameter']
     parametersOut = properties['outputs-parameters']['parameter']
     agents = properties['agents']['agent']
@@ -4160,10 +4171,9 @@ def createTestAbstract (	dataTest, userName, testName, trPath, logFilename, with
         
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
 
+    srcTest = dataTest['test-definition']
+    
     projectName = ProjectsManager.instance().getProjectName(prjId=projectId)
     
     # prepare datasets
@@ -4181,7 +4191,8 @@ def createTestAbstract (	dataTest, userName, testName, trPath, logFilename, with
 
     # import static arguments
     te.append( getStaticArgs() )
-
+    
+    te.append( """taskuuid_ = '%s'\n""" % taskUuid )
     te.append( """channelid_ = %s\n""" % channelId )
     te.append( """user_ = '%s'\n""" % userName )
     te.append( """userid_ = '%s'\n""" % userId )
@@ -4237,7 +4248,7 @@ return_message = None
 
 TDS.initialize(path = result_path)
 
-TLX.initialize(path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
+TLX.initialize(task_uuid=taskuuid_, path = result_path, name = log_filename, user_ = user_, testname_ = test_name, id_ = test_id,
 	replay_id_ = replay_id, task_id_ = task_id, userid_ = userid_, channelid_=channelid_)
 
 def initialize_te():
@@ -4430,7 +4441,7 @@ try:
 """ % str(nbSubTe) )
 
     te.append("\n")
-    te.append(indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
+    te.append(Common.indent("TESTCASE(suffix=None, testName='%s' % description('name') ).execute()"  ))
     te.append("""
 except Exception as e:
     if not isinstance(e, ForceStopException) :

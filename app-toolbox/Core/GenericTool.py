@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -38,16 +38,13 @@ import time
 import sys
 import shutil
 import zipfile
+import json
+import base64
+import requests
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
+urllib3.disable_warnings(InsecureRequestWarning)
 
-try:
-    import xmlrpclib
-except ImportError: # support python3
-    import xmlrpc.client as xmlrpclib
-try:
-    import httplib as httpclient
-except ImportError: # support python3
-    import http.client as httpclient
-import ssl
 
 try:
     xrange
@@ -970,35 +967,16 @@ class Tool(NetLayerLib.ClientAgent):
         """
         NetLayerLib.ClientAgent.ok(self, tid, body)
         if dataToSend:
-            self.sendZip( callId=additional['callid'], zipReplayId=additional['replay-id'], 
-                                resultPath=additional['result-path'] )
-                                
-    def sendZip(self, callId, zipReplayId, resultPath):
-        """
-        Send data
-        """
-        self.trace("Send zip file")
-        ret, pathZip, fileName = self.createZip( callId=callId, zipReplayId=zipReplayId)
-        if not ret:
-            self.trace( 'Unable to create zip'  )
-        else:
-            t = threading.Thread(target=self.__callXmlrpcFile, args=("uploadLogs", pathZip, { 'filename': fileName,  
-                                                                    'result-path': resultPath, 'call-id': callId}, ))
-            t.start()
-            
-    def onUploadErrorFile(self, callId):
-        """
-        On upload error
-        """
-        self.upload('upload error, cleanup temp folder')
-        self.delCallIdTmpDir(callId)
-        
-    def onUploadTerminatedFile(self, callId, resultPath, fileName):
-        """
-        On upload terminated
-        """
-        # remove temp folder
-        self.delCallIdTmpDir(callId)
+            ret, pathZip, fileName = self.createZip( callId=additional['callid'], 
+                                                     zipReplayId=additional['replay-id'])
+            if not ret:
+                self.trace( 'Unable to create zip'  )
+            else:
+                self.uploadData(fileName=fileName, 
+                                resultPath=additional['result-path'], 
+                                data=None, 
+                                filePath=pathZip, 
+                                callId=additional['callid'])
         
     def createZip(self, callId, zipReplayId, zipPrefix="probe"):
         """
@@ -1064,6 +1042,7 @@ class Tool(NetLayerLib.ClientAgent):
         except Exception as e:
             raise Exception( "addFolderToZip - %s" % str(e) )
 
+<<<<<<< HEAD
     def __callXmlrpcFile(self, xmlrpcFunc, pathZip, xmlrpcData={}):
         """
         Internal function to make a xmlrpc call
@@ -1154,10 +1133,14 @@ class Tool(NetLayerLib.ClientAgent):
                                                             fileName=xmlrpcData['filename'])
 
     def uploadData(self, fileName, resultPath, data):
+=======
+    def uploadData(self, fileName, resultPath, data=None, filePath=None, callId=None):
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         """
         Send data
         """
         self.trace("Upload binary data")
+<<<<<<< HEAD
         t = threading.Thread(target=self.__callXmlrpc, args=("uploadLogs", 
                                 { 'filename': fileName, 'result-path': resultPath,
                                 'file-data': xmlrpclib.Binary(data) }) )
@@ -1170,22 +1153,46 @@ class Tool(NetLayerLib.ClientAgent):
         self.trace("Upload binary data")
         t = threading.Thread(target=self.__callXmlrpcFile, args=("uploadLogs", pathZip, 
                                                                 { 'filename': fileName, 'result-path': resultPath, 'call-id': callId}) )
+=======
+                      
+        if data is not None:
+            fileContent = base64.b64encode(data)
+            
+        if filePath is not None:
+            fd = open(filePath, 'rb')
+            fileContent = base64.b64encode(fd.read())
+            fd.close()
+
+        t = threading.Thread(target=self.__callRest, args=(resultPath, fileName, 
+                                                           fileContent, callId)  )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         t.start()
         
-    def onUploadError(self):
+    def onUploadError(self, callId=None):
         """
         On upload error
         """
-        pass
+        self.upload('upload error, cleanup temp folder')
+        if callId is not None:
+            self.delCallIdTmpDir(callId)
         
-    def onUploadTerminated(self, resultPath, fileName):
+    def onUploadTerminated(self, resultPath, fileName, callId=None):
         """
         On upload terminated
         """
-        pass
-        
-    def __callXmlrpc(self, xmlrpcFunc, xmlrpcData={}):
+        if callId is not None:
+            # remove temp folder
+            self.delCallIdTmpDir(callId)
+    
+    def onTakeScreenshot(self, request, action, actionId, adapterId, testcaseName, replayId):
         """
+        On take screenshot
+        """
+        pass
+ 
+    def __callRest(self, resultPath, fileName, fileContent, callId=None):
+        """
+<<<<<<< HEAD
         Internal function 
         XMLRPC call
         """
@@ -1206,12 +1213,18 @@ class Tool(NetLayerLib.ClientAgent):
         httpsMode = Settings.getBool( 'Server', 'xmlrpc-https' )
         dstPort = self.controllerPort # Fix issue to upload file with a different tcp port than the default tcp/443
         
+=======
+        Rest call
+        """
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         # set proxy is activated
+        proxyDict = {}
         if eval( Settings.get( 'Server', 'proxy-active' ) ):
             proxyAddr = Settings.get( 'Server', 'addr-proxy-http' )
             proxyPort = Settings.get( 'Server', 'port-proxy-http' )
-            self.trace("Proxy activated for xmlrpc Ip=%s Port=%s" % (proxyAddr, proxyPort) )
+            self.trace("Proxy activated for rest Ip=%s Port=%s" % (proxyAddr, proxyPort) )
             
+<<<<<<< HEAD
         if self.defaultTool: 
             httpsMode = False
             dstPort = Settings.get( 'Server', 'default-xmlrpc-port' )
@@ -1271,3 +1284,22 @@ class Tool(NetLayerLib.ClientAgent):
         On take screenshot
         """
         pass
+=======
+            https_proxy = "https://%s:%s" % (proxyAddr, proxyPort)
+            proxyDict = { "https" : https_proxy}
+            
+        req = '{"result-path": "%s", "file-name": "%s", "file-content": "%s"}' % ( resultPath,
+                                                                                   fileName,
+                                                                                   fileContent.decode("utf8") )
+        r = requests.post("https://%s:%s/rest/results/upload/file" % (self.controllerIp, self.controllerPort),
+                            headers = {'Content-Type': 'application/json;charset=utf-8'},
+                            data = req.encode("utf8"),
+                            proxies=proxyDict, verify=False)
+        if r.status_code != 200:
+            self.error('Unable to reach the rest api: %s - %s' % (r.status_code, r.text) )
+            self.onUploadError(callId=callId)
+        else:
+            self.onUploadTerminated(resultPath=resultPath, 
+                                    fileName=fileName,
+                                    callId=callId)
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945

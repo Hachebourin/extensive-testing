@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -25,8 +25,11 @@ try:
     import CliFunctions
     import WebServer
     import RestServerInterface
+<<<<<<< HEAD
     import XmlrpcServerInterface
     import XmlrpcServerRights
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     import ProbeServerInterface
     import AgentServerInterface
     import EventServerInterface
@@ -51,8 +54,11 @@ except ImportError: # python3 support
     from . import CliFunctions
     from . import WebServer
     from . import RestServerInterface
+<<<<<<< HEAD
     from . import XmlrpcServerInterface
     from . import XmlrpcServerRights
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     from . import ProbeServerInterface
     from . import AgentServerInterface
     from . import EventServerInterface
@@ -152,7 +158,6 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
             # Initialize the core
             Context.initialize()
             Context.instance().setStartTime()
-            Context.instance().readLicence()
             Context.instance().setMysqlVersion()
             Context.instance().setApacheVersion()
             Context.instance().setPhpVersion()
@@ -220,6 +225,7 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
                                            statsmgr=StatsManager.instance(),
                                            context = Context.instance()
                                         )
+<<<<<<< HEAD
             self.info("Starting WSU on %s:%s" %  (  Settings.get('Bind','ip-wsu') , 
                                                     Settings.getInt('Bind','port-wsu') ) )
             XmlrpcServerRights.initialize()
@@ -229,6 +235,8 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
                                                 ),
                                                 https=Settings.getInt('WebServices','https')
                                             )
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             self.info("Starting RSU on %s:%s" %  (  Settings.get('Bind','ip-rsi') , 
                                                     Settings.getInt('Bind','port-rsi') ) )
             RestServerInterface.initialize( listeningAddress = 
@@ -259,9 +267,12 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
                                             )
 
             # Start on modules
+<<<<<<< HEAD
             XmlrpcServerInterface.instance().start()
             self.info("WSU is listening on tcp://%s:%s" % ( Settings.get('Bind','ip-wsu'), 
                                                             Settings.get('Bind','port-wsu') ) ) 
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
             RestServerInterface.instance().start()
             self.info("RSI is listening on tcp://%s:%s" % ( Settings.get('Bind','ip-rsi'), 
                                                             Settings.get('Bind','port-rsi') ) )                 
@@ -311,15 +322,7 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
                 self.info("Backup archives scheduled")
             else:
                 self.info("Backup archives disabled")
-                    
-            # Start the default tools if installed
-            time.sleep(0.25) # not nice ....
-            started = ToolboxManager.instance().startDefault()
-            if started is not None:
-                if started:
-                    self.info("All local tools are started")
-                else:
-                    self.error("unable to start default local tools")
+
         except Exception as e:
             self.error("Unable to start server: %s" % str(e))
             self.cleanup()
@@ -337,20 +340,14 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
         self.info('Cleanup...')
         self.trace("finalize probes manager")
         try:
-            # stop default probes if installed
-            ProbesManager.instance().stopDefault()
             ProbesManager.finalize()
         except Exception: pass
         self.trace("finalize agent manager")
         try:
-            # stop default agents if installed
-            AgentsManager.instance().stopDefault()
             AgentsManager.finalize()
         except Exception: pass
-        self.trace("finalize agent manager")
+        self.trace("finalize toolbox manager")
         try:
-            # stop default tools if installed
-            ToolboxManager.instance().stopDefault()
             ToolboxManager.finalize()
         except Exception: pass
         self.trace("finalize settings")
@@ -407,12 +404,6 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
         except Exception: pass
         self.trace("finalize WSU")
         try:
-            XmlrpcServerInterface.instance().stop()
-            XmlrpcServerInterface.finalize()
-            XmlrpcServerRights.finalize()
-        except Exception: pass
-        self.trace("finalize RSI")
-        try:
             RestServerInterface.instance().stop()
             RestServerInterface.finalize()
         except Exception: pass
@@ -451,7 +442,7 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
         On stopping the server
         """
         self.info("Stopping server...")
-        
+
         # cleanup all child processes 
         for f in os.listdir( "%s/%s" % (Settings.getDirExec(), 
                                         Settings.get('Paths','run')) ):
@@ -480,7 +471,7 @@ class AutomationServer(Logger.ClassLogger, daemon.Daemon):
         On server stopped
         """
         self.info("%s successfully stopped!" % Settings.get('Server','name') )
-
+        
     def finalize(self):
         """
         Stops all modules

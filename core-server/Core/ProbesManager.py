@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -23,21 +23,32 @@
 
 import base64
 import zlib
+<<<<<<< HEAD
 try:
     # python 2.4 support
     import simplejson as json
 except ImportError:
     import json
+=======
+import json
+import sys
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 try:
     import ProbeServerInterface as PSI
     import EventServerInterface as ESI
+<<<<<<< HEAD
     # import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     import Common
 except ImportError: # python3 support
     from . import ProbeServerInterface as PSI
     from . import EventServerInterface as ESI
+<<<<<<< HEAD
     # from . import Context
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     from . import Common
     
 from Libs import Settings, Logger
@@ -68,6 +79,7 @@ class ProbesManager(Logger.ClassLogger):
         self.configsFile = None
         self.__pids__ = {}
 
+<<<<<<< HEAD
     def encodeData(self, data):
         """
         Encode data
@@ -108,6 +120,8 @@ class ProbesManager(Logger.ClassLogger):
                 ret = self.encodeData(data=ret)
         return ret
 
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     def getDefaultProbes(self, b64=False):
         """
         Read default probes to start on boot
@@ -127,8 +141,7 @@ class ProbesManager(Logger.ClassLogger):
                     tpl[optKey] = optValue
                 # {'enable': '1', 'type': 'textual', 'name': 'textual01', 'description': 'default probe'},
                 probes.append( tpl )  
-        if b64:
-            probes = self.encodeData(data=probes)
+
         return probes
 
     def addDefaultProbe(self, pName, pType, pDescr):
@@ -150,6 +163,7 @@ class ProbesManager(Logger.ClassLogger):
         ret = self.context.CODE_ERROR
         try:
             if self.configsFile is not None:
+<<<<<<< HEAD
                 # check licence
                 if len(self.configsFile.sections()) >=  self.context.getLicence()[ 'probes' ] [ 'default' ]:
                     ret = self.context.CODE_FORBIDDEN
@@ -171,6 +185,25 @@ class ProbesManager(Logger.ClassLogger):
                     
                     # return OK
                     ret = self.context.CODE_OK
+=======
+                # add the section in the config file object
+                self.configsFile.add_section(pName)
+                self.configsFile.set( pName, 'enable', 1)
+                self.configsFile.set( pName, 'type', pType)
+                self.configsFile.set( pName, 'description', pDescr)
+                
+                # write date the file 
+                f = open(  "%s/probes.ini" % Settings.getDirExec() , 'w')
+                self.configsFile.write(f)
+                f.close()
+
+                # notify all admin and tester
+                notif = ( 'probes-default', ( 'add', self.getDefaultProbes() ) )
+                ESI.instance().notifyByUserTypes(body = notif, admin=True, leader=False, tester=True, developer=False)
+                
+                # return OK
+                ret = self.context.CODE_OK
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         except ConfigParser.DuplicateSectionError:
             self.error( "probe already exist %s" % str(pName) ) 
             ret = self.context.CODE_ALLREADY_EXISTS
@@ -230,8 +263,6 @@ class ProbesManager(Logger.ClassLogger):
         """
         self.trace("get running probes" )
         ret = PSI.instance().getProbes()
-        if b64:
-            ret = self.encodeData(data=ret)
         return ret
 
     def getInstalled (self, b64=False):
@@ -263,8 +294,7 @@ class ProbesManager(Logger.ClassLogger):
                         p['description'] = probeDescr
                     if  len(p) > 0:
                         pluginsInstalled.append( p )
-        if b64:
-            pluginsInstalled = self.encodeData(data=pluginsInstalled)
+
         return pluginsInstalled
 
     def disconnectProbe(self, name):

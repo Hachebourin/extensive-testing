@@ -1,5 +1,9 @@
 :: -------------------------------------------------------------------
+<<<<<<< HEAD
 :: Copyright (c) 2010-2017 Denis Machard
+=======
+:: Copyright (c) 2010-2018 Denis Machard
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 :: This file is part of the extensive testing project
 ::
 :: This library is free software; you can redistribute it and/or
@@ -24,7 +28,11 @@ set Project=%~dp0..\..\
 
 set PythonPath=C:\Python36
 set Python=%PythonPath%\python.exe
+<<<<<<< HEAD
 set Output=E:\My Lab\01 ExtensiveTesting\02 - Output\
+=======
+set Output=D:\My Lab\outputs\
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 :: make resources
 %PythonPath%\python.exe -m PyQt5.pyrcc_main -o "%Project%\Resources\Resources.py" "%Project%\Resources\__resources.qrc"

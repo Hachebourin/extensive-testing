@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -21,6 +21,7 @@
 # MA 02110-1301 USA
 # -------------------------------------------------------------------
 
+<<<<<<< HEAD
 try:
     import MySQLdb
 except ImportError: # python3 support
@@ -34,17 +35,32 @@ try:
 except ImportError as e: # support python 2.4
     import sha
     sha1_constructor = sha.new
-try:
-    # python 2.4 support
-    import simplejson as json
-except ImportError:
-    import json
+=======
+from binascii import hexlify
+import os
 
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
+try:
+    import MySQLdb
+except ImportError: # python3 support
+    import pymysql as MySQLdb
+import time
+import hashlib
+
+<<<<<<< HEAD
 # import Context
 try:
     import DbManager
 except ImportError: # python3 support
     from . import DbManager
+=======
+try:
+    import DbManager
+    import Common
+except ImportError: # python3 support
+    from . import DbManager
+    from . import  Common
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 from Libs import Settings, Logger
 
@@ -66,27 +82,6 @@ class UsersManager(Logger.ClassLogger):
         self.context=context
         self.table_name = '%s-users' % Settings.get( 'MySql', 'table-prefix')
         self.table_name_stats = '%s-users-stats' % Settings.get( 'MySql', 'table-prefix')
-
-    def encodeData(self, data):
-        """
-        Encode data
-        """
-        ret = ''
-        try:
-            tasks_json = json.dumps(data)
-        except Exception as e:
-            self.error( "Unable to encode in json: %s" % str(e) )
-        else:
-            try: 
-                tasks_zipped = zlib.compress(tasks_json)
-            except Exception as e:
-                self.error( "Unable to compress: %s" % str(e) )
-            else:
-                try: 
-                    ret = base64.b64encode(tasks_zipped)
-                except Exception as e:
-                    self.error( "Unable to encode in base 64: %s" % str(e) )
-        return ret
 
     def getNbUserOfType(self, userType):
         """
@@ -124,25 +119,25 @@ class UsersManager(Logger.ClassLogger):
         self.trace( 'get nb tester from db' )
         return self.getNbUserOfType(userType=Settings.get( 'Server', 'level-tester'))
 
-    def getNbDeveloper(self):
-        """
-        Returns the number of developers present in database
+    # def getNbDeveloper(self):
+        # """
+        # Returns the number of developers present in database
 
-        @return: nb developers
-        @rtype: int
-        """
-        self.trace( 'get nb developer from db' )
-        return self.getNbUserOfType(userType=Settings.get( 'Server', 'level-developer'))
+        # @return: nb developers
+        # @rtype: int
+        # """
+        # self.trace( 'get nb developer from db' )
+        # return self.getNbUserOfType(userType=Settings.get( 'Server', 'level-developer'))
 
-    def getNbLeader(self):
-        """
-        Returns the number of leaders present in database
+    # def getNbMonitor(self):
+        # """
+        # Returns the number of leaders present in database
 
-        @return: nb managers
-        @rtype: int
-        """
-        self.trace( 'get nb managers from db' )
-        return self.getNbUserOfType(userType=Settings.get( 'Server', 'level-leader'))
+        # @return: nb managers
+        # @rtype: int
+        # """
+        # self.trace( 'get nb managers from db' )
+        # return self.getNbUserOfType(userType=Settings.get( 'Server', 'level-leader'))
 
     def getNbOfUsers(self):
         """
@@ -177,7 +172,8 @@ class UsersManager(Logger.ClassLogger):
         Returns users with colomn name
         """
         self.trace( 'get users from db' )
-        ret, rows = DbManager.instance().querySQL( query = """SELECT * FROM `%s`""" % self.table_name, columnName=True)
+        sql = """SELECT * FROM `%s`""" % self.table_name
+        ret, rows = DbManager.instance().querySQL( query = sql, columnName=True)
         if not ret:
             self.error( 'unable to select users from db: %s' % str(ret) )
             return None
@@ -191,7 +187,7 @@ class UsersManager(Logger.ClassLogger):
         @return: all users from the database
         @rtype: dict
         """
-        self.trace( 'get users dict' )
+        self.trace( 'get users as dict' )
         users = {}
 
         usersdb = self.getUsers()
@@ -243,11 +239,18 @@ class UsersManager(Logger.ClassLogger):
         defaultPrj = 1
         projects = [1]
         #  password, create a sha1 hash with salt: sha1( salt + sha1(password) )
-        sha1 = sha1_constructor()
+        sha1 = hashlib.sha1()
         sha1.update( "%s%s" % ( Settings.get( 'Misc', 'salt'), password )  )
 
-        sql = """INSERT INTO `%s-users`(`login`, `password`, `administrator`, `leader`, `tester`, `developer`, `system`, `email`, `lang`, `style`, `active`, `default`, `online`, `notifications`, `defaultproject`, `cli`, `gui`, `web`)""" % prefix
-        sql += """ VALUES('%s', '%s', '0', '0', '1', '0', '0', '%s', '%s', '%s', '1', '0', '0', '%s', '%s', '1', '1', '1')""" % (escape(login), escape(sha1.hexdigest()), escape(email), escape(lang), escape(style), escape(notifications), defaultPrj)
+        apikey_secret = hexlify(os.urandom(20))
+        sql = """INSERT INTO `%s-users`(`login`, `password`, `administrator`, """  % prefix
+        sql += """`leader`, `tester`, `developer`, `system`, `email`, `lang`, """
+        sql += """`style`, `active`, `default`, `online`, `notifications`, """
+        sql += """`defaultproject`, `cli`, `gui`, `web`, `apikey_id`, `apikey_secret`)"""
+        sql += """ VALUES('%s', '%s', '0', """ % (escape(login), escape(sha1.hexdigest()))
+        sql += """'0', '1', '0', '0', '%s', '%s',""" % ( escape(email), escape(lang) )
+        sql += """'%s', '1', '0', '0', '%s', """ % (escape(style), escape(notifications))
+        sql += """'%s', '1', '1', '1', '%s', '%s')""" % (defaultPrj, escape(login), apikey_secret )
         dbRet, lastRowId = DbManager.instance().querySQL( query = sql, insertData=True  )
         if not dbRet: 
             self.error("unable to insert user")
@@ -288,7 +291,11 @@ class UsersManager(Logger.ClassLogger):
         if not len(dbRows): return (self.context.CODE_NOT_FOUND, "this user id does not exist")
         
         # disconnect user before deletion
+<<<<<<< HEAD
         disconnected = self.context.unregisterUserFromXmlrpc(login=dbRows[0]['login'])
+=======
+        # todo
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
         # delete from db
         sql = """DELETE FROM `%s-users` WHERE  id='%s'""" % ( prefix, escape(userId) )
@@ -354,7 +361,7 @@ class UsersManager(Logger.ClassLogger):
         
         # duplicate user
         newLogin = "%s-COPY#%s" % (user['login'], uniqid())
-        sha1 = sha1_constructor()
+        sha1 = hashlib.sha1()
         sha1.update( '' )
         emptypwd = sha1.hexdigest()
         
@@ -402,12 +409,16 @@ class UsersManager(Logger.ClassLogger):
         if not len(dbRows): return (self.context.CODE_NOT_FOUND, "this user id does not exist")
         
         # disconnect user before 
+<<<<<<< HEAD
         disconnected = self.context.unregisterUserFromXmlrpc(login=dbRows[0]['login'])
+=======
+        # todo
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
         # update password
-        emptypwd = sha1_constructor()
+        emptypwd = hashlib.sha1()
         emptypwd.update( '' )
-        sha1 = sha1_constructor()
+        sha1 = hashlib.sha1()
         sha1.update( "%s%s" % ( Settings.get( 'Misc', 'salt'), emptypwd.hexdigest() )  )
         
         sql = """UPDATE `%s-users` SET password='%s' WHERE id='%s'""" % (prefix, sha1.hexdigest(), userId)
@@ -435,10 +446,14 @@ class UsersManager(Logger.ClassLogger):
         if not len(dbRows): return (self.context.CODE_NOT_FOUND, "this user id does not exist")
 
         # disconnect user before 
+<<<<<<< HEAD
         disconnected = self.context.unregisterUserFromXmlrpc(login=dbRows[0]['login'])
+=======
+        # todo
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         
         # update password
-        sha1 = sha1_constructor()
+        sha1 = hashlib.sha1()
         sha1.update( "%s%s" % ( Settings.get( 'Misc', 'salt'), newPwd )  )
         
         sql = """UPDATE `%s-users` SET password='%s' WHERE id='%s'""" % (prefix, sha1.hexdigest(), userId)

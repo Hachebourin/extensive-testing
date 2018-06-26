@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -47,7 +47,9 @@ if sys.version_info > (3,):
 
 __TOOL_TYPE__ = GenericTool.TOOL_AGENT
 __WITH_IDE__ = True  
-__APP_PATH__ = '%s\%s\%s' % (Settings.getDirExec(), Settings.get('Paths', 'bin'), Settings.get('BinWin', 'soapui-ide') )
+__APP_PATH__ = '%s\%s\%s' % (Settings.getDirExec(), 
+                             Settings.get('Paths', 'bin'), 
+                             Settings.get('BinWin', 'soapui-ide') )
 __TYPE__="""soapui"""
 __RESUME__="""This agent enables to execute SoapUI test file.
 Can be used on Linux or Windows."""

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -28,9 +28,11 @@ except ImportError: # support python 3
     import io as cStringIO
 import time
 
-import copy
 import os
+<<<<<<< HEAD
 import tarfile
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
 def indent(code, nbTab = 1):
     """

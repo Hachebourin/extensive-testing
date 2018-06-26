@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -26,6 +26,11 @@
 # the test is not compliant with python recommandation
 # /!\ WARNING /!\
 
+<<<<<<< HEAD
+=======
+import sys
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 try:
     import TestModel
     import RepoAdapters
@@ -37,8 +42,16 @@ except ImportError: # python3 support
     from . import RepoLibraries
     from . import Common
     
+<<<<<<< HEAD
 indent = Common.indent
+=======
+# indent = Common.indent
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
+# unicode = str with python3
+if sys.version_info > (3,):
+    unicode = str
+    
 def createSubTest(dataTest, descriptions, trPath, defaultLibrary='', defaultAdapter='', isTestUnit=True, 
                     isTestAbstract=False, isTestPlan=False, isTestGlobal=False):
     """
@@ -59,13 +72,9 @@ def createSubTest(dataTest, descriptions, trPath, defaultLibrary='', defaultAdap
 
     SutLibrariesGeneric = RepoLibraries.instance().getGeneric()
     SutAdaptersGeneric = RepoAdapters.instance().getGeneric()
-    
-    if 'src-test' in dataTest:
-        srcTest = dataTest['src-test']
 
-    if isTestPlan or isTestGlobal:
-        srcTest = dataTest['src']
-
+    srcTest = dataTest['test-definition']
+ 
     # te construction
     te = []
 
@@ -244,10 +253,10 @@ try:
 	# !! test injection
 """)
     if isTestUnit or isTestAbstract:
-        te.append(indent(srcTest, nbTab=2))
+        te.append(Common.indent(srcTest, nbTab=2))
     else:
 
-        te.append(indent(srcTest, nbTab=1))
+        te.append(Common.indent(srcTest, nbTab=1))
 
     te.append("""	
 except Exception as e:

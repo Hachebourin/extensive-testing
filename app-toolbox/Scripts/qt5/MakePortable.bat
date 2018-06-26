@@ -1,5 +1,5 @@
 :: -------------------------------------------------------------------
-:: Copyright (c) 2010-2017 Denis Machard
+:: Copyright (c) 2010-2018 Denis Machard
 :: This file is part of the extensive testing project
 ::
 :: This library is free software; you can redistribute it and/or
@@ -33,5 +33,9 @@ echo Build the project...
 cd "%Project%"
 %Python% "%Project%\ConfigureExe.py" portable
 %PythonPath%\Scripts\pyinstaller.exe --clean --noconfirm BuildWinIns.spec
+<<<<<<< HEAD:app-toolbox/Scripts/qt5/MakePortable.bat
+=======
+%Python% "%Project%\BuildWinIns.py"
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945:app-toolbox/Scripts/qt5/MakePortable.bat
 
 pause

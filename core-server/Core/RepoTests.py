@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------
-# Copyright (c) 2010-2017 Denis Machard
+# Copyright (c) 2010-2018 Denis Machard
 # This file is part of the extensive testing project
 #
 # This library is free software; you can redistribute it and/or
@@ -34,16 +34,18 @@ import base64
 import tarfile
 import scandir
 import copy
-try:
-    # python 2.4 support
-    import simplejson as json
-except ImportError:
-    import json
+import json
+import re
 
+# unicode = str with python3
+if sys.version_info > (3,):
+    unicode = str
+    
 from Libs import Scheduler, Settings, Logger
 
 try:
     import RepoManager
+<<<<<<< HEAD
     # import Context
     import EventServerInterface as ESI
     # import TaskManager
@@ -59,6 +61,20 @@ except ImportError:
     from . import Common
     # from . import TestModel
     from . import DbManager
+=======
+    import EventServerInterface as ESI
+    import ProjectsManager
+    import Common
+    import DbManager
+    import ProjectsManager
+except ImportError:
+    from . import RepoManager
+    from . import EventServerInterface as ESI
+    from . import ProjectsManager
+    from . import Common
+    from . import DbManager
+    from . import ProjectsManager
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
     
 import Libs.FileModels.TestPlan as TestPlan
 import Libs.FileModels.TestUnit as TestUnit
@@ -233,11 +249,16 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         """
         Returns tree
         """
+<<<<<<< HEAD
         tests_ret = []
         nb_tests, nb_tests_f, tests, stats = self.getListingFilesV2(path="%s/%s" % (self.testsPath, str(project)), 
                                                                     project=project, supportSnapshot=True  )
         tests_ret = self.encodeData(data=tests)
         return nb_tests, nb_tests_f, tests_ret, stats
+=======
+        return self.getListingFilesV2(path="%s/%s" % (self.testsPath, str(project)), 
+                                      project=project, supportSnapshot=True  )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def __getBasicListing(self, testPath, initialPath):
         """
@@ -271,10 +292,16 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         @return:
         @rtype: list
         """
+<<<<<<< HEAD
         nb, nbf, tests, stats = self.getListingFilesV2( path=self.destBackup, 
                                                         extensionsSupported=[RepoManager.ZIP_EXT] )
         backups_ret = self.encodeData(data=tests)
         return backups_ret
+=======
+        _, _, tests, _ = self.getListingFilesV2( path=self.destBackup, 
+                                                        extensionsSupported=[RepoManager.ZIP_EXT] )
+        return tests
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def getLastBackupIndex(self, pathBackups ):
         """
@@ -523,7 +550,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         @param data_:
         @type data_:
         """
-        ret = None
+        ret = ( self.context.CODE_OK, "")
         alltests = []
         # read each test files in data
         for ts in data_:
@@ -603,19 +630,20 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                         # end of fix
                         
                         if fileExt == RepoManager.TEST_SUITE_EXT:
-                            ts.update( { 'src': doc.testdef, 'src2': doc.testexec, 'path': filenameTs } )
+                            ts.update( { 'test-definition': doc.testdef, 'test-execution': doc.testexec, 'path': filenameTs } )
                             alltests.append( ts )
                         elif fileExt == RepoManager.TEST_UNIT_EXT:
-                            ts.update( { 'src': doc.testdef, 'path': filenameTs } )
+                            ts.update( { 'test-definition': doc.testdef, 'path': filenameTs } )
                             alltests.append( ts )
                         elif fileExt == RepoManager.TEST_ABSTRACT_EXT:
-                            ts.update( { 'src': doc.testdef, 'path': filenameTs } )
+                            ts.update( { 'test-definition': doc.testdef, 'path': filenameTs } )
                             alltests.append( ts )
                         elif fileExt == RepoManager.TEST_PLAN_EXT:
                             self.trace('Reading sub test plan')
                             sortedTests = doc.getSorted()
-                            ret = self.addtf2tp( data_=sortedTests, tpid=ts['id'] )
-                            if ret is not None:
+                            subret, suberr = self.addtf2tp( data_=sortedTests, tpid=ts['id'] )
+                            ret = (subret, suberr)
+                            if subret != self.context.CODE_OK:
                                 del sortedTests
                                 break
                             else:
@@ -654,9 +682,14 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                 alltests.extend( [{ 'extension': 'tpx', 'separator': 'terminated',  
                                                     'enable': "0" , 'depth': 1, 
                                                     'id': ts['id'], 'testname': filenameTs, 
+<<<<<<< HEAD
                                                     'parent': ts['parent'], 'alias': alias_ts }] ) 
 
         return ( ret, alltests )
+=======
+                                                    'parent': ts['parent'], 'alias': alias_ts }] )
+        return ret + (alltests, )
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
     def addtf2tp(self, data_, tpid=0):
         """
@@ -666,7 +699,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         @param data_:
         @type data_:
         """
-        ret = None
+        ret = (self.context.CODE_OK, "")
         for ts in data_:
             # extract project info
             prjName = str(ts['file']).split(":", 1)[0]
@@ -734,11 +767,12 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                         # end of fix
                         
                         if fileExt == RepoManager.TEST_SUITE_EXT:
-                            ts.update( { 'src': doc.testdef, 'src2': doc.testexec, 'path': filenameTs, 'tpid': tpid } )
+                            ts.update( { 'test-definition': doc.testdef, 'test-execution': doc.testexec, 
+                                         'path': filenameTs, 'tpid': tpid } )
                         elif fileExt == RepoManager.TEST_ABSTRACT_EXT:
-                            ts.update( { 'src': doc.testdef, 'path': filenameTs, 'tpid': tpid } )
+                            ts.update( { 'test-definition': doc.testdef, 'path': filenameTs, 'tpid': tpid } )
                         else:
-                            ts.update( { 'src': doc.testdef, 'path': filenameTs, 'tpid': tpid } )
+                            ts.update( { 'test-definition': doc.testdef, 'path': filenameTs, 'tpid': tpid } )
                 
                         # backward compatibility
                         self.__fixAliasTp(ts=ts)
@@ -778,7 +812,6 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         for i in xrange(len(currentParam)):
             for np in newParam:
                 if np['name'] == currentParam[i]['name'] and currentParam[i]['type'] != "alias":
-                #if np['name'] == currentParam[i]['name']:
                     currentParam[i] = np
         # adding new param
         newparams = self.__getnewparams(currentParam, newParam)
@@ -843,7 +876,11 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         return (self.context.CODE_OK, tests)
     
     def getFile(self, pathFile, binaryMode=True, project='', addLock=True, login='', 
+<<<<<<< HEAD
                     forceOpen=False, readOnly=False, projectsList=[]):
+=======
+                    forceOpen=False, readOnly=False):
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         """
         New in v17
         Return the file ask by the tester
@@ -851,11 +888,17 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         """
         ret = RepoManager.RepoManager.getFile(self, pathFile=pathFile, binaryMode=binaryMode, project=project, 
                                                     addLock=addLock, login=login, forceOpen=forceOpen, 
+<<<<<<< HEAD
                                                     readOnly=readOnly, 
                                                     projectsList=projectsList)
         result, path_file, name_file, ext_file, data_base64, project, locked = ret
+=======
+                                                    readOnly=readOnly)
+        result, path_file, name_file, ext_file, project, data_base64, locked, locked_by = ret
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         if result != self.context.CODE_OK:
             return ret
+            
         if ext_file in [ RepoManager.TEST_PLAN_EXT, RepoManager.TEST_GLOBAL_EXT]:
             # checking if all links are good
             doc = TestPlan.DataModel()
@@ -866,6 +909,9 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
             else:
                 testsfile = doc.testplan['testplan']['testfile']
                 
+                # get all projcts
+                success, projectsList = ProjectsManager.instance().getProjectsFromDB()
+                
                 # read all tests file defined in the testplan or testglobal
                 for i in xrange(len(testsfile)):
                     # update only remote file
@@ -875,7 +921,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                         prjId = 0
                         for prj in projectsList:
                             if prj["name"] == prjName: 
-                                prjId = int(prj["project_id"])
+                                prjId = int(prj["id"])
                                 break
 
                         if not os.path.exists(  "%s/%s/%s" % (self.testsPath, prjId, testPath)  ):
@@ -885,7 +931,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                             
                 # finally save the change
                 doc.write( absPath=absPath )
-                return [ result, path_file, name_file, ext_file, doc.getRaw(), project, locked ]
+                return (result, path_file, name_file, ext_file, project, doc.getRaw(), locked, locked_by)
             return ret
         else:
             return ret
@@ -933,6 +979,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         # execute the rename function as before
         ret = RepoManager.RepoManager.moveDir(self, mainPath=mainPath, folderName=folderName, newPath=newPath, 
                                             project=project, newProject=newProject)
+<<<<<<< HEAD
         ( code, mainPath, folderName, newPath, project) = ret
         
         if code == self.context.CODE_OK:
@@ -975,6 +1022,8 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                 
                 # finished = self.updateAllTestsPlan(renamedBy=renamedBy)
 
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         return ret
         
     def moveFile(self, mainPath, fileName, extFilename, newPath, project='', newProject='', 
@@ -986,6 +1035,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         ret = RepoManager.RepoManager.moveFile( self, mainPath=mainPath, fileName=fileName, extFilename=extFilename, 
                                                 newPath=newPath, project=project, newProject=newProject, 
                                                 supportSnapshot=supportSnapshot)
+<<<<<<< HEAD
         ( code, mainPath, fileName, newPath, extFilename, project) = ret
         
         if code == self.context.CODE_OK:
@@ -1011,6 +1061,9 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                 
                 self.saveToHistory(oldPrjId=project, oldPath=oldPath, newPrjId=newProject, newPath=newPath) 
    
+=======
+
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
         return ret
         
     def duplicateDir(self, mainPath, oldPath, newPath, project='', newProject='', newMainPath=''):
@@ -1043,6 +1096,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
         # execute the rename function as before
         ret = RepoManager.RepoManager.renameDir(self, mainPath=mainPath, oldPath=oldPath, newPath=newPath, 
                                                      project=project)
+<<<<<<< HEAD
         code, mainPath, oldPath, newPath, project  = ret  
         
         # if ok then update the history
@@ -1081,6 +1135,8 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                         newPrjId=project, newPath=new_path) 
                 
                 # finished = self.updateAllTestsPlan(renamedBy=renamedBy)
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
         return ret
         
@@ -1096,6 +1152,7 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                                                     newFilename=newFilename,
                                                     extFilename=extFilename, project=project, 
                                                     supportSnapshot=supportSnapshot )
+<<<<<<< HEAD
         code, mainPath, oldFilename, newFilename, extFilename, project = ret
 
         # if ok then update the history
@@ -1119,8 +1176,237 @@ class RepoTests(RepoManager.RepoManager, Logger.ClassLogger):
                 self.saveToHistory(oldPrjId=project, oldPath=oldPath, 
                                     newPrjId=project, newPath=newPath) 
                 # finished = self.updateAllTestsPlan(renamedBy=renamedBy)
+=======
+>>>>>>> 45df48b948e3efe1667629a2b66a7a857a6f5945
 
         return ret
+
+    # dbr13 >>
+    def getTestFileUsage(self, file_path, project_id, user_login):
+
+        project_name = ProjectsManager.instance().getProjectName(prjId=project_id)
+        projects = ProjectsManager.instance().getProjects(user=user_login)
+        # escape special character
+        escaped_file_path = '/'.join([re.escape(path) for path in file_path.rsplit('/')])
+        usage_path_file_regex = re.compile('%s:/*%s' % (project_name, escaped_file_path))
+        extFile = file_path.rsplit('.')[-1]
+
+        search_result = []
+
+        for proj in projects:
+            project_id = proj['project_id']
+            tmp_proj_info = {}
+            tmp_proj_info.update(proj)
+            tmp_proj_info['content'] = []
+            tmp_content = tmp_proj_info['content']
+            _, _, listing, _ = self.getTree(project=project_id)
+            tests_tree_update_locations = self.getTestsForUpdate(listing=listing, extFileName=extFile)
+            files_paths = self.get_files_paths(tests_tree=tests_tree_update_locations)
+
+            for file_path in files_paths:
+
+                if file_path.endswith(RepoManager.TEST_PLAN_EXT):
+                    doc = TestPlan.DataModel()
+                elif file_path.endswith(RepoManager.TEST_GLOBAL_EXT):
+                    doc = TestPlan.DataModel(isGlobal=True)
+                else:
+                    return "Bad file extension: %s" % file_path
+                absPath = '%s%s%s' % (self.testsPath, project_id, file_path)
+                res = doc.load(absPath=absPath)
+                test_files_list = doc.testplan['testplan']['testfile']
+                line_ids = []
+                for test_file in test_files_list:
+                    if re.findall(usage_path_file_regex, test_file['file']):
+                        line_ids.append(test_file['id'])
+
+                tmp_content.append({'file_path': file_path, 'lines_id': line_ids}) if line_ids else None
+
+            search_result.append(tmp_proj_info)
+        return search_result
+
+    def updateAdaptersLibrariesVForTestEnteties(self, folder_path, adapter_version,
+                                                library_version, project_id, user_login):
+
+        _, _, listing, _ = self.getListingFilesV2(path="%s/%s/%s" % (self.testsPath, str(project_id), folder_path),
+                                                  project=project_id, supportSnapshot=True)
+        tests_tree_update_locations = self.getTestsForUpdate(listing=listing, extFileName='all')
+        files_paths = self.get_files_paths(tests_tree=tests_tree_update_locations, file_path='/%s/' % folder_path)
+        # updated_files = []
+        for file_path in files_paths:
+            if file_path.endswith(RepoManager.TEST_PLAN_EXT):
+                doc = TestPlan.DataModel()
+                ext_file_name = RepoManager.TEST_PLAN_EXT
+            elif file_path.endswith(RepoManager.TEST_GLOBAL_EXT):
+                doc = TestPlan.DataModel(isGlobal=True)
+                ext_file_name = RepoManager.TEST_GLOBAL_EXT
+            elif file_path.endswith(RepoManager.TEST_ABSTRACT_EXT):
+                doc = TestAbstract.DataModel()
+                ext_file_name = RepoManager.TEST_ABSTRACT_EXT
+            elif file_path.endswith(RepoManager.TEST_UNIT_EXT):
+                doc = TestUnit.DataModel()
+                ext_file_name = RepoManager.TEST_UNIT_EXT
+            elif file_path.endswith(RepoManager.TEST_SUITE_EXT):
+                doc = TestSuite.DataModel()
+                ext_file_name = RepoManager.TEST_SUITE_EXT
+
+            else:
+                return "Bad file extension: %s" % file_path
+            absPath = '%s%s%s' % (self.testsPath, project_id, file_path)
+            res = doc.load(absPath=absPath)
+            if res:
+                des_list = doc.properties['properties']['descriptions']['description']
+                for des in des_list:
+                    if des['key'] == 'libraries' and library_version != 'None':
+                        des['value'] = library_version
+                    elif des['key'] == 'adapters' and adapter_version != 'None':
+                        des['value'] = adapter_version
+                # updated_files.append(absPath)
+            else:
+                return 'error_updated', absPath
+
+            file_content = doc.getRaw()
+            f_path_list = file_path.split('/')
+            path_file = '/'.join(f_path_list[:-1])
+            name_file = f_path_list[-1][:-4]
+            putFileReturn = self.uploadFile(pathFile=path_file, nameFile=name_file,
+                                            extFile=ext_file_name,
+                                            contentFile=file_content, login=user_login, project=project_id,
+                                            overwriteFile=True, createFolders=False, lockMode=True,
+                                            binaryMode=True, closeAfter=False)
+            success, pathFile, nameFile, extFile, project, overwriteFile, closeAfter, isLocked, lockedBy = putFileReturn
+            if success == self.context.CODE_ERROR:
+                return 'error_uploaded', '%s/%s.%s' % (path_file, name_file, extFile)
+        return self.context.CODE_OK, 'OK'
+
+    def updateLinkedScriptPath(self, project, mainPath, oldFilename, newFilename, extFilename, user_login):
+
+        # get current project name and accessible projects list for currnet user
+
+        project_name = ProjectsManager.instance().getProjectName(prjId=project)
+        projects = ProjectsManager.instance().getProjects(user=user_login)
+
+        updated_files_list = []
+
+        # create old and new file name
+        if mainPath != '/':
+            new_test_file_name = '%s:%s/%s.%s' % (project_name, mainPath, newFilename, extFilename)
+
+            # for update location func
+            if oldFilename.rsplit(".")[-1] in [RepoManager.TEST_PLAN_EXT,
+                                               RepoManager.TEST_ABSTRACT_EXT,
+                                               RepoManager.TEST_UNIT_EXT,
+                                               RepoManager.TEST_SUITE_EXT]:
+                old_test_file_name = oldFilename
+            else:
+                # for rename func
+                old_test_file_name = '%s:/*%s/%s.%s' % (project_name, mainPath[1:], oldFilename, extFilename)
+        else:
+            new_test_file_name = '%s:%s.%s' % (project_name, newFilename, extFilename)
+
+            # for update location func
+            if oldFilename.rsplit(".")[-1] in [RepoManager.TEST_PLAN_EXT,
+                                               RepoManager.TEST_ABSTRACT_EXT,
+                                               RepoManager.TEST_UNIT_EXT,
+                                               RepoManager.TEST_SUITE_EXT]:
+
+                old_test_file_name = oldFilename
+            else:
+                # for rename func
+                old_test_file_name = '%s:%s.%s' % (project_name, oldFilename, extFilename)
+
+        for proj_id in projects:
+            project_id = proj_id['project_id']
+            _, _, listing, _ = self.getTree(project=project_id)
+
+            tests_tree_update_locations = self.getTestsForUpdate(listing=listing, extFileName=extFilename)
+
+            files_paths = self.get_files_paths(tests_tree=tests_tree_update_locations)
+
+            for file_path in files_paths:
+                # init appropriate data model for current file path
+                if file_path.endswith(RepoManager.TEST_PLAN_EXT):
+                    doc = TestPlan.DataModel()
+                    ext_file_name = RepoManager.TEST_PLAN_EXT
+                elif file_path.endswith(RepoManager.TEST_GLOBAL_EXT):
+                    doc = TestPlan.DataModel(isGlobal=True)
+                    ext_file_name =RepoManager.TEST_GLOBAL_EXT
+                else:
+                    return "Bad file extension: %s" % file_path
+
+                absPath = '%s%s%s' % (self.testsPath, project_id, file_path)
+                res = doc.load(absPath=absPath)
+                test_files_list = doc.testplan['testplan']['testfile']
+
+                is_changed = False
+
+                for test_file in test_files_list:
+                    old_test_file_name_regex = re.compile(old_test_file_name)
+                    if re.findall(old_test_file_name_regex, test_file['file']):
+                        test_file['file'] = new_test_file_name
+                        test_file['extension'] = extFilename
+                        is_changed = True
+                if is_changed:
+                    file_content = doc.getRaw()
+                    f_path_list = file_path.split('/')
+                    path_file = '/'.join(f_path_list[:-1])
+                    name_file = f_path_list[-1][:-4]
+                    putFileReturn = self.uploadFile(pathFile=path_file, nameFile=name_file,
+                                                    extFile=ext_file_name,
+                                                    contentFile=file_content, login=user_login, project=project_id,
+                                                    overwriteFile=True, createFolders=False, lockMode=True,
+                                                    binaryMode=True, closeAfter=False)
+                    success, pathFile, nameFile, extFile, project,\
+                    overwriteFile, closeAfter, isLocked, lockedBy = putFileReturn
+                    updated_files_list.append({"code": success,
+                                               "file-path": pathFile,
+                                               "file-name": nameFile,
+                                               "file-extension": extFile,
+                                               "project-id":  project_id,
+                                               "overwrite":  overwriteFile,
+                                               "close-after": closeAfter,
+                                               "locked": isLocked,
+                                               "locked-by": lockedBy})
+        return updated_files_list
+
+    def getTestsForUpdate(self, listing, extFileName):
+
+        tests_list = []
+
+        extDict = {
+            RepoManager.TEST_ABSTRACT_EXT: [RepoManager.TEST_GLOBAL_EXT, RepoManager.TEST_PLAN_EXT],
+            RepoManager.TEST_UNIT_EXT: [RepoManager.TEST_GLOBAL_EXT, RepoManager.TEST_PLAN_EXT],
+            RepoManager.TEST_PLAN_EXT: [RepoManager.TEST_GLOBAL_EXT],
+            RepoManager.TEST_SUITE_EXT: [RepoManager.TEST_GLOBAL_EXT, RepoManager.TEST_PLAN_EXT],
+            'all': [RepoManager.TEST_GLOBAL_EXT, RepoManager.TEST_PLAN_EXT, RepoManager.TEST_SUITE_EXT,
+                    RepoManager.TEST_UNIT_EXT, RepoManager.TEST_ABSTRACT_EXT]
+        }
+
+        for test in listing:
+            if test['type'] == 'file':
+                ext_test = test['name'].split('.')[-1]
+                req_exts = extDict[extFileName]
+                if extFileName in extDict and ext_test in req_exts:
+                    tests_list.append(test)
+            else:
+                if test['type'] == 'folder':
+                    tests_list.append(test)
+                    tests_list[-1]['content'] = (self.getTestsForUpdate(listing=test['content'],
+                                                                        extFileName=extFileName))
+        return tests_list
+
+    def get_files_paths(self, tests_tree, file_path='/'):
+
+        list_path = []
+        for test in tests_tree:
+            f_path = file_path
+            if test['type'] == 'file':
+                list_path.append('%s%s' % (f_path, test['name']))
+            else:
+                f_path += '%s/' % test['name']
+                list_path += self.get_files_paths(test['content'], file_path=f_path)
+        return list_path
+
+    # dbr13 <<
         
     def saveToHistory(self, oldPrjId, oldPath, newPrjId, newPath):
         """
